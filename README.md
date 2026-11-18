@@ -6,9 +6,9 @@ A website for investors and anyone who wants to understand scenario S7 for the R
 
 | File | Purpose |
 |---|---|
-| `index.html` | The website: 3D model, section, floor plans, room types, living concept, prices, investors, open points, FAQ |
+| `index.html` | The website: 3D model, "Why S7" band, section, floor plans and drawing sheets, room types, living concept, prices, investors |
 | `model.html` | The full 3D model (every scenario) with an embed mode for S7 |
-| `js/rooms-data.js` | The 72 rooms of S7 and the wall outlines of the church, read out of the model |
+| `js/rooms-data.js` | The 74 rooms of S7 and the wall outlines of the church, read out of the model |
 | `js/rooms3d.js` | 13 room models to scale (dollhouse view) |
 | `js/site.js` | Floor plans, section, charts, calculators, model controls |
 | `js/usp3d.js` | The "Why S7" band: the building as coloured layers that come apart on scroll |
