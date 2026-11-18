@@ -107,7 +107,18 @@
   window.addEventListener('message', function (e) { if (e.source === (frame && frame.contentWindow) && e.data && e.data.s7ready) onReady(); });
   if (frame) {
     frame.addEventListener('load', function () { setTimeout(function () { if (!modelReady) { try { if (frame.contentWindow.S7API) onReady(); } catch (x) {} } }, 1500); });
-    setTimeout(function () { if (!modelReady) { var l = $('#modelLoad'); l.innerHTML = '<span style="max-width:40ch;text-align:center;padding:16px">The 3D model needs WebGL and an internet connection (three.js). <a href="model.html#scen=s7" target="_blank" rel="noopener">Open the model directly ↗</a></span>'; } }, 25000);
+    // Load the model file and hand it to the iframe as srcdoc. Some hosts (such as a claude.ai artifact) do not allow
+    // a frame that points at another page, but they do serve the file to fetch(). Opened from disk, fetch() fails,
+    // and the iframe falls back to the plain URL.
+    var useSrc = function () { frame.src = 'model.html#embed=1&scen=s7'; };
+    if (window.fetch && location.protocol !== 'file:') {
+      fetch('model.html').then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); }).then(function (html) {
+        var tag = '<script>window.__S7Q = "embed=1&scen=s7";<\/script>';
+        html = /<head[^>]*>/i.test(html) ? html.replace(/<head[^>]*>/i, function (h) { return h + tag; }) : tag + html;
+        frame.srcdoc = html;
+      }).catch(useSrc);
+    } else useSrc();
+    setTimeout(function () { if (!modelReady) { var l = $('#modelLoad'); l.innerHTML = '<span style="max-width:44ch;text-align:center;padding:16px">The 3D model could not start here. It needs WebGL and the three.js library from cdn.jsdelivr.net.</span>'; } }, 30000);
   }
   // the transparent cover keeps the page scrolling over the model until the visitor clicks into it
   var cover = $('#modelCover'), stage = $('#modelStage');
@@ -132,11 +143,14 @@
   });
   $$('#segCam button').forEach(function (b) { b.addEventListener('click', function () { press($('#segCam'), b); send({ cmd: 'cam', v: b.dataset.cam }); }); });
   $$('[data-tour]').forEach(function (b) { b.addEventListener('click', function () { toModel({ cmd: 'tour', v: 's7' }); }); });
-  var lblBtn = $('#btnLabels');
-  if (lblBtn) lblBtn.addEventListener('click', function () {
-    var on = lblBtn.getAttribute('aria-pressed') !== 'true';
-    lblBtn.setAttribute('aria-pressed', String(on)); lblBtn.textContent = on ? 'Labels: on' : 'Labels: off';
-    send({ cmd: 'labels', v: on });
+  // on and off switches for the labels and the surroundings (street, car park, trees, neighbours)
+  [['#btnLabels', 'labels', 'Labels'], ['#btnCtx', 'context', 'Surroundings']].forEach(function (q) {
+    var b = $(q[0]); if (!b) return;
+    b.addEventListener('click', function () {
+      var on = b.getAttribute('aria-pressed') !== 'true';
+      b.setAttribute('aria-pressed', String(on)); b.textContent = q[2] + ': ' + (on ? 'on' : 'off');
+      send({ cmd: q[1], v: on });
+    });
   });
 
   /* ================= nav highlight ================= */

@@ -4007,7 +4007,7 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
      The parent page steers the model with postMessage({ s7: { cmd: ... } }). */
   var EMBED = (function () {
     var q = {};
-    (location.search.slice(1) + '&' + location.hash.slice(1)).split('&').forEach(function (kv) {
+    (location.search.slice(1) + '&' + location.hash.slice(1) + '&' + (window.__S7Q || '')).split('&').forEach(function (kv) {
       if (!kv) return; var i = kv.indexOf('=');
       try { q[decodeURIComponent(i < 0 ? kv : kv.slice(0, i))] = i < 0 ? '1' : decodeURIComponent(kv.slice(i + 1)); } catch (e) {}
     });
@@ -4056,6 +4056,8 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
       if (tour.on) tourStop(); leaveWalk(); tourStart(m.v || 's7');
     } else if (m.cmd === 'labels') {
       labelsOn = !!m.v; el('labelsOn').checked = labelsOn;
+    } else if (m.cmd === 'context') {
+      vis.context = !!m.v; el('ctx').checked = vis.context; applyVisibility();
     } else if (m.cmd === 'scenario') {
       setScenario(m.v);
     }
