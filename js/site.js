@@ -117,7 +117,7 @@
     stage.addEventListener('mouseleave', function () { if (window.matchMedia('(hover:hover)').matches) cover.hidden = false; });
   }
   function toModel(cmd) {
-    var t = $('#modell .model-box');
+    var t = $('#explore .model-box');
     if (t) t.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'center' });
     uncover(); send(cmd);
   }
@@ -242,7 +242,7 @@
       b.addEventListener('click', function (e) {
         var was = b.getAttribute('aria-pressed') === 'true';
         $$('button', list).forEach(function (x) { x.setAttribute('aria-pressed', 'false'); });
-        if (e.target.hasAttribute('data-go')) { setLevel(L.key); $('#etagen').scrollIntoView({ behavior: 'smooth' }); return; }
+        if (e.target.hasAttribute('data-go')) { setLevel(L.key); $('#floors').scrollIntoView({ behavior: 'smooth' }); return; }
         b.setAttribute('aria-pressed', String(!was)); hot(!was);
       });
       list.appendChild(li);
@@ -358,7 +358,7 @@
     var p = $('#roomPanel');
     $('[data-act="enter"]', p).addEventListener('click', function () { toModel({ cmd: 'room', name: r.name }); });
     $('[data-act="roam"]', p).addEventListener('click', function () { toModel({ cmd: 'room', name: r.name, roam: true }); });
-    if (rk) $('[data-act="type"]', p).addEventListener('click', function () { selectType(rk); $('#raeume').scrollIntoView({ behavior: 'smooth' }); });
+    if (rk) $('[data-act="type"]', p).addEventListener('click', function () { selectType(rk); $('#rooms').scrollIntoView({ behavior: 'smooth' }); });
   }
   function initPlans() {
     var tabs = $('#levelTabs');
