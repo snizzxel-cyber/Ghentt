@@ -405,7 +405,7 @@
       p: 'The roof of the new building is the large terrace of the house. It is level with the kitchen and reached through the glazed wing by lift and stair.',
       f: ['Timber deck, glass guard with steel handrail on three sides', 'Planters along the north edge', 'Four bistro tables, two parasols', 'Long table with benches, two loungers'], who: 'For summer evenings, shared dinners and residents’ parties.' },
     { key: 'library', cat: 'pub', name: 'Reading hall', count: '1×', lv: 'Ground floor', dims: ['26.0 × 8.0', 'm'], area: ['208', 'm²'], h: ['5.4', 'm (last bay 12 m)'], model: 'Library reading hall',
-      p: 'The heart of the project: the nave as an open public reading hall between the octagonal piers, on the original tiled floor.',
+      p: 'The heart of the project: the nave as an open public reading hall between the octagonal piers, on the original tiled floor. The model shows the whole ground floor of the church around it, without the new building, so you can see where everything sits.',
       f: ['Four long tables with six seats and reading lamps each', 'Shelf rings around the ten piers', 'Two rows of free-standing shelf units', 'Book stacks in both side aisles'], who: 'For everyone: students, pupils from the neighbourhood, residents and visitors.' },
     { key: 'cafeIn', cat: 'cafe', name: 'Café in the choir', count: '1×', lv: 'Ground floor', dims: ['7.2 × 6.6', 'm'], area: ['47.5', 'm²'], h: ['4.6', 'm'], model: 'Café inside: second order point and seating',
       p: 'The former choir platform holds a second café counter. A glass wall with a glass door keeps noise and cups out of the reading hall.',

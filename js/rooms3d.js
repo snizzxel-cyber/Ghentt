@@ -225,11 +225,12 @@
   // community kitchen and dining hall under the ridge, 22 × 6 m (level +4, floor at 12.30 m)
   B.commkitchen = function (g) {
     var W = 22, D = 6, ridge = 5.9, knee = 2.61;   // ridge 18.2 m and roof at z = ±3: 14.91 m, floor 12.3 m
-    shell(g, W, D, knee, { back: false, front: false, floorCol: 0xd8c7aa });
+    shell(g, W, D, knee, { back: false, front: false, left: false, floorCol: 0xd8c7aa });
     // knee wall at the back and the north roof slope with roof windows
     box(g, W, knee, 0.12, 0, 0, -D / 2 - 0.06, K.wall);
     quad(g, [-W / 2, knee, -D / 2], [W / 2, knee, -D / 2], [W / 2, ridge, 0], [-W / 2, ridge, 0], 0xe8e2d6);
-    for (var i = 0; i < 5; i++) { var xc = -W / 2 + 2.25 + i * 4.5 - 0.3; quad(g, [xc - 0.5, knee + 0.6, -D / 2 + 0.55], [xc + 0.5, knee + 0.6, -D / 2 + 0.55], [xc + 0.5, knee + 1.8, -D / 2 + 1.65], [xc - 0.5, knee + 1.8, -D / 2 + 1.65], 0xcfe6f2, { emis: true }); }
+    var rs = (ridge - knee) / (D / 2), rz = function (z) { return knee + (z + D / 2) * rs - 0.03; };
+    for (var i = 0; i < 5; i++) { var xc = -W / 2 + 2.25 + i * 4.5 - 0.3, za = -D / 2 + 0.55, zb = -D / 2 + 1.65; quad(g, [xc - 0.5, rz(za), za], [xc + 0.5, rz(za), za], [xc + 0.5, rz(zb), zb], [xc - 0.5, rz(zb), zb], 0xcfe6f2, { emis: true }); }
     // gable walls: west full, east cut
     var gw = new T.Shape(); gw.moveTo(-D / 2, 0); gw.lineTo(D / 2, 0); gw.lineTo(D / 2, knee); gw.lineTo(0, ridge); gw.lineTo(-D / 2, knee); gw.lineTo(-D / 2, 0);
     var gm = new T.Mesh(new T.ExtrudeGeometry(gw, { depth: 0.14, bevelEnabled: false }), mat(K.brick)); gm.rotation.y = Math.PI / 2; gm.position.set(-W / 2 - 0.14, 0, 0); g.add(gm);
@@ -238,7 +239,7 @@
     for (var gx = 2.7; gx <= 10.71; gx += 1.6) box(g, 0.06, knee, 0.08, gx, 0, D / 2 + 0.06, K.maroon);
     box(g, 8.0, knee - 0.35, 0.02, 6.7, 0.35, D / 2 + 0.06, K.glass, { glass: true });
     // ridge beam
-    box(g, W, 0.2, 0.2, 0, ridge - 0.2, 0, K.oak);
+    box(g, W, 0.18, 0.16, 0, ridge - 0.32, 0, K.oak);
     // kitchen run along the back
     var w2 = W - 0.3, d2 = D - 0.3, len = 11, x0 = -w2 / 2 + 1.0, cxk = x0 + len / 2, zk = -d2 / 2 + 0.3;
     box(g, len, 0.9, 0.6, cxk, 0, zk, K.white); box(g, len, 0.04, 0.64, cxk, 0.9, zk, K.dark);
@@ -329,46 +330,110 @@
     return { W: W, D: D, H: 3.2, view: [0.7, 0.9, 1.0], fit: 0.66 };
   };
 
-  // reading hall in the nave, 26 × 8 m between the arcades, with the tiled floor and octagonal piers
+  // reading hall, shown with the whole ground floor of the church (without the new building), built from the model data:
+  // traced walls (cut low), piers and every ground-floor room of S7. World coordinates of the model, shifted so the church sits at the centre.
+  var bookTex = null;
+  function books2() {
+    if (bookTex) return bookTex;
+    var cv = document.createElement('canvas'); cv.width = 256; cv.height = 128; var x = cv.getContext('2d');
+    var cols = ['#d0684a', '#2f7d82', '#e0b13a', '#7a5c9e', '#5aa6d1', '#8fae7e', '#f3f3ef', '#2c3136'];
+    x.fillStyle = '#b48a5a'; x.fillRect(0, 0, 256, 128);
+    for (var row = 0; row < 4; row++) { var px = 0; while (px < 256) { var bw = 3 + Math.floor(rnd() * 5); x.fillStyle = cols[Math.floor(rnd() * cols.length)]; x.fillRect(px, row * 32 + 6, bw, 24 - Math.floor(rnd() * 6)); px += bw + 1; } x.fillStyle = '#8a6a44'; x.fillRect(0, row * 32 + 29, 256, 3); }
+    bookTex = new T.CanvasTexture(cv); bookTex.wrapS = T.RepeatWrapping;
+    return bookTex;
+  }
+  function shelfUnit(g, len, h, d, x, z, alongZ) {
+    var t = books2().clone(); t.needsUpdate = true; t.repeat.set(Math.max(1, len / 1.2), Math.max(1, h / 2));
+    var face = new T.MeshStandardMaterial({ map: t, roughness: 0.85 }), side = mat(K.oak);
+    var mats = alongZ ? [face, face, side, side, side, side] : [side, side, side, side, face, face];
+    var m = new T.Mesh(new T.BoxGeometry(alongZ ? d : len, h, alongZ ? len : d), mats); m.position.set(x, h / 2, z); m.castShadow = true; m.receiveShadow = true; g.add(m); return m;
+  }
+  function tag(g, text, x, y, z, w) {
+    var cv = document.createElement('canvas'), fs = 44; cv.height = 72; var c = cv.getContext('2d'); c.font = '600 ' + fs + 'px Arial, sans-serif';
+    cv.width = Math.ceil(c.measureText(text).width) + 40; c = cv.getContext('2d'); c.font = '600 ' + fs + 'px Arial, sans-serif';
+    c.fillStyle = 'rgba(17,27,32,0.86)'; c.fillRect(0, 0, cv.width, cv.height); c.fillStyle = '#ffffff'; c.textBaseline = 'middle'; c.fillText(text, 20, 38);
+    var tx = new T.CanvasTexture(cv), sp = new T.Sprite(new T.SpriteMaterial({ map: tx, depthTest: false, transparent: true }));
+    var hgt = (w || 0.62) * 1.6; sp.scale.set(hgt * cv.width / cv.height, hgt, 1); sp.position.set(x, y, z); sp.renderOrder = 10; g.add(sp); return sp;
+  }
+  function lowWalls(g, r, h, col) {
+    var t = 0.1, c = col || K.wall, x0 = r.x0, x1 = r.x1, z0 = r.z0, z1 = r.z1, door = r.door;
+    function seg(ax, a0, a1, f) { if (a1 - a0 < 0.05) return; if (ax === 'x') box(g, a1 - a0, h, t, (a0 + a1) / 2, 0, f, c); else box(g, t, h, a1 - a0, f, 0, (a0 + a1) / 2, c); }
+    function wallX(f, isDoor) { if (!isDoor) { seg('x', x0, x1, f); return; } var dc = (x0 + x1) / 2; seg('x', x0, dc - 0.45, f); seg('x', dc + 0.45, x1, f); }
+    function wallZ(f, isDoor) { if (!isDoor) { seg('z', z0, z1, f); return; } var dc = (z0 + z1) / 2; seg('z', z0, dc - 0.45, f); seg('z', dc + 0.45, z1, f); }
+    wallX(z0, door === 'zmin'); wallX(z1, door === 'zmax'); wallZ(x0, door === 'xmin'); wallZ(x1, door === 'xmax');
+  }
   B.library = function (g) {
-    var W = 26, D = 8, NZ = 4.33;
-    tiledFloor(g, 29, 17.3, 0.6, 0, 0);
-    box(g, 29.4, 0.25, 17.6, 0.6, -0.31, 0, K.slab);
-    var px = [-9.29, -4.64, 0, 4.63, 9.26];
-    [-1, 1].forEach(function (s) {
-      px.forEach(function (x) {
-        var p = new T.Mesh(new T.CylinderGeometry(0.4, 0.4, 2.5, 8), mat(0xe8e1d0)); p.rotation.y = Math.PI / 8; p.position.set(x, 1.65, s * NZ); p.castShadow = true; g.add(p);
-        box(g, 1.0, 0.4, 1.0, x, 0, s * NZ, 0x4c4742); box(g, 1.0, 0.35, 1.0, x, 2.9, s * NZ, K.stone);
-        // shelf ring around each pier
-        var ring = new T.Mesh(new T.CylinderGeometry(0.85, 0.85, 1.9, 16, 1, true, s > 0 ? Math.PI * 0.15 : Math.PI * 1.15, Math.PI * 1.7), mat(K.oak)); ring.position.set(x, 0.95, s * NZ); g.add(ring);
+    var CX = 10.75, w = sub(g, -CX, 0, 0), R = (window.S7_ROOMS || []).filter(function (r) { return r.lv === 'Ground floor' && r.x0 > -7.95; });
+    var TR = window.S7_TRACE || { classes: [], columns: [] };
+    // floors: the tiled floor of nave and aisles, the levelled choir in wood
+    tiledFloor(w, 29.1, 17.3, 14.55, 0, 0);
+    box(w, 7.6, 0.06, 8.8, -3.8, -0.06, 0, 0xb08d5e).castShadow = false;
+    box(w, 37.2, 0.25, 24.4, 10.75, -0.31, 0, K.slab).castShadow = false;
+    // existing walls, traced from the study plans, cut at 1.3 m so the rooms can be seen
+    TR.classes.forEach(function (c) {
+      if (['aisle', 'choir', 'chapel'].indexOf(c.name) < 0) return;
+      c.polys.forEach(function (p) {
+        var sh = new T.Shape(p.o.map(function (q) { return new T.Vector2(q[0], -q[1]); }));
+        var geo = new T.ExtrudeGeometry(sh, { depth: 1.3, bevelEnabled: false }); geo.rotateX(-Math.PI / 2);
+        var m = new T.Mesh(geo, mat(K.brick)); m.castShadow = true; m.receiveShadow = true; w.add(m);
       });
     });
-    // north arcade: round arches and the nave wall above (cut at 7 m), the south side stays open to the camera
-    var bays = [-13.5].concat(px).concat([13.5]);
-    for (var i = 0; i < bays.length - 1; i++) {
-      var a = bays[i], b = bays[i + 1], span = b - a, r = span / 2 - 0.4, cx = (a + b) / 2;
-      var sh = new T.Shape(); sh.moveTo(-span / 2, 3.25); sh.lineTo(span / 2, 3.25); sh.lineTo(span / 2, 7.0); sh.lineTo(-span / 2, 7.0); sh.lineTo(-span / 2, 3.25);
-      var hole = new T.Path(); hole.moveTo(-r, 3.25); for (var k = 0; k <= 16; k++) { var ang = Math.PI * k / 16; hole.lineTo(-r * Math.cos(ang), 3.25 + 0.9 + r * 0.55 * Math.sin(ang)); } hole.lineTo(r, 3.25); hole.lineTo(-r, 3.25);
-      sh.holes.push(hole);
-      var wm = new T.Mesh(new T.ExtrudeGeometry(sh, { depth: 0.5, bevelEnabled: false }), mat(0xd9c4a0)); wm.position.set(cx, 0, -NZ - 0.25); wm.castShadow = true; g.add(wm);
-    }
-    // north aisle outer wall with round-headed windows
-    box(g, 29, 6.8, 0.4, 0.6, 0, -8.85, K.brick);
-    for (var wx = -11; wx <= 12; wx += 4.63) [-0.7, 0, 0.7].forEach(function (o) { box(g, 0.45, 1.8, 0.05, wx + o, 3.2, -8.63, K.glass, { glass: true }); });
-    // furniture: long tables with lamps and chairs, two rows of free-standing shelf units
-    var w2 = W - 0.4, nt = 4, pitch = w2 / nt;
-    for (var t = 0; t < nt; t++) {
-      var x = -w2 / 2 + (t + 0.5) * pitch;
-      desk(g, 4.0, 1.2, x, 0, 0, K.oak);
-      for (var c = 0; c < 3; c++) { var ccx = x - 1.2 + c * 1.2; chair(g, ccx, -1.0, 0, K.teal); chair(g, ccx, 1.0, Math.PI, K.teal); }
-      [-0.9, 0.9].forEach(function (o) { cyl(g, 0.02, 0.3, x + o, 0.75, 0, K.steel, 6); box(g, 0.3, 0.1, 0.16, x + o, 1.03, 0, K.mustard); });
-      [-1, 1].forEach(function (s) { var sx = x, sz = s * 2.35; box(g, 3.6, 2.0, 0.6, sx, 0, sz, K.oak); for (var rr = 0; rr < 5; rr++) { books(g, 3.4, sx, 0.08 + rr * 0.38, sz - 0.31, 0, 0.04); books(g, 3.4, sx, 0.08 + rr * 0.38, sz + 0.31, 0, 0.04); } });
-    }
-    // book stacks in the north aisle behind the arcade
-    for (var sx2 = 5; sx2 <= 12; sx2 += 1.6) shelf(g, 1.2, 2.2, 0.5, sx2, -6.7, Math.PI / 2, 5);
-    sitter(g, -8.5, 1.0, Math.PI, K.coral); sitter(g, -4.0, -1.0, 0, K.plum); sitter(g, 2.5, 1.0, Math.PI, K.mustard); person(g, 6.0, 3.3, 2.0, K.teal); person(g, -11.5, -3.0, 0.8, K.coral);
-    plant(g, -W / 2 + 0.6, 3.1, 1.3); plant(g, W / 2 - 0.6, -3.1, 1.3);
-    return { W: 29, D: 17.3, H: 7, view: [0.45, 0.75, 1.0], fit: 0.46, target: [0, 1.2, 0] };
+    // octagonal piers with plinth and capital
+    TR.columns.forEach(function (q) {
+      var p = new T.Mesh(new T.CylinderGeometry(0.4, 0.4, 2.5, 8), mat(0xe8e1d0)); p.rotation.y = Math.PI / 8; p.position.set(q[0], 1.65, q[1]); p.castShadow = true; w.add(p);
+      box(w, 1.0, 0.4, 1.0, q[0], 0, q[1], 0x4c4742); box(w, 1.0, 0.35, 1.0, q[0], 2.9, q[1], K.stone);
+    });
+    var FL = { pub: 0xcfe7e6, learn: 0xf3d5ca, serv: 0xd9e8cf, circ: 0xdfe3e6, cafe: 0xecdcb4 };
+    R.forEach(function (r) {
+      var cx = (r.x0 + r.x1) / 2, cz = (r.z0 + r.z1) / 2, W = r.x1 - r.x0, D = r.z1 - r.z0, i, k;
+      if (r.type === 'library2') {
+        // the reading hall: long tables with lamps, two rows of shelf units, shelf rings around the piers
+        var w2 = W - 0.4, pitch = w2 / 4;
+        for (i = 0; i < 4; i++) {
+          var x = r.x0 + 0.2 + (i + 0.5) * pitch;
+          desk(w, 4.0, 1.2, x, 0, 0, K.oak);
+          for (k = 0; k < 3; k++) { chair(w, x - 1.2 + k * 1.2, -1.0, 0, K.teal); chair(w, x - 1.2 + k * 1.2, 1.0, Math.PI, K.teal); }
+          [-0.9, 0.9].forEach(function (o) { cyl(w, 0.02, 0.3, x + o, 0.75, 0, K.steel, 6); box(w, 0.3, 0.1, 0.16, x + o, 1.03, 0, K.mustard); });
+          [-2.35, 2.35].forEach(function (sz) { shelfUnit(w, 3.6, 2.0, 0.6, x, sz, false); });
+        }
+        TR.columns.forEach(function (q) { var ring = new T.Mesh(new T.CylinderGeometry(0.85, 0.85, 1.9, 16, 1, true, q[1] > 0 ? Math.PI * 0.15 : Math.PI * 1.15, Math.PI * 1.7), mat(K.oak)); ring.position.set(q[0], 0.95, q[1]); w.add(ring); });
+        tag(w, 'Reading hall · 208 m²', cx, 4.4, 0, 0.8);
+      } else if (r.type === 'stacks') {
+        for (var sx = r.x0 + 0.7; sx < r.x1 - 0.5; sx += 1.35) shelfUnit(w, D - 0.9, 2.2, 0.5, sx, cz, true);
+        tag(w, 'Book stacks', cx, 3.4, cz);
+      } else if (r.type === 'lounge') {
+        // café in the choir: counter with stools at the north edge, bistro tables, sofas, glass wall to the reading hall
+        box(w, 2.6, 1.05, 0.6, -3.7, 0, -2.9, K.oak); box(w, 2.7, 0.04, 0.7, -3.7, 1.05, -2.9, K.dark);
+        [-4.8, -4.0, -3.2, -2.4].forEach(function (x) { stool(w, x, -2.2, 0.68, K.coral); });
+        [[-6.6, -1.4], [-1.9, -1.4]].forEach(function (q) { bistro(w, q[0], q[1], 0.4); chair(w, q[0] - 0.7, q[1], Math.PI / 2, K.teal, true); chair(w, q[0] + 0.7, q[1], -Math.PI / 2, K.teal, true); });
+        sofa(w, -5.85, 2.45, 2.2, Math.PI, K.plum); sofa(w, -2.75, 2.45, 2.2, Math.PI, K.teal);
+        box(w, 0.03, 3.0, 9.2, -1.0, 0, 0, K.glass, { glass: true });
+        [-4.6, -2.3, -0.55, 0.55, 2.3, 4.6].forEach(function (z) { box(w, 0.06, 3.0, 0.06, -1.0, 0, z, 0x707a84); });
+        tag(w, 'Café in the choir', cx, 3.4, cz);
+        tag(w, '← entrance wing (new building, not shown)', -6.2, 1.6, 0.0, 0.42);
+      } else if (r.type === 'studysm') {
+        box(w, W, 0.015, D, cx, 0.005, cz, FL.learn).castShadow = false; lowWalls(w, r, 2.4, 0xf1e6df);
+        desk(w, 1.6, 0.65, cx, r.z1 - 0.45, 0, K.oak); chair(w, cx, r.z1 - 1.05, 0, K.mustard);
+        if (r.name === 'Study room 0.01') tag(w, 'Study rooms', cx + 1.8, 3.2, cz);
+      } else if (r.type === 'wc1') {
+        box(w, W, 0.015, D, cx, 0.005, cz, FL.serv).castShadow = false; lowWalls(w, r, 2.4, 0xe6ecef);
+        box(w, 0.4, 0.4, 0.55, cx, 0, r.z0 + 0.4, K.white); box(w, 0.5, 0.12, 0.4, cx, 0.85, r.z0 + 1.4, K.white);
+        if (r.name === 'Toilet, men') tag(w, 'WC', 6.6, 3.2, cz);
+      } else if (r.type === 'locker') {
+        box(w, W, 0.015, D, cx, 0.005, cz, FL.serv).castShadow = false; lowWalls(w, r, 2.4, 0xe6ecef);
+        box(w, W - 0.4, 1.9, 0.5, cx, 0, r.z0 + 0.35, K.lockerB); box(w, 2.2, 0.45, 0.4, cx, 0, cz + 0.3, K.oak);
+        if (r.name === 'Locker room 1') tag(w, 'Lockers', 13.5, 3.2, cz);
+      } else if (r.type === 'core') {
+        box(w, W, 0.015, D, cx, 0.005, cz, FL.circ).castShadow = false; lowWalls(w, r, 2.4, 0xe6e9ec);
+        var sgn = cz > 0 ? 1 : -1;
+        for (k = 0; k < 8; k++) box(w, 0.26, 0.18 * (k + 1), 1.1, r.x0 + 0.5 + k * 0.26, 0, cz - sgn * 0.6, K.ash);
+        tag(w, 'Stair to level +1', cx, 3.2, cz);
+      }
+    });
+    // people for scale
+    sitter(w, 4.2, 1.0, Math.PI, K.coral); sitter(w, 11.0, -1.0, 0, K.plum); sitter(w, 17.5, 1.0, Math.PI, K.mustard); person(w, 15.2, 3.3, 2.0, K.teal); person(w, -3.7, -2.0, Math.PI, K.coral); person(w, 23.0, 6.5, 1.0, K.plum);
+    tag(w, 'N ↑', 31.0, 0.6, -9.0, 0.5);
+    return { W: 37.2, D: 24, H: 3, view: [0.42, 0.95, 1.0], fit: 0.43, target: [0, 0, 0.5] };
   };
 
   // café inside on the choir platform, 6.6 × 7.2 m
@@ -556,7 +621,7 @@
     camera = new T.PerspectiveCamera(38, 1, 0.1, 400);
     scene.add(new T.HemisphereLight(0xffffff, 0xb8b0a4, 0.75));
     var sun = new T.DirectionalLight(0xfff4e6, 0.75); sun.position.set(8, 16, 10); sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left = -18; sun.shadow.camera.right = 18; sun.shadow.camera.top = 18; sun.shadow.camera.bottom = -18; sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.02;
+    sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left = -24; sun.shadow.camera.right = 24; sun.shadow.camera.top = 24; sun.shadow.camera.bottom = -24; sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.02;
     scene.add(sun); scene.add(sun.target);
     var fill = new T.DirectionalLight(0xdfe9ff, 0.25); fill.position.set(-10, 8, -6); scene.add(fill);
     if (T.OrbitControls) {
@@ -601,7 +666,13 @@
   }
   function clear() {
     if (!root) return;
-    root.traverse(function (o) { if (o.geometry) o.geometry.dispose(); if (o.material && o.material.map && !matCacheHas(o.material)) { o.material.map.dispose(); o.material.dispose(); } });
+    // materials can be single or an array (shelf units); only textured materials outside the cache are freed
+    root.traverse(function (o) {
+      if (o.geometry) o.geometry.dispose();
+      (Array.isArray(o.material) ? o.material : (o.material ? [o.material] : [])).forEach(function (mm) {
+        if (mm.map && !matCacheHas(mm)) { mm.map.dispose(); mm.dispose(); }
+      });
+    });
     scene.remove(root); root = null;
   }
   function matCacheHas(m) { for (var k in matCache) if (matCache[k] === m) return true; return false; }
