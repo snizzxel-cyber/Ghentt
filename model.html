@@ -4022,6 +4022,15 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
     tb.addEventListener('click', function () { var c = el('tourCap'); c.classList.toggle('notext'); tb.textContent = c.classList.contains('notext') ? 'Show text' : 'Hide text'; });
     el('tourExit').parentNode.insertBefore(tb, el('tourExit'));
     if (window.innerWidth < 600) { el('tourCap').classList.add('notext'); tb.textContent = 'Show text'; }
+    // the website shows the building on its own: no surroundings, no labels, turning slowly until the visitor takes over
+    vis.context = false; el('ctx').checked = false;
+    labelsOn = false; el('labelsOn').checked = false;
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (controls.autoRotate !== undefined && !calm) { controls.autoRotate = true; controls.autoRotateSpeed = 1.0; }
+    var stopSpin = function () { if (!controls.autoRotate) return; controls.autoRotate = false; try { window.parent.postMessage({ s7rotate: false }, '*'); } catch (e) {} };
+    renderer.domElement.addEventListener('pointerdown', stopSpin);
+    renderer.domElement.addEventListener('wheel', stopSpin, { passive: true });
+    window.S7STOPSPIN = stopSpin;
   }
   buildTabs();
   setScenario(EMBED.scen && (DATA[EMBED.scen] || EMBED.scen === 'ex') ? EMBED.scen : (isEmbed ? 's7' : 's4'));
@@ -4036,6 +4045,8 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
   function roomByNameActive(n) { for (var i = 0; i < ROOMS.length; i++) if (ROOMS[i].scen === active && ROOMS[i].name === n) return ROOMS[i]; return null; }
   function embedCmd(m) {
     if (!m || !m.cmd) return;
+    if (m.cmd === 'rotate') { if (controls.autoRotate !== undefined) { leaveWalk(); if (tour.on) tourStop(); controls.autoRotate = !!m.v; } return; }
+    if (m.cmd !== 'labels' && window.S7STOPSPIN) window.S7STOPSPIN();
     if (m.cmd !== 'tour' && tour.on) tourStop();
     if (m.cmd === 'view') {
       leaveWalk();
@@ -4056,8 +4067,7 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
       if (tour.on) tourStop(); leaveWalk(); tourStart(m.v || 's7');
     } else if (m.cmd === 'labels') {
       labelsOn = !!m.v; el('labelsOn').checked = labelsOn;
-    } else if (m.cmd === 'context') {
-      vis.context = !!m.v; el('ctx').checked = vis.context; applyVisibility();
+
     } else if (m.cmd === 'scenario') {
       setScenario(m.v);
     }

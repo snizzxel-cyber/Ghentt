@@ -104,7 +104,11 @@
     if (modelReady) return; modelReady = true; $('#modelLoad').hidden = true;
     var q = queue; queue = []; q.forEach(send);
   }
-  window.addEventListener('message', function (e) { if (e.source === (frame && frame.contentWindow) && e.data && e.data.s7ready) onReady(); });
+  window.addEventListener('message', function (e) {
+    if (e.source !== (frame && frame.contentWindow) || !e.data) return;
+    if (e.data.s7ready) onReady();
+    if (e.data.s7rotate === false) { var rb = $('#btnRotate'); if (rb) { rb.setAttribute('aria-pressed', 'false'); rb.textContent = 'Rotate: off'; } }
+  });
   if (frame) {
     frame.addEventListener('load', function () { setTimeout(function () { if (!modelReady) { try { if (frame.contentWindow.S7API) onReady(); } catch (x) {} } }, 1500); });
     // Load the model file and hand it to the iframe as srcdoc. Some hosts (such as a claude.ai artifact) do not allow
@@ -143,8 +147,8 @@
   });
   $$('#segCam button').forEach(function (b) { b.addEventListener('click', function () { press($('#segCam'), b); send({ cmd: 'cam', v: b.dataset.cam }); }); });
   $$('[data-tour]').forEach(function (b) { b.addEventListener('click', function () { toModel({ cmd: 'tour', v: 's7' }); }); });
-  // on and off switches for the labels and the surroundings (street, car park, trees, neighbours)
-  [['#btnLabels', 'labels', 'Labels'], ['#btnCtx', 'context', 'Surroundings']].forEach(function (q) {
+  // on and off switches for the slow rotation and the labels in the model
+  [['#btnRotate', 'rotate', 'Rotate'], ['#btnLabels', 'labels', 'Labels']].forEach(function (q) {
     var b = $(q[0]); if (!b) return;
     b.addEventListener('click', function () {
       var on = b.getAttribute('aria-pressed') !== 'true';
