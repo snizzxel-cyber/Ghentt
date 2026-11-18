@@ -493,7 +493,7 @@
     box(g, W, 0.08, 0.12, 0, H - 0.08, -D / 2, K.dark); box(g, 3.3, 0.08, 0.12, 0, 2.5, -D / 2, K.dark);
     box(g, 4.8, 0.2, 1.3, 0, 3.3, -D / 2 - 0.65, K.concrete); cyl(g, 0.04, 3.3, -2.3, 0, -D / 2 - 1.2, K.dark, 8); cyl(g, 0.04, 3.3, 2.3, 0, -D / 2 - 1.2, K.dark, 8);
     box(g, 6, 0.04, 2, 0, -0.04, -D / 2 - 1.1, 0x9aa1a8);
-    var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 96; var x = cv.getContext('2d'); x.fillStyle = '#2b6f77'; x.fillRect(0, 0, 1024, 96); x.fillStyle = '#fff'; x.font = 'bold 50px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('BIBLIOTHEK · STUDENTENWOHNEN · EINGANG', 512, 50);
+    var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 96; var x = cv.getContext('2d'); x.fillStyle = '#2b6f77'; x.fillRect(0, 0, 1024, 96); x.fillStyle = '#fff'; x.font = 'bold 50px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('LIBRARY · STUDENT HOUSING · ENTRANCE', 512, 50);
     var sg = new T.Mesh(new T.PlaneGeometry(4.4, 0.42), new T.MeshBasicMaterial({ map: new T.CanvasTexture(cv), side: T.DoubleSide })); sg.position.set(0, 3.12, -D / 2 - 1.31); sg.rotation.y = Math.PI; g.add(sg);
     // book return slot beside the portal
     box(g, 0.6, 1.1, 0.4, -2.2, 0, -D / 2 + 0.25, 0x59606a); box(g, 0.4, 0.06, 0.05, -2.2, 0.95, -D / 2 + 0.47, K.mustard);

@@ -68,6 +68,16 @@ body.embed .rail,body.embed #tourStart2,body.embed #tourStart4,body.embed #tourS
 body.embed #viewport{height:100%}
 body.embed .tourkeys{display:none}
 body.embed.nodata #tourText{display:block}
+body.embed #tourCap{margin:0 0 12px 12px;width:min(470px,calc(100% - 24px));max-width:none;padding:10px 14px 9px;background:rgba(17,27,32,.82);backdrop-filter:none;border-radius:2px;box-shadow:none}
+body.embed #tourCount{font-size:10.5px}
+body.embed #tourTitle{font-size:17px;line-height:1.2;margin:3px 0 4px}
+body.embed #tourText{font-size:13px;line-height:1.4;margin:0 0 8px}
+body.embed #tourCap.notext #tourText{display:none!important}
+body.embed #tourBarWrap{height:2px;margin-bottom:8px}
+body.embed .tourctl{gap:4px}
+body.embed .tourctl button{font-size:12px;padding:4px 8px;border-radius:2px}
+body.embed #tourDots{gap:4px}body.embed #tourDots i{width:7px;height:7px}
+body.embed #navHint{display:none!important}
 @media (max-width:760px){body.embed #navPad{display:none}body.embed .hint{font-size:11px}}
 
 .tabs{display:grid;grid-template-columns:1fr 1fr;gap:6px}
@@ -3860,25 +3870,26 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
 
 
   /* ---- S7 tour in German, for the investor website ---- */
+  // in walking order: street side, entrance, choir, nave, aisle, gallery, up to the rooms, along the corridor, up to the kitchen and the terraces
   var S7_PLAN = [
-    ['Entrance and book return', 'Ankommen im Glasflügel', 'Der verglaste Flügel an der Westseite ist der Haupteingang: Schiebetüren, Vordach, Buchrückgabe, Aufzug und Treppe. Von hier geht es in die Kirche, in das Café und nach oben zu den Zimmern.'],
-    ['Café inside: second order point and seating', 'Café im Chor', 'Das ehemalige Chorpodium ist ein zweiter Bestellpunkt des Cafés. Eine Glaswand mit Glastür trennt es vom Lesesaal, damit Geräusche und Tassen draußen bleiben.'],
-    ['Library reading hall', 'Lesesaal unter dem Gewölbe', 'Das Hauptschiff bleibt ein offener, öffentlicher Raum: lange Tische, Regale um die Pfeiler und zwei Reihen freistehender Regale. Der Fliesenboden bleibt sichtbar.'],
-    ['Book stacks, south aisle west', 'Büchermagazin im Seitenschiff', 'Das südliche Seitenschiff nimmt Regale auf, dazwischen liegen zwei kleine Lernräume im Erdgeschoss.'],
-    ['Study room 1.03', 'Lernraum auf Ebene +1', '14 kleine Lernräume von etwa 6,4 m² liegen auf der Galerie über den Seitenschiffen. Schreibtisch, Stuhl, Regal und Sessel: zum Lernen, nicht zum Wohnen.'],
-    ['Student room 2.03', 'Studentenzimmer, Ebene +2', '20 Einzelzimmer von je 4,20 × 3,15 m, etwa 12,5 m² netto: Bett, Schreibtisch, Regal und Schrank. Jede Tür ist eine Brandschutztür EI30.'],
-    ['Toilets and showers, women, level +2', 'Bäder im Cafégebäude', 'Auf den Ebenen +2 und +3 hat das Cafégebäude je einen Damen- und einen Herrenraum mit drei WCs, drei Waschbecken und zwei bodengleichen Duschen.'],
-    ['Organ gallery, reading balcony', 'Orgelempore als Lesebalkon', 'Der Flur der Ebene +2 endet an der Orgelempore. Sie bleibt erhalten und wird zum ruhigen Lesebalkon mit Blick in das Kirchenschiff.'],
-    ['Community kitchen and dining hall', 'Gemeinschaftsküche unter dem First', 'Ganz oben liegt keine Wohnung, sondern eine große Küche für alle Bewohner: lange Esstische, zwei Kochinseln und Sofas, etwa 130 m².'],
-    ['Roof terrace, about 14 m²', 'Kleine Dachterrasse', 'Eine Glastür führt von der Küche auf eine Terrasse von etwa 14 m², eingeschnitten in die südliche Dachfläche.'],
-    ['Roof terrace on the café building, about 67 m²', 'Große Dachterrasse', 'Das Dach des Cafégebäudes ist eine Terrasse von etwa 67 m² mit Pflanzkübeln, Bistrotischen, einer langen Tafel und Liegen. Erreichbar mit Aufzug und Treppe.'],
-    ['Take-away café', 'Take-away-Café', 'Im Erdgeschoss des Neubaus liegt das Take-away-Café mit etwa 58 m²: Kaffee und Snacks für Studierende, Nachbarn und Pendler.']
+    ['Take-away café', 'Take-away café', 'Start on the street side: the take-away café on the ground floor of the new north-west building, about 58 m², serves students, neighbours and commuters.'],
+    ['Entrance and book return', 'The glazed entrance wing', 'Next door, the glazed wing is the main entrance for everyone: sliding doors, a canopy, the book return, and the lift and stair to every level.'],
+    ['Café inside: second order point and seating', 'Café in the choir', 'Through a 2.2 m opening into the choir: a second café counter on the old choir platform, behind a glass wall that keeps the reading hall quiet.'],
+    ['Library reading hall', 'Reading hall in the nave', 'Through the glass door into the nave: one open public reading hall with long tables, shelving around the octagonal piers and the original tiled floor.'],
+    ['Book stacks, south aisle west', 'Book stacks in the south aisle', 'Beside the hall, the south aisle holds the book stacks, with two small study rooms between them.'],
+    ['Study room 1.09', 'Study room, level +1', 'Up the aisle stair to the gallery: 14 small study rooms of about 6.4 m², made for studying, not for living.'],
+    ['Toilets and showers, women, level +2', 'Bathrooms, level +2', 'One floor up and across the bridge into the café building: three toilets, three washbasins and two walk-in showers per room, for women and men.'],
+    ['Student room 2.06', 'Student room 2.06', 'Back across the bridge to the first room on the corridor: 4.20 × 3.15 m, about 12.5 m², with a bed, desk, shelf and wardrobe.'],
+    ['Organ gallery, reading balcony', 'Organ gallery reading balcony', 'Along the 1.8 m corridor to the east end: the organ gallery is kept as a quiet reading balcony that overlooks the nave.'],
+    ['Community kitchen and dining hall', 'Community kitchen under the ridge', 'Two floors up by lift: one large kitchen for all 20 residents, about 130 m², with dining tables, two islands and sofas.'],
+    ['Roof terrace, about 14 m²', 'Small roof terrace', 'A glass door leads from the kitchen onto a terrace of about 14 m², cut into the south roof slope.'],
+    ['Roof terrace on the café building, about 67 m²', 'Large roof terrace', 'Over the bridge to the west: the roof of the café building is a terrace of about 67 m² with planters, bistro tables, a long table and loungers.']
   ];
   function buildS7Shots() {
     var out = [];
     S7_PLAN.forEach(function (d) {
       var r = roomBy('s7', d[0]); if (!r) { if (window.console) console.warn('S7 tour: room not found', d[0]); return; }
-      var sh = roomShot('s7', r); sh.tag = 'Rundgang S7'; sh.title = d[1]; sh.text = d[2]; out.push(sh);
+      var sh = roomShot('s7', r); sh.tag = 'S7 tour'; sh.title = d[1]; sh.text = d[2]; out.push(sh);
     });
     return out;
   }
@@ -4005,19 +4016,12 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
   var isEmbed = EMBED.embed === '1';
   if (isEmbed) {
     document.body.classList.add('embed');
-    el('tourPrev').textContent = '‹ Zurück'; el('tourNext').textContent = 'Weiter ›'; el('tourFs').textContent = 'Vollbild'; el('tourExit').textContent = 'Beenden';
-    el('hudPrev').textContent = 'Vorheriger Raum'; el('hudNext').textContent = 'Nächster Raum'; el('hudLeave').textContent = 'Verlassen';
-    el('navHint').textContent = 'Ziehen: drehen · Mausrad oder zwei Finger: zoomen · Rechtsklick-Ziehen: verschieben · Doppelklick: fokussieren';
-    var PADDE = { tl: 'Links drehen', f: 'Vor', tr: 'Rechts drehen', l: 'Links', b: 'Zurück', r: 'Rechts' };
-    Array.prototype.forEach.call(document.querySelectorAll('#padEl button'), function (b) { if (PADDE[b.dataset.k]) b.textContent = PADDE[b.dataset.k]; });
-    // texts that the walk mode writes later: translate them as they appear
-    var DE = [[/^Free walk: on$/, 'Frei gehen: an'], [/^Free walk: off$/, 'Frei gehen: aus'], [/^Free walk$/, 'Frei gehen'], [/, room with door/, ', Raum mit Tür'], [/, open area/, ', offener Bereich'],
-      [/^Ground floor/, 'Erdgeschoss'], [/^Level \+(\d)/, 'Ebene +$1'], [/^W A S D or arrow.*Esc: leave\.$/, 'W A S D oder Pfeiltasten: gehen. Ziehen: umsehen. Q und E: drehen. Shift: schneller. N und P: nächster und vorheriger Raum. Esc: verlassen.'],
-      [/^W A S D or arrows: walk.*Esc: leave\.$/, 'W A S D oder Pfeiltasten: gehen. Ziehen: umsehen. Q und E: drehen. Shift: schneller. R und F: Ebene hoch und runter. M: Karte. N und P: nächster und vorheriger Raum. Esc: verlassen.']];
-    var tr = function (n) { var t = n.textContent, o = t; DE.forEach(function (d) { t = t.replace(d[0], d[1]); }); if (t !== o) n.textContent = t; };
-    ['hudRoam', 'hudHelp', 'hudSub'].forEach(function (id) { var n = el(id); tr(n); new MutationObserver(function () { tr(n); }).observe(n, { childList: true, characterData: true, subtree: true }); });
-    el('hudLvWrap').querySelector('.hud-l').textContent = 'Ebene (Aufzug):';
     scene.background = new T.Color(0xf2f4f4);
+    // a button in the tour caption hides the text, so that it does not cover the view
+    var tb = document.createElement('button'); tb.id = 'tourTxt'; tb.type = 'button'; tb.textContent = 'Hide text';
+    tb.addEventListener('click', function () { var c = el('tourCap'); c.classList.toggle('notext'); tb.textContent = c.classList.contains('notext') ? 'Show text' : 'Hide text'; });
+    el('tourExit').parentNode.insertBefore(tb, el('tourExit'));
+    if (window.innerWidth < 600) { el('tourCap').classList.add('notext'); tb.textContent = 'Show text'; }
   }
   buildTabs();
   setScenario(EMBED.scen && (DATA[EMBED.scen] || EMBED.scen === 'ex') ? EMBED.scen : (isEmbed ? 's7' : 's4'));
@@ -4050,6 +4054,8 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
       leaveWalk();
     } else if (m.cmd === 'tour') {
       if (tour.on) tourStop(); leaveWalk(); tourStart(m.v || 's7');
+    } else if (m.cmd === 'labels') {
+      labelsOn = !!m.v; el('labelsOn').checked = labelsOn;
     } else if (m.cmd === 'scenario') {
       setScenario(m.v);
     }

@@ -1,39 +1,40 @@
-# S7 Bibliothekskirche Gent
+# S7 Library Church Ghent
 
-Website für Investoren und alle, die das Szenario S7 für die Redemptoristenkirche (Voskenslaan, Gent) verstehen wollen.
+A website for investors and anyone who wants to understand scenario S7 for the Redemptorist Church (Voskenslaan, Ghent).
 
-## Inhalt
+## Contents
 
-| Datei | Zweck |
+| File | Purpose |
 |---|---|
-| `index.html` | Die Website: 3D-Modell, Schnitt, Grundrisse, Raumtypen, Wohnkonzept, Preise, Investoren, offene Punkte, FAQ |
-| `model.html` | Das vollständige 3D-Modell (alle Szenarien) mit Einbettungsmodus für S7 |
-| `js/rooms-data.js` | Die 72 Räume von S7 und die Wandumrisse der Kirche, aus dem Modell ausgelesen |
-| `js/rooms3d.js` | 13 eigene Raummodelle im Maßstab (Puppenhaus-Ansicht) |
-| `js/site.js` | Grundrisse, Schnitt, Diagramme, Rechner, Steuerung des Modells |
+| `index.html` | The website: 3D model, section, floor plans, room types, living concept, prices, investors, open points, FAQ |
+| `model.html` | The full 3D model (every scenario) with an embed mode for S7 |
+| `js/rooms-data.js` | The 72 rooms of S7 and the wall outlines of the church, read out of the model |
+| `js/rooms3d.js` | 13 room models to scale (dollhouse view) |
+| `js/site.js` | Floor plans, section, charts, calculators, model controls |
 
-## Ansehen
+## Viewing
 
-Die Seite braucht einen Webserver (wegen des eingebetteten Modells), zum Beispiel:
+The page needs a web server (because of the embedded model), for example:
 
 ```
 python3 -m http.server 8000
 ```
 
-und dann `http://localhost:8000` öffnen. Auf GitHub Pages läuft sie direkt aus dem Hauptverzeichnis.
+then open `http://localhost:8000`.
 
-## Steuerung des Modells
+## Controlling the model
 
-`model.html#embed=1&scen=s7` blendet die Seitenleiste aus und startet in S7. Die Website steuert das Modell per `postMessage({ s7: { cmd: ... } })`:
+`model.html#embed=1&scen=s7` hides the side rail and starts in S7. The website controls the model with `postMessage({ s7: { cmd: ... } })`:
 
 - `{ cmd: 'view', v: 'exterior' | 'xray' | 'section' }`
 - `{ cmd: 'cam', v: 'sw' | 'ne' | 'west' | 'top' }`
 - `{ cmd: 'explode', v: 0..1 }`
+- `{ cmd: 'labels', v: true | false }`
 - `{ cmd: 'room', name: 'Student room 2.06', roam: false }`
-- `{ cmd: 'tour', v: 's7' }` (deutscher Rundgang mit 12 Stationen)
+- `{ cmd: 'tour', v: 's7' }` (a 12-stop tour that walks through the building room by room)
 
-Ohne `embed=1` verhält sich `model.html` wie das Original. Behoben wurde dabei ein Fehler im Original: Die Rundgang-Buttons suchten ein Element `tourRoot`, das es nicht gibt.
+Without `embed=1`, `model.html` behaves like the original. One bug in the original was fixed: the tour buttons looked for an element `tourRoot` that does not exist.
 
-## Hinweise
+## Notes
 
-Preise, Einnahmen und Betreiber sind Annahmen und nicht Teil der Studie. Maße und Flächen stammen aus dem 3D-Modell, das Grundriss und Schnitte der Studie (Miss Miyagi, 2026) nachzeichnet; es ist keine Vermessung.
+Prices, income and operators are assumptions and not part of the study. Sizes and areas come from the 3D model, which traces the plans and sections of the study (Miss Miyagi, 2026); it is not a survey.
