@@ -10,10 +10,10 @@
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
   var scene = new T.Scene(), camera = new T.PerspectiveCamera(34, 1, 0.5, 600);
-  scene.add(new T.HemisphereLight(0xffffff, 0x334046, 0.9));
-  var sun = new T.DirectionalLight(0xffffff, 0.55); sun.position.set(-30, 60, 40); scene.add(sun);
+  scene.add(new T.HemisphereLight(0xffffff, 0x8a9aa0, 0.85));
+  var sun = new T.DirectionalLight(0xffffff, 0.65); sun.position.set(-30, 60, 40); scene.add(sun);
 
-  var CAT = { pub: 0x00908f, cafe: 0xb8860b, live: 0x7a5c9e, learn: 0xd0684a, comm: 0x3f8fd0, serv: 0x5e9e3a, circ: 0x8a96a0 };
+  var CAT = { pub: 0x00908f, cafe: 0xb8860b, live: 0x7a5c9e, learn: 0xd0684a, comm: 0x3f8fd0, serv: 0x5e9e3a, circ: 0x4f5b63 };
   function catOf(r) {
     if (/^Café|Take-away/.test(r.name)) return 'cafe';
     if (/Organ gallery/.test(r.name)) return 'pub';
@@ -26,10 +26,10 @@
     return { g: g, mats: {}, lines: [], k: k };
   });
   function matFor(L, cat) {
-    if (!L.mats[cat]) L.mats[cat] = new T.MeshStandardMaterial({ color: CAT[cat], roughness: 0.6, emissive: CAT[cat], emissiveIntensity: 0.18, transparent: true, opacity: 0.92 });
+    if (!L.mats[cat]) L.mats[cat] = new T.MeshStandardMaterial({ color: CAT[cat], roughness: 0.6, emissive: CAT[cat], emissiveIntensity: 0.06, transparent: true, opacity: 0.94 });
     return L.mats[cat];
   }
-  var edgeMat = function () { return new T.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 }); };
+  var edgeMat = function () { return new T.LineBasicMaterial({ color: 0x13222a, transparent: true, opacity: 0.3 }); };
   function block(L, x0, x1, y0, h, z0, z1, cat) {
     var w = Math.max(0.1, x1 - x0 - 0.08), d = Math.max(0.1, z1 - z0 - 0.08);
     var geo = new T.BoxGeometry(w, h, d), m = new T.Mesh(geo, matFor(L, cat));
@@ -46,18 +46,18 @@
   // floor plates: a faint slab under each level
   var plateMat = [];
   levels.forEach(function (L, i) {
-    var pm = new T.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.05, depthWrite: false }); plateMat.push(pm);
+    var pm = new T.MeshBasicMaterial({ color: 0x1d6a71, transparent: true, opacity: 0.05, depthWrite: false }); plateMat.push(pm);
     var p = new T.Mesh(new T.BoxGeometry(40.5, 0.05, i <= 1 ? 24 : 24), pm);
     p.position.set(9.3, LVY[i] - 0.05, 0); L.g.add(p);
     // level tag, to the west of the plate
     var cv = document.createElement('canvas'); cv.width = 160; cv.height = 64; var c = cv.getContext('2d');
-    c.font = '600 40px Arial, sans-serif'; c.fillStyle = '#ffffff'; c.textBaseline = 'middle'; c.fillText(i ? '+' + i : 'G', 8, 34);
+    c.font = '600 40px Arial, sans-serif'; c.fillStyle = '#13222a'; c.textBaseline = 'middle'; c.fillText(i ? '+' + i : 'G', 8, 34);
     var sp = new T.Sprite(new T.SpriteMaterial({ map: new T.CanvasTexture(cv), transparent: true, depthTest: false }));
     sp.scale.set(5, 2, 1); sp.position.set(-14, LVY[i] + 0.8, 12.5); L.g.add(sp); L.tag = sp.material;
   });
   // the church as a line drawing: traced footprint, nave walls, aisle roofs, main roof and gables
   var shell = new T.Group(); root.add(shell);
-  var shellMat = new T.LineBasicMaterial({ color: 0xc9a27a, transparent: true, opacity: 0.55 });
+  var shellMat = new T.LineBasicMaterial({ color: 0xa9523b, transparent: true, opacity: 0.7 });
   function line(pts) { var g = new T.BufferGeometry().setFromPoints(pts.map(function (p) { return new T.Vector3(p[0], p[1], p[2]); })); shell.add(new T.Line(g, shellMat)); }
   TR.classes.forEach(function (c) {
     if (['aisle', 'choir', 'chapel'].indexOf(c.name) < 0) return;
@@ -118,10 +118,10 @@
       var dd = target - op[i]; op[i] += dd * k; if (Math.abs(dd) > 0.004) moving = true;
       L.g.position.y = i * GAP * ex;
       for (var c in L.mats) L.mats[c].opacity = (c === 'circ' && S.hi === 'circ') ? 1 : 0.92 * op[i];
-      L.lines.forEach(function (m) { m.opacity = 0.35 * op[i]; });
-      plateMat[i].opacity = 0.05 + 0.05 * ex; L.tag.opacity = 0.35 + 0.65 * ex * op[i];
+      L.lines.forEach(function (m) { m.opacity = 0.3 * op[i]; });
+      plateMat[i].opacity = 0.04 + 0.05 * ex; L.tag.opacity = 0.35 + 0.65 * ex * op[i];
     });
-    shellMat.opacity = 0.55 * (1 - ex * 0.75);
+    shellMat.opacity = 0.7 * (1 - ex * 0.75);
     if (!reduced) ang += dt * 0.07;
     var fitK = Math.max(1, 1.25 / camera.aspect), r = (84 + 46 * ex) * fitK, cy = 6 + 14 * ex;
     camera.position.set(Math.cos(ang) * r * 0.82, cy + 30 + 12 * ex, Math.sin(ang) * r);
