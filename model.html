@@ -4017,6 +4017,7 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
     var tr = function (n) { var t = n.textContent, o = t; DE.forEach(function (d) { t = t.replace(d[0], d[1]); }); if (t !== o) n.textContent = t; };
     ['hudRoam', 'hudHelp', 'hudSub'].forEach(function (id) { var n = el(id); tr(n); new MutationObserver(function () { tr(n); }).observe(n, { childList: true, characterData: true, subtree: true }); });
     el('hudLvWrap').querySelector('.hud-l').textContent = 'Ebene (Aufzug):';
+    scene.background = new T.Color(0xf2f4f4);
   }
   buildTabs();
   setScenario(EMBED.scen && (DATA[EMBED.scen] || EMBED.scen === 'ex') ? EMBED.scen : (isEmbed ? 's7' : 's4'));
