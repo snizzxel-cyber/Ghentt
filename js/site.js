@@ -72,7 +72,7 @@
     wc1: 'A single toilet with washbasin for library visitors.',
     wc3: 'Three toilets, three washbasins and two walk-in showers for the men on this level.',
     wc3w: 'Three toilets, three washbasins and two walk-in showers for the women on this level.',
-    locker: 'Lockers, a bench and a mirror for library visitors, built as a room inside the north aisle.',
+    locker: 'Lockers and a mirror for library visitors, in the covered passage along the south aisle.',
     bikes: 'Bicycle store with about 60 places in the one-storey building at the south-west corner.',
     core: 'Stair or lift. The aisle stairs only go up to level +1; the lift and stair in the glazed wing reach every level.',
     takeaway: 'Take-away café on the ground floor of the new building: counter, coffee machine, bistro tables and a storage room. For students, neighbours and commuters.',
@@ -82,12 +82,13 @@
   function descOf(r) {
     if (/^Café inside/.test(r.name)) return 'A second café counter on the former choir platform. A glass wall with a glass door separates it from the reading hall, so the hall stays quiet. The choir floor is drawn without its step.';
     if (/^Organ gallery/.test(r.name)) return 'The organ gallery is kept and becomes a quiet reading balcony overlooking the nave. The level +2 corridor ends here.';
+    if (r.alc) return 'A single room to live in, 4.20 × 3.15 m, plus an alcove of 2.20 × 2.95 m under the sloping aisle roof with its own roof window. The ceiling of the alcove drops towards the outer wall. EI30 fire door; bathrooms and the kitchen are shared.';
     return TYPE_TXT[r.type] || '';
   }
   var LVS = [
-    { key: 'Ground floor', tab: 'Ground', y: 0, name: 'Ground floor', head: 'Public', text: 'Reading hall, book stacks, café in the choir, take-away café, entrance and bicycle store.' },
+    { key: 'Ground floor', tab: 'Ground', y: 0, name: 'Ground floor', head: 'Public', text: 'Reading hall, book stacks, four study rooms, café in the choir, take-away café, entrance, bicycle store and the locker rooms in the covered passage.' },
     { key: 'Level +1', tab: '+1', y: 2.9, name: 'Level +1', head: 'Study', text: '14 study rooms on the aisle galleries; the café storage hall in the new building.' },
-    { key: 'Level +2', tab: '+2', y: 5.6, name: 'Level +2', head: 'Living', text: '10 rooms on a central corridor, the reading balcony on the organ gallery, bathrooms in the café building.' },
+    { key: 'Level +2', tab: '+2', y: 5.6, name: 'Level +2', head: 'Living', text: '10 rooms on a central corridor, each with an alcove under the aisle roof; the reading balcony on the organ gallery; bathrooms in the café building.' },
     { key: 'Level +3', tab: '+3', y: 9.0, name: 'Level +3', head: 'Living', text: '10 rooms on a central corridor; the last bay stays open; bathrooms in the café building.' },
     { key: 'Level +4', tab: '+4', y: 12.3, name: 'Level +4', head: 'Shared', text: 'The community kitchen under the ridge and two roof terraces.' }
   ];
@@ -146,7 +147,7 @@
     });
   });
   $$('#segCam button').forEach(function (b) { b.addEventListener('click', function () { press($('#segCam'), b); send({ cmd: 'cam', v: b.dataset.cam }); }); });
-  $$('[data-tour]').forEach(function (b) { b.addEventListener('click', function () { toModel({ cmd: 'tour', v: 's7' }); }); });
+  $$('[data-tour]').forEach(function (b) { b.addEventListener('click', function () { toModel({ cmd: 'tour', v: b.dataset.tour || 's7walk' }); }); });
   // on and off switches for the slow rotation and the labels in the model
   [['#btnRotate', 'rotate', 'Rotate'], ['#btnLabels', 'labels', 'Labels']].forEach(function (q) {
     var b = $(q[0]); if (!b) return;
@@ -181,7 +182,7 @@
   var LAYERS = [
     { id: 4, lv: '+4', h: '12.30 m', cat: 'comm', t: 'Shared', p: 'Community kitchen of about 130 m² under the ridge, a 14 m² roof terrace in the south slope and 67 m² on the café building.', key: 'Level +4' },
     { id: 3, lv: '+3', h: '9.00 m', cat: 'live', t: 'Living', p: '10 rooms on a central corridor, dormers in the roof. The last bay stays open, with a view of the organ.', key: 'Level +3' },
-    { id: 2, lv: '+2', h: '5.60 m', cat: 'live', t: 'Living', p: '10 rooms on a central corridor, on top of the arcade arches. The corridor ends at the reading balcony on the organ gallery.', key: 'Level +2' },
+    { id: 2, lv: '+2', h: '5.60 m', cat: 'live', t: 'Living', p: '10 rooms on a central corridor, on top of the arcade arches. Each reaches through the nave wall into an alcove under the aisle roof, with a roof window.', key: 'Level +2' },
     { id: 1, lv: '+1', h: '2.90 m', cat: 'learn', t: 'Study', p: '14 study rooms on the side-aisle galleries, each aisle reached by its own stair at the west end.', key: 'Level +1' },
     { id: 0, lv: 'G', h: '±0.00 m', cat: 'pub', t: 'Public', p: 'Reading hall below the living floors, book stacks in the aisles, café in the choir and the take-away café in the new building.', key: 'Ground floor' }
   ];
@@ -203,6 +204,7 @@
     rect(4.9, 6.25, 0, 2.7, F('pub', 0.15), LG[0]);
     [[-8.5, -6.3], [6.3, 8.5]].forEach(function (q) { rect(q[0], q[1], 2.92, 5.5, F('learn'), LG[1]); });
     [[-6.3, -4.72], [4.72, 6.3]].forEach(function (q) { rect(q[0], q[1], 2.9, 4.0, { fill: cv('circ'), 'fill-opacity': 0.12 }, LG[1]); });
+    [-1, 1].forEach(function (sd) { poly([[sd * 4.05, 5.6], [sd * 7.0, 5.6], [sd * 7.0, 7.82], [sd * 4.95, 8.8], [sd * 4.05, 8.8]], F('live', 0.28), LG[2]); });
     [[5.6, 8.8, 2], [9.0, 12.1, 3]].forEach(function (q) {
       rect(-4.05, -0.9, q[0], q[1], F('live'), LG[q[2]]); rect(0.9, 4.05, q[0], q[1], F('live'), LG[q[2]]);
       rect(-0.9, 0.9, q[0], q[0] + 2.6, { fill: cv('circ'), 'fill-opacity': 0.14 }, LG[q[2]]);
@@ -214,7 +216,7 @@
     poly([[-9.45, 6.75], [-4.7, 9.05], [-4.7, 9.35], [-9.45, 7.05]], W); poly([[9.45, 6.75], [4.7, 9.05], [4.7, 9.35], [9.45, 7.05]], W);
     [-1, 1].forEach(function (sd) {
       var a = sd * 4.45, b = sd * 4.95;
-      rect(a, b, 5.6, 9.2, W); rect(a, b, 11.5, 12.5, W);
+      rect(a, b, 8.95, 9.2, W); rect(a, b, 11.5, 12.5, W);
       rect(a, b, 9.2, 11.5, { fill: 'var(--c-comm)', 'fill-opacity': 0.25 });
       rect(sd * 3.93, sd * 4.73, 0, 3.25, { fill: 'var(--brick)', 'fill-opacity': 0.35 });
       rect(sd * 3.83, sd * 4.83, 2.9, 3.25, { fill: 'var(--brick)', 'fill-opacity': 0.5 });
@@ -223,6 +225,8 @@
     poly([[0, 18.2], [2.9, ry(2.9)], [2.9, ry(2.9) + 0.35], [0, 18.55]], W);
     poly([[4.7, 12.5], [5.3, 12.45], [5.3, 12.8], [4.7, 13.0]], W);
     svg('line', { x1: 3.0, x2: 3.0, y1: Y(12.3), y2: Y(ry(2.9)), stroke: 'var(--c-comm)', 'stroke-width': 0.08 }, g0);
+    [-1, 1].forEach(function (sd) { svg('line', { x1: sd * 5.4, x2: sd * 6.7, y1: Y(8.62), y2: Y(7.99), stroke: 'var(--c-comm)', 'stroke-width': 0.14 }, g0); });
+    rect(-7.0, -4.05, 5.4, 5.6, { fill: 'var(--ink)' }); rect(4.05, 7.0, 5.4, 5.6, { fill: 'var(--ink)' });
     svg('line', { x1: 4.7, x2: 4.7, y1: Y(12.5), y2: Y(13.4), stroke: 'var(--c-comm)', 'stroke-width': 0.06 }, g0);
     var SL = { fill: 'var(--ink)' };
     rect(-8.65, -4.72, 2.7, 2.9, SL); rect(4.72, 8.65, 2.7, 2.9, SL);
@@ -234,7 +238,7 @@
     rl(0, 2.4, 'Reading hall', LG[0]); rl(-6.75, 1.4, 'Stacks', LG[0]); rl(7.4, 1.2, 'Study', LG[0]);
     rl(-7.4, 4.1, 'Study', LG[1]); rl(7.4, 4.1, 'Study', LG[1]);
     rl(-2.47, 7.0, 'Room', LG[2]); rl(2.47, 7.0, 'Room', LG[2]); rl(-2.47, 10.4, 'Room', LG[3]); rl(2.47, 10.4, 'Room', LG[3]);
-    rl(0, 7.7, 'Corr.', LG[2]); rl(0, 11.1, 'Corr.', LG[3]);
+    rl(0, 7.7, 'Corr.', LG[2]); rl(0, 11.1, 'Corr.', LG[3]); rl(-5.9, 6.4, 'Alcove', LG[2]); rl(5.9, 6.4, 'Alcove', LG[2]);
     rl(0, 13.6, 'Kitchen', LG[4]); rl(3.85, 13.6, 'Terr.', LG[4]);
     LAYERS.forEach(function (L) {
       var y = [0, 2.9, 5.6, 9.0, 12.3][L.id];
@@ -245,7 +249,6 @@
     });
     text(11.2, 18.2 + 0.16, 'Ridge 18.20 m', 'sec-sub', 0.46, 'start');
     svg('line', { x1: 0.3, x2: 10.6, y1: Y(18.2), y2: Y(18.2), stroke: 'var(--muted)', 'stroke-width': 0.04, 'stroke-dasharray': '.12 .1' }, g0);
-    text(-7.0, 6.15, 'Side aisle', 'sec-sub', 0.38); text(7.0, 6.15, 'Side aisle', 'sec-sub', 0.38);
     text(-9.2, -0.6, 'North', 'sec-sub', 0.42, 'start'); text(9.2, -0.6, 'South', 'sec-sub', 0.42, 'end');
     svg('rect', { x: -10.2, y: Y(17.2), width: 5, height: 0.14, fill: 'var(--ink)' }, g0); svg('rect', { x: -10.2, y: Y(17.2), width: 2.5, height: 0.14, fill: 'var(--surface)', stroke: 'var(--ink)', 'stroke-width': 0.03 }, g0);
     text(-10.2, 17.5, '0', 'sec-sub', 0.4, 'start'); text(-5.2, 17.5, '5 m', 'sec-sub', 0.4, 'middle');
@@ -296,8 +299,8 @@
     } else {
       rect(0, 29.1, -4.7, 4.7, { fill: 'var(--surface-2)' });
       [-1, 1].forEach(function (sd) { rect(0.2, 28.8, sd * 4.95, sd * 8.9, { fill: 'url(#hatch)' }); });
-      var rl = li === 2 ? 'Lean-to roof of the side aisle (up to 9.10 m)' : 'Side-aisle roof below';
-      text(14.5, -6.9, rl, 'plan-note', 0.5); text(14.5, 6.9, rl, 'plan-note', 0.5);
+      var rl = li === 2 ? 'Aisle roof · alcoves with roof windows' : 'Side-aisle roof below';
+      text(14.5, li === 2 ? -7.9 : -6.9, rl, 'plan-note', 0.5); text(14.5, li === 2 ? 7.9 : 6.9, rl, 'plan-note', 0.5);
     }
     TRACE.classes.forEach(function (c) {
       if (heights[c.name] <= y0 + 0.1) return;
@@ -324,6 +327,7 @@
       var cat = catOf(r), g = svg('g', { 'class': 'plan-room' + (selRoom === r ? ' sel' : ''), tabindex: 0, role: 'button', 'aria-label': nm(r.name) + ', ' + m(r.m2) + ' m²' }, gRooms);
       var big = r.area && r.type !== 'core';
       svg('rect', { x: r.x0, y: r.z0, width: r.x1 - r.x0, height: r.z1 - r.z0, fill: cv(cat), 'fill-opacity': big ? 0.14 : 0.3, stroke: cv(cat), 'stroke-width': big ? 0.08 : 0.12 }, g);
+      if (r.alc) { svg('rect', { x: r.alc.x0, y: r.alc.z0, width: r.alc.x1 - r.alc.x0, height: r.alc.z1 - r.alc.z0, fill: cv(cat), 'fill-opacity': 0.2, stroke: cv(cat), 'stroke-width': 0.08, 'stroke-dasharray': '.25 .15' }, g); svg('rect', { x: (r.alc.x0 + r.alc.x1) / 2 - 0.5, y: (r.alc.z0 + r.alc.z1) / 2 - 0.55, width: 1.0, height: 1.1, fill: 'none', stroke: 'var(--c-comm)', 'stroke-width': 0.06 }, g); }
       var w = r.x1 - r.x0, h = r.z1 - r.z0, lbl = shortLbl(r), fs = Math.min(0.62, w / (lbl.length * 0.62 + 0.4), h / 1.6);
       if (fs > 0.28) {
         text((r.x0 + r.x1) / 2, (r.z0 + r.z1) / 2 - (h > 2.2 && !big ? 0.3 : 0), lbl, 'plan-lbl', fs, {}, g);
@@ -343,8 +347,26 @@
     $('#levelSum').textContent = LVS[li].name + ' · floor at ' + lvH(LVS[li].y) + ' m · ' + rooms.length + ' rooms and areas · ' + nf.format(Math.round(sum)) + ' m² net';
     if (!selRoom || selRoom.lv !== curLevel) panelLevel();
   }
+  var SHEETS = { 'Ground floor': ['A-101', 'Ground floor'], 'Level +1': ['A-102', 'Level +1'], 'Level +2': ['A-103', 'Level +2'], 'Level +3': ['A-104', 'Level +3'], 'Level +4': ['A-105', 'Level +4'] };
+  function setSheet(key) {
+    var sh = SHEETS[key], img = $('#sheetImg'); if (!sh || !img) return;
+    img.src = 'plans/' + sh[0] + '.png'; img.alt = 'Drawing sheet ' + sh[0] + ', ' + sh[1].toLowerCase() + ' plan of S7 at 1:150';
+    $('#sheetCap').textContent = 'Sheet ' + sh[0] + ' · ' + sh[1] + ' · 1:150 on A3';
+  }
+  (function () {
+    var box = $('#sheetBox'), grid = $('#planGrid'), zb = $('#sheetZoom');
+    $$('#planMode button').forEach(function (b) {
+      b.addEventListener('click', function () {
+        press($('#planMode'), b); var sheet = b.dataset.mode === 'sheet';
+        box.hidden = !sheet; grid.hidden = sheet; $('#levelSum').hidden = sheet;
+      });
+    });
+    function zoom() { box.classList.toggle('zoom'); zb.textContent = box.classList.contains('zoom') ? 'Zoom out' : 'Zoom in'; }
+    if (zb) zb.addEventListener('click', zoom);
+    $('#sheetImg').addEventListener('click', zoom);
+  })();
   function setLevel(key) {
-    curLevel = key; if (selRoom && selRoom.lv !== key) selRoom = null;
+    curLevel = key; if (selRoom && selRoom.lv !== key) selRoom = null; setSheet(key);
     $$('#levelTabs button').forEach(function (b) { b.setAttribute('aria-selected', String(b.dataset.lv === key)); b.setAttribute('aria-pressed', String(b.dataset.lv === key)); });
     drawPlan();
   }
@@ -370,7 +392,7 @@
     if (r.type === 'terrace7') h = 'open air';
     $('#roomPanel').innerHTML = '<p class="eyebrow">' + L.name + ' · floor at ' + lvH(r.y0) + ' m</p><h3>' + esc(nm(r.name)) + '</h3>' +
       '<p><span class="tag"><span class="sw" style="--c:' + cv(cat) + '"></span>' + CAT[cat].name + '</span></p>' +
-      '<dl><dt>Area</dt><dd>' + m(r.m2) + ' m²' + (r.area ? '' : ' net') + '</dd><dt>Size</dt><dd>' + dims + '</dd><dt>Ceiling height</dt><dd>' + h + '</dd>' + (r.door ? '<dt>Door</dt><dd>' + (r.type === 'student' || r.type === 'core' ? 'EI30 fire door' : 'Door') + '</dd>' : '') + '</dl>' +
+      '<dl><dt>Area</dt><dd>' + m(r.m2) + ' m²' + (r.area ? '' : ' net') + (r.alc ? ', including the alcove' : '') + '</dd><dt>Size</dt><dd>' + dims + '</dd><dt>Ceiling height</dt><dd>' + h + '</dd>' + (r.door ? '<dt>Door</dt><dd>' + (r.type === 'student' || r.type === 'core' ? 'EI30 fire door' : 'Door') + '</dd>' : '') + '</dl>' +
       '<p class="small">' + esc(descOf(r)) + '</p>' +
       '<div class="acts"><button class="btn small primary" type="button" data-act="enter">Walk into it in 3D</button><button class="btn small" type="button" data-act="roam">Walk freely from here</button>' + (rk ? '<button class="btn small" type="button" data-act="type">Room model</button>' : '') + '</div>';
     var p = $('#roomPanel');
@@ -389,10 +411,10 @@
 
   /* ================= room types ================= */
   var RT = [
-    { key: 'student', cat: 'live', name: 'Student room', count: '20×', lv: 'Levels +2 and +3', dims: ['4.20 × 3.15', 'm'], area: ['12.5', 'm² net'], h: ['3.2 / 3.1', 'm high'], model: 'Student room 2.03',
-      p: 'A private retreat: compact, quiet and furnished. Five rooms sit on each side of a 1.8 m central corridor on levels +2 and +3.',
-      f: ['Bed 90 × 200 cm, desk 120 × 60 cm with chair', 'Wall shelf above the desk, wardrobe, rug', 'Window 1.50 × 1.10 m in the outer wall', 'EI30 fire door, transponder access'], who: 'For students who want to live together and still have a room of their own.' },
-    { key: 'studysm', cat: 'learn', name: 'Study room', count: '16×', lv: 'Level +1 (14), ground floor (2)', dims: ['3.16 × 2.20', 'm'], area: ['6.4', 'm² (ground floor 7.4)'], h: ['2.58', 'm high'], model: 'Study room 1.03',
+    { key: 'student', cat: 'live', name: 'Student room', count: '20×', lv: 'Levels +2 and +3', dims: ['4.20 × 3.15', 'm + alcove'], area: ['≈ 19', 'm² (level +3: 12.5)'], h: ['3.2', 'm, alcove 2.3–3.2'], model: 'Student room 2.03',
+      p: 'A private retreat: compact, quiet and furnished. Five rooms sit on each side of a 1.8 m central corridor. On level +2, shown here, each room opens through the old nave wall into an alcove under the sloping aisle roof, lit by its own roof window.',
+      f: ['Bed 90 × 200 cm, desk 120 × 60 cm with chair', 'Alcove 2.20 × 2.95 m with roof window and reading chair', 'Wardrobe, wall shelf, rug', 'EI30 fire door, transponder access'], who: 'For students who want to live together and still have a room of their own. The ten rooms on level +3 are the same without the alcove.' },
+    { key: 'studysm', cat: 'learn', name: 'Study room', count: '18×', lv: 'Level +1 (14), ground floor (4)', dims: ['3.16 × 2.20', 'm'], area: ['6.4', 'm² (ground floor 7.4)'], h: ['2.58', 'm high'], model: 'Study room 1.03',
       p: 'Small rooms for studying on the galleries above the side aisles, looking through the arcade into the reading hall. They are for work, not for living.',
       f: ['Desk 170 × 65 cm, chair, reading lamp', 'Shelf and armchair', 'Door onto the gallery along the arcade', 'Bookable for residents and library users'], who: 'For exam weeks, work in pairs or quiet hours outside the bedroom.' },
     { key: 'commkitchen', cat: 'comm', name: 'Community kitchen', count: '1×', lv: 'Level +4', dims: ['22.0 × 6.0', 'm'], area: ['132', 'm²'], h: ['2.6 – 5.9', 'm under the roof'], model: 'Community kitchen and dining hall',
@@ -422,9 +444,9 @@
     { key: 'lobby', cat: 'pub', name: 'Entrance and book return', count: '1×', lv: 'Ground floor, glazed wing', dims: ['8.1 × 2.4', 'm'], area: ['≈ 9.8', 'm² free'], h: ['3.4', 'm'], model: 'Entrance and book return',
       p: 'The glazed wing facing Clemenspoort is the main entrance for everyone: library, café and residents. The lift and stair to every level stand here too.',
       f: ['3 m portal with two sliding doors and a canopy', 'Book return next to the portal', '1.5 × 1.5 m lift that stops on every level', 'U-shaped stair; 2.2 m opening into the choir'], who: 'For all visitors; residents go upstairs with their transponder.' },
-    { key: 'locker', cat: 'serv', name: 'Locker room', count: '2×', lv: 'Ground floor, north aisle', dims: ['3.8 × 3.6', 'm'], area: ['12.9', 'm²'], h: ['2.8', 'm'], model: 'Locker room 1',
-      p: 'A room inside the north aisle, so that bags and coats stay out of the reading hall.',
-      f: ['16 lockers in two rows', 'Bench in the middle', 'Mirror and shoe rack'], who: 'For library visitors.' },
+    { key: 'locker', cat: 'serv', name: 'Locker room', count: '2×', lv: 'Ground floor, covered passage', dims: ['5.0 × 1.3', 'm'], area: ['5.9', 'm²'], h: ['2.6', 'm'], model: 'Locker room 1',
+      p: 'Two narrow rooms in the covered passage along the south aisle, under a new flat roof with roof windows, so that bags and coats stay out of the reading hall.',
+      f: ['A wall of lockers in two tiers', 'Mirror at the end', 'Door from the passage, which becomes the student entrance'], who: 'For library visitors and residents.' },
     { key: 'bikes', cat: 'serv', name: 'Bicycle store', count: '1×', lv: 'Ground floor, new building south', dims: ['9.8 × 6.8', 'm'], area: ['66.6', 'm²'], h: ['2.7', 'm'], model: 'Bicycle parking',
       p: 'Ghent is a cycling city. The one-storey building at the south-west corner holds about 60 bicycles.',
       f: ['Five rows of stands', 'About 60 places', 'Right next to the main entrance', 'Whether this is enough for residents and visitors still has to be calculated'], who: 'For residents and library visitors.' }
@@ -475,19 +497,26 @@
     var WL = { fill: 'var(--ink)' };
     r(-t, -t, W + 2 * t, t, WL); r(-t, 0, t, D, WL); r(W, 0, t, D, WL);
     r(-t, D, 2.83 + t, t, WL); r(3.73, D, W - 3.73 + t, t, WL);
-    r(1.35, -t, 1.5, t, { fill: 'var(--c-comm)', 'fill-opacity': 0.6 });
+    // opening in the old nave wall to the alcove (level +2); on level +3 a window sits here
+    r(1.0, -t, 2.2, t, { fill: 'var(--surface)' }); r(1.0, -t - 0.02, 2.2, 0.02, { fill: 'var(--c-live)' });
     svg('path', { d: 'M3.73 ' + D + ' L3.73 ' + (D - 0.9) + ' A0.9 0.9 0 0 0 2.83 ' + D, fill: 'none', stroke: 'var(--muted)', 'stroke-width': 0.02 }, g);
     r(3.71, D - 0.9, 0.04, 0.9, { fill: 'var(--brick)' });
     var FU = { fill: 'var(--surface)', stroke: 'var(--ink)', 'stroke-width': 0.025 };
-    r(0.1, 0.1, 2.0, 0.9, FU); r(0.15, 0.15, 0.4, 0.8, { fill: 'none', stroke: 'var(--muted)', 'stroke-width': 0.02 }); T(1.2, 0.55, 0.2, 'Bed 90 × 200', 'plan-lbl');
-    r(2.6, 0.1, 1.2, 0.6, FU); T(3.2, 0.4, 0.2, 'Desk', 'plan-lbl');
-    svg('circle', { cx: 3.2, cy: 1.05, r: 0.22, fill: 'var(--surface)', stroke: 'var(--ink)', 'stroke-width': 0.025 }, g);
-    r(0.1, 2.48, 0.6, 0.55, FU); T(0.4, 2.755, 0.14, 'Wardrobe', 'plan-lbl');
-    r(1.2, 1.18, 1.8, 1.2, { fill: 'var(--c-live)', 'fill-opacity': 0.12, stroke: 'var(--c-live)', 'stroke-width': 0.02, 'stroke-dasharray': '.06 .05' }); T(2.1, 1.78, 0.16, 'Rug');
-    T(2.1, -0.28, 0.15, 'Window 1.50 m'); T(3.28, D + 0.33, 0.17, 'EI30 door · corridor');
+    // bed along the left wall, desk along the right wall, wardrobe by the door, as in the 3D model
+    r(0.07, 0.08, 0.9, 2.0, FU); r(0.12, 0.13, 0.8, 0.4, { fill: 'none', stroke: 'var(--muted)', 'stroke-width': 0.02 });
+    var bt = T(0.52, 1.25, 0.17, 'Bed 90 × 200', 'plan-lbl'); bt.setAttribute('transform', 'rotate(-90 0.52 1.25)');
+    r(3.54, 0.22, 0.6, 1.2, FU); var dt = T(3.84, 0.82, 0.17, 'Desk', 'plan-lbl'); dt.setAttribute('transform', 'rotate(-90 3.84 0.82)');
+    svg('circle', { cx: 3.18, cy: 0.82, r: 0.22, fill: 'var(--surface)', stroke: 'var(--ink)', 'stroke-width': 0.025 }, g);
+    r(0.1, 2.5, 0.6, 0.55, FU); T(0.4, 2.775, 0.13, 'Wardrobe', 'plan-lbl');
+    r(1.4, 1.2, 1.4, 1.0, { fill: 'var(--c-live)', 'fill-opacity': 0.12, stroke: 'var(--c-live)', 'stroke-width': 0.02, 'stroke-dasharray': '.06 .05' }); T(2.1, 1.7, 0.16, 'Rug');
+    T(3.28, D + 0.33, 0.17, 'EI30 door · corridor');
+    // level +2: the alcove under the aisle roof, through an opening in the old nave wall
+    r(1.0, -2.95, 2.2, 2.85, { fill: 'var(--c-live)', 'fill-opacity': 0.05, stroke: 'var(--c-live)', 'stroke-width': 0.025, 'stroke-dasharray': '.08 .06' });
+    r(1.6, -2.1, 1.0, 1.1, { fill: 'var(--c-comm)', 'fill-opacity': 0.15, stroke: 'var(--c-comm)', 'stroke-width': 0.02 });
+    T(2.1, -1.55, 0.14, 'Roof window'); T(2.1, -2.68, 0.16, 'Alcove, level +2', 'plan-lbl'); T(2.1, -2.42, 0.12, '2.20 × 2.95 m'); T(2.1, -0.55, 0.12, 'ceiling 3.2 → 2.3 m');
     var DL = { stroke: 'var(--muted)', 'stroke-width': 0.015 };
-    svg('line', Object.assign({ x1: 0, x2: W, y1: -0.6, y2: -0.6 }, DL), g); svg('line', Object.assign({ x1: 0, x2: 0, y1: -0.68, y2: -0.52 }, DL), g); svg('line', Object.assign({ x1: W, x2: W, y1: -0.68, y2: -0.52 }, DL), g);
-    T(W / 2, -0.76, 0.19, '4.20 m', 'plan-lbl');
+    svg('line', Object.assign({ x1: 0, x2: W, y1: D + 0.75, y2: D + 0.75 }, DL), g); svg('line', Object.assign({ x1: 0, x2: 0, y1: D + 0.67, y2: D + 0.83 }, DL), g); svg('line', Object.assign({ x1: W, x2: W, y1: D + 0.67, y2: D + 0.83 }, DL), g);
+    T(W / 2, D + 0.95, 0.19, '4.20 m', 'plan-lbl');
     svg('line', Object.assign({ x1: W + 0.45, x2: W + 0.45, y1: 0, y2: D }, DL), g); svg('line', Object.assign({ x1: W + 0.37, x2: W + 0.53, y1: 0, y2: 0 }, DL), g); svg('line', Object.assign({ x1: W + 0.37, x2: W + 0.53, y1: D, y2: D }, DL), g);
     var v = T(W + 0.62, D / 2, 0.19, '3.15 m', 'plan-lbl'); v.setAttribute('transform', 'rotate(90 ' + (W + 0.62) + ' ' + D / 2 + ')');
   }
@@ -574,39 +603,6 @@
       ['S7', 'Library Church', 'S6+ redrawn from the photos: full access, organ gallery kept free, kitchen under the ridge, 20 rooms.', 'this site']
     ];
     $('#evo').innerHTML = EVO.map(function (e) { return '<li' + (e[0] === 'S7' ? ' class="now"' : '') + '><b>' + e[0] + '</b><div><h4>' + e[1] + '</h4><p>' + e[2] + '</p></div><span class="tag">' + e[3] + '</span></li>'; }).join('');
-    var H = [
-      'Can the upper side aisles be divided into rooms along the pier grid?',
-      'Can the nave be partly divided into floors with a central corridor?',
-      'Can three openings be cut into the west gable? <span>The upper two sit in the blind niches, the lowest in the white lower part.</span>',
-      'Can the organ gallery be used as a reading balcony?',
-      'Can a recess of about 8 × 2 m be cut into the south roof slope?',
-      'Are dormers and roof windows allowed on both slopes? <span>With the red tiles they would be clearly visible.</span>',
-      'Can a stair be built at the west end of each side aisle?',
-      'Can the west facade be opened as an entrance, and a 2.2 m opening be cut into the west wall of the choir?',
-      'Can the choir floor be brought down to the level of the nave (today a 0.6 m platform)?',
-      'May new volumes be built against the west facade next to the choir?'
-    ];
-    var P = [
-      'Is student housing allowed in the community-facilities zone?',
-      'Can the parking requirement be reduced because the station is close by?',
-      'Which second escape route serves the nave floors?',
-      'Are about 60 bicycle places enough? <span>The requirement has not been calculated yet.</span>'
-    ];
-    var X = [
-      'Second escape route: <span>levels +2 to +4 only have the stair and lift in the glazed wing.</span>',
-      'Step-free access: <span>the study rooms on level +1 are reached by stair only; the small lifts of S6+ were removed.</span>',
-      'Daylight on level +2: <span>the outer wall of these rooms sits under the lean-to roof of the side aisles (up to 9.10 m). Daylight has to be proven, for example with rooflights in the aisle roof. Our own check in the model.</span>',
-      'Kitchens: <span>one kitchen for 20 rooms. The S4 notes mention a rule of one kitchen per ten units; whether one large kitchen with several cooking runs is enough has to be checked.</span>',
-      'Distance to the bathrooms: <span>about 40 m from the easternmost room to the bathroom in the café building; level +4 has no toilets.</span>',
-      'Sound insulation between the reading hall, study rooms and bedrooms.',
-      'Fire safety: <span>the EI30 and EI60 doors are a first proposal and have not been checked.</span>',
-      'Structure: <span>new floors in the nave and the load of the shelving.</span>',
-      'Condition: <span>roof, damp, asbestos in the roof boarding.</span>',
-      'Height of the reading hall: <span>5.4 m remain below level +2; the full height of the nave is only felt in the last bay.</span>'
-    ];
-    $('#openHeritage').innerHTML = H.map(function (x) { return '<li>' + x + '</li>'; }).join('');
-    $('#openPlanning').innerHTML = P.map(function (x) { return '<li>' + x + '</li>'; }).join('');
-    $('#openTech').innerHTML = X.map(function (x) { return '<li>' + x + '</li>'; }).join('');
   }
 
   /* ================= calculators ================= */

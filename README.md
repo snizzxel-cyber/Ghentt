@@ -11,6 +11,8 @@ A website for investors and anyone who wants to understand scenario S7 for the R
 | `js/rooms-data.js` | The 72 rooms of S7 and the wall outlines of the church, read out of the model |
 | `js/rooms3d.js` | 13 room models to scale (dollhouse view) |
 | `js/site.js` | Floor plans, section, charts, calculators, model controls |
+| `js/usp3d.js` | The "Why S7" band: the building as coloured layers that come apart on scroll |
+| `plans/` | The five drawing sheets A-101 to A-105 (PNG, 150 dpi) and the PDF |
 
 ## Viewing
 
@@ -31,7 +33,9 @@ then open `http://localhost:8000`.
 - `{ cmd: 'explode', v: 0..1 }`
 - `{ cmd: 'labels', v: true | false }`
 - `{ cmd: 'room', name: 'Student room 2.06', roam: false }`
-- `{ cmd: 'tour', v: 's7' }` (a 12-stop tour that walks through the building room by room)
+- `{ cmd: 'tour', v: 's7' }` (the cinematic fly-through with sun, shadows and sky)
+- `{ cmd: 'tour', v: 's7walk' }` (a 12-stop walk through the building, room by room)
+- `{ cmd: 'rotate', v: true | false }` (slow turn of the model, on at the start)
 
 Without `embed=1`, `model.html` behaves like the original. One bug in the original was fixed: the tour buttons looked for an element `tourRoot` that does not exist.
 

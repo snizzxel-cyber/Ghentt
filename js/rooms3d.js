@@ -184,24 +184,37 @@
   /* ================= the rooms ================= */
   var B = {};
 
-  // student room, 4.20 × 3.15 m, 3.20 m high (level +2)
+  // student room on level +2: 4.20 × 3.15 m, 3.20 m high, plus an alcove of 2.20 × 2.95 m under the sloping aisle roof
+  // (an opening in the old nave wall), lit by a roof window. The alcove ceiling drops from 3.2 m to about 2.3 m.
   B.student = function (g) {
-    var W = 4.2, D = 3.15, H = 3.2;
-    shell(g, W, D, H, { backCol: 0xe9e1d3 });
-    windowPane(g, 1.5, 1.1, 0, 0.95, -D / 2 - 0.02, 0);
-    var b = bed(g, -1.0, -D / 2 + 0.55, Math.PI / 2, 0.9, 2.0, K.teal);
-    desk(g, 1.2, 0.6, 1.2, -D / 2 + 0.4, 0);
-    chair(g, 1.2, -D / 2 + 1.0, Math.PI, K.coral);
-    box(g, 1.0, 0.03, 0.25, 1.2, 1.5, -D / 2 + 0.15, K.oak); books(g, 0.9, 1.2, 1.53, -D / 2 + 0.15, 0, 0.18);
-    laptop(g, 1.1, 0.75, -D / 2 + 0.42, 0); lamp(g, 1.65, 1.35, -D / 2 + 0.3, K.mustard);
-    // wardrobe in the corner by the door
-    box(g, 0.6, 2.0, 0.55, -W / 2 + 0.4, 0, D / 2 - 0.4, K.ash); box(g, 0.01, 1.9, 0.01, -W / 2 + 0.4, 0.05, D / 2 - 0.12, K.dark);
-    box(g, 1.8, 0.015, 1.2, 0, 0, 0.2, K.rug);
-    box(g, 0.7, 0.5, 0.02, -1.0, 1.2, -D / 2 + 0.01, 0xd8cbb5); // pinboard above the bed
-    plant(g, 1.85, 0.9, 0.9);
+    var W = 4.2, D = 3.15, H = 3.2, AW = 2.2, AD = 2.95, AH = 2.34, th = 0.12;
+    shell(g, W, D, H, { back: false, backCol: 0xe9e1d3 });
+    // back wall with the opening into the alcove (the old nave wall, drawn thicker)
+    // the old nave wall, cut at 1 m in this view so the alcove behind it can be seen
+    [[-W / 2 - th, -AW / 2], [AW / 2, W / 2 + th]].forEach(function (q) { box(g, q[1] - q[0], 1.0, 0.5, (q[0] + q[1]) / 2, 0, -D / 2 - 0.25, 0xd9c4a0); box(g, q[1] - q[0], 0.02, 0.51, (q[0] + q[1]) / 2, 1.0, -D / 2 - 0.25, K.wallCut); });
+    // alcove: floor, side walls, end wall and the sloping roof with a roof window
+    var z0 = -D / 2, z1 = -D / 2 - AD;
+    box(g, AW, 0.06, AD, 0, -0.06, (z0 + z1) / 2, K.floorOak).castShadow = false;
+    [-1, 1].forEach(function (sd) {
+      var x = sd * (AW / 2 + 0.06);
+      quad(g, [x, 0, z0], [x, 0, z1], [x, AH, z1], [x, H, z0], 0xefe7da);
+    });
+    box(g, AW + 0.24, AH, 0.12, 0, 0, z1 - 0.06, 0xefe7da);
+    quad(g, [-AW / 2 - 0.12, H, z0], [AW / 2 + 0.12, H, z0], [AW / 2 + 0.12, AH, z1], [-AW / 2 - 0.12, AH, z1], 0xe8e2d6);
+    var s = (H - AH) / AD, yAt = function (z) { return H - (z0 - z) * s - 0.02; }, wa = z0 - 0.8, wb = z0 - 2.0;
+    quad(g, [-0.55, yAt(wa), wa], [0.55, yAt(wa), wa], [0.55, yAt(wb), wb], [-0.55, yAt(wb), wb], 0xcfe6f2, { emis: true });
+    // furniture: bed along the left wall, desk along the right wall, wardrobe by the door, a reading corner in the alcove
+    bed(g, -W / 2 + 0.52, -0.5, 0, 0.9, 2.0, K.teal);
+    desk(g, 1.2, 0.6, W / 2 - 0.36, -0.75, Math.PI / 2);
+    chair(g, W / 2 - 0.98, -0.75, -Math.PI / 2, K.coral);
+    box(g, 0.25, 0.03, 1.0, W / 2 - 0.14, 1.5, -0.75, K.oak); books(g, 0.9, W / 2 - 0.14, 1.53, -0.75, Math.PI / 2, 0.18);
+    laptop(g, W / 2 - 0.4, 0.75, -0.75, -Math.PI / 2); lamp(g, W / 2 - 0.3, 1.35, -1.2, K.mustard);
+    box(g, 0.6, 2.0, 0.55, -W / 2 + 0.4, 0, D / 2 - 0.38, K.ash); box(g, 0.01, 1.9, 0.01, -W / 2 + 0.4, 0.05, D / 2 - 0.1, K.dark);
+    armchair(g, 0.35, z0 - 1.9, 0.5, K.mustard); plant(g, -0.7, z0 - 2.5, 0.8);
+    box(g, 1.6, 0.015, 1.4, 0, 0, z0 - 1.3, K.rug); box(g, 1.4, 0.015, 1.0, 0, 0, 0.3, K.rug);
     doorGap(g, 1.18, D / 2 + 0.06, 0, true);
-    person(g, 0.2, 0.9, -0.6, K.plum);
-    return { W: W, D: D, H: H };
+    person(g, 0.2, 0.7, -0.4, K.plum);
+    return { W: W, D: D + AD, H: H, view: [0.55, 1.05, 1.0], fit: 0.66, target: [0, 0.9, -1.4] };
   };
 
   // small study room, 3.16 × 2.20 m, 2.58 m high (level +1), opens onto the gallery behind the arcade
@@ -583,18 +596,23 @@
     return { W: W, D: D + 2.6, H: H, view: [0.35, 0.75, 1.0], fit: 0.62, target: [0, 1.0, -0.6] };
   };
 
-  // locker room in the north aisle, 3.8 × 3.6 m
+  // locker room in the covered passage along the south aisle: 5.0 × 1.3 m, 2.6 m high
   B.locker = function (g) {
-    var W = 3.8, D = 3.6, H = 2.8;
+    var W = 5.0, D = 1.3, H = 2.6;
     shell(g, W, D, H, { floorCol: 0xc3ccd3 });
-    var bw = W - 0.4, n = 8, pw = bw / n, d0 = -D / 2 + 0.3;
-    box(g, bw + 0.04, 0.1, 0.52, 0, 0, d0, K.dark); box(g, bw + 0.04, 0.06, 0.52, 0, 1.9, d0, K.dark); box(g, bw, 1.8, 0.5, 0, 0.1, d0, 0x8d979f);
-    for (var i = 0; i < n; i++) { var x = -bw / 2 + (i + 0.5) * pw; box(g, pw - 0.04, 0.84, 0.03, x, 0.14, d0 + 0.265, i % 4 === 2 ? K.mustard : K.lockerB); box(g, pw - 0.04, 0.84, 0.03, x, 1.02, d0 + 0.265, i % 3 === 1 ? K.mustard : K.lockerB); box(g, 0.08, 0.02, 0.02, x + pw / 2 - 0.1, 0.6, d0 + 0.285, K.white); box(g, 0.08, 0.02, 0.02, x + pw / 2 - 0.1, 1.48, d0 + 0.285, K.white); }
-    box(g, 2.2, 0.06, 0.4, 0, 0.42, 0.3, K.oak); box(g, 0.06, 0.42, 0.3, -1.0, 0, 0.3, K.dark); box(g, 0.06, 0.42, 0.3, 1.0, 0, 0.3, K.dark);
-    box(g, 0.5, 1.2, 0.02, -W / 2 + 0.01, 0.6, 0.6, K.glass, { glass: true }); box(g, 0.8, 0.5, 0.3, -W / 2 + 0.5, 0, 1.2, K.oak);
-    doorGap(g, 0.9, D / 2 + 0.06, 0, false);
-    person(g, 0.8, 0.9, Math.PI + 0.4, K.coral);
-    return { W: W, D: D, H: H };
+    var bw = W - 0.5, n = 12, pw = bw / n, d0 = -D / 2 + 0.27;
+    box(g, bw + 0.04, 0.1, 0.5, -0.15, 0, d0, K.dark); box(g, bw + 0.04, 0.06, 0.5, -0.15, 1.9, d0, K.dark); box(g, bw, 1.8, 0.48, -0.15, 0.1, d0, 0x8d979f);
+    for (var i = 0; i < n; i++) {
+      var x = -0.15 - bw / 2 + (i + 0.5) * pw;
+      box(g, pw - 0.04, 0.84, 0.03, x, 0.14, d0 + 0.255, i % 4 === 2 ? K.mustard : K.lockerB); box(g, pw - 0.04, 0.84, 0.03, x, 1.02, d0 + 0.255, i % 3 === 1 ? K.mustard : K.lockerB);
+      box(g, 0.08, 0.02, 0.02, x + pw / 2 - 0.1, 0.6, d0 + 0.275, K.white); box(g, 0.08, 0.02, 0.02, x + pw / 2 - 0.1, 1.48, d0 + 0.275, K.white);
+    }
+    box(g, 0.02, 1.2, 0.5, W / 2 - 0.02, 0.6, 0, K.glass, { glass: true });
+    // flat roof of the passage above, with a roof window
+    box(g, W + 0.3, 0.12, D + 0.3, 0, H + 0.3, 0, 0x6d737b, { op: 0.35 });
+    doorGap(g, 1.7, D / 2 + 0.06, 0, false);
+    person(g, 1.6, 0.25, Math.PI + 0.4, K.coral);
+    return { W: W, D: D, H: H, view: [0.4, 0.85, 1.0], fit: 0.7 };
   };
 
   // bicycle store in the one-storey south volume, 9.8 × 6.8 m, about 60 places
@@ -609,7 +627,7 @@
   };
 
   /* ================= viewer ================= */
-  var renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0;
+  var renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0, frames = 0;
   function mount(cv, wrap) {
     canvas = cv; wrapEl = wrap || cv.parentNode;
     try { renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: false }); }
@@ -653,7 +671,12 @@
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function loop(now) {
     requestAnimationFrame(loop);
-    if (!visible || !renderer) return;
+    if (!renderer) return;
+    // visibility checked here as well: the IntersectionObserver alone can miss a change during smooth scrolling
+    var vr = wrapEl.getBoundingClientRect(), nowVis = vr.bottom > 0 && vr.top < (window.innerHeight || 800);
+    if (nowVis && !visible) dirty = true;
+    visible = nowVis;
+    if (!visible) return;
     if (controls) {
       if (!autoRot && !reduced && performance.now() - lastInteract > 12000) autoRot = true;
       controls.autoRotate = autoRot && !reduced; controls.autoRotateSpeed = 0.55;
@@ -662,7 +685,7 @@
     }
     if (!dirty) return;
     dirty = false;
-    renderer.render(scene, camera);
+    renderer.render(scene, camera); frames++;
   }
   function clear() {
     if (!root) return;
@@ -696,6 +719,7 @@
     return info;
   }
   api.mount = mount; api.show = show; api.keys = Object.keys(B);
+  api.stats = function () { return { visible: visible, frames: frames, autoRot: autoRot, dirty: dirty }; };
   api.resetView = function () { if (curKey) show(curKey); };
   api.toggleRotate = function () { autoRot = !autoRot; lastInteract = autoRot ? 0 : performance.now() + 1e9; dirty = true; return autoRot; };
 })();

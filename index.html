@@ -318,6 +318,44 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 .foot h4{color:var(--ink);margin-bottom:8px}
 .foot ul{margin:0;padding-left:18px;display:grid;gap:4px}
 
+
+/* USP band: the one dark moment of the page; colours set explicitly */
+.usp{background:#0d1518;color:#e8eeed;padding-block:0;border-top:0}
+.usp .eyebrow{color:#9fb0b4}
+.usp-wrap{max-width:var(--maxw);margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,.75fr);gap:clamp(20px,4vw,56px)}
+.usp-stage{position:sticky;top:59px;height:calc(100vh - 59px);min-height:440px;align-self:start}
+.usp-stage canvas{display:block;width:100%;height:100%}
+.usp-key{position:absolute;left:0;bottom:22px;display:flex;flex-wrap:wrap;gap:6px 14px;font:500 .74rem/1.2 var(--f-mono);color:#9fb0b4;letter-spacing:.04em}
+.usp-key span{display:inline-flex;align-items:center;gap:6px}
+.usp-steps{display:grid;padding-block:12vh}
+.usp-step{min-height:72vh;display:flex;flex-direction:column;justify-content:center;gap:12px;opacity:.42;transition:opacity .35s}
+.usp-step.is-on{opacity:1}
+.usp-step h2{color:#fff;font-size:clamp(2.1rem,4.4vw,3.4rem)}
+.usp-step h3{color:#fff;font-size:clamp(1.5rem,2.6vw,2.1rem);font-weight:700;letter-spacing:-.02em}
+.usp-step p{color:#c9d4d3;max-width:44ch;font-size:1.05rem;line-height:1.6}
+.usp-lv{font:500 .76rem/1.2 var(--f-mono)!important;letter-spacing:.08em;text-transform:uppercase;color:#9fb0b4!important;display:flex;align-items:center;gap:10px}
+.usp-lv::before{content:"";width:22px;height:3px;background:var(--c)}
+.usp-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:#24343a;border:1px solid #24343a;margin:10px 0 0;max-width:460px}
+.usp-stats div{background:#0d1518;padding:12px 14px;display:grid;gap:2px}
+.usp-stats dt{font:500 .7rem/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:#9fb0b4;order:2}
+.usp-stats dd{margin:0;font:650 1.6rem/1 var(--f-display);color:#fff;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+@media (max-width:900px){
+  .usp-wrap{grid-template-columns:1fr;gap:0}
+  .usp-stage{height:46vh;min-height:300px;z-index:1;background:#0d1518}
+  .usp-steps{padding-block:4vh 10vh}
+  .usp-step{min-height:62vh;justify-content:flex-start;padding-top:4vh}
+  .usp-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){.usp-step{opacity:1}}
+/* drawing sheets */
+.sheet{margin:0 0 20px;border:1px solid var(--line);background:#fff}
+.sheet[hidden]{display:none}
+.sheet-scroll{overflow:auto;max-height:78vh;-webkit-overflow-scrolling:touch;cursor:zoom-in}
+.sheet-scroll img{display:block;width:100%;height:auto;max-width:none}
+.sheet.zoom .sheet-scroll{cursor:zoom-out}
+.sheet.zoom .sheet-scroll img{width:240%}
+.sheet figcaption{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-top:1px solid var(--line);font:500 .78rem/1.3 var(--f-mono);color:var(--muted)}
+.sheet-acts{display:flex;gap:8px;flex-wrap:wrap}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -330,7 +368,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
       <b>S7</b><span>Library Church Ghent</span>
     </a>
     <nav class="nav" aria-label="Sections">
-      <a href="#explore">Model</a><a href="#concept">Concept</a><a href="#floors">Floors</a><a href="#rooms">Rooms</a><a href="#living">Living</a><a href="#renting">Renting</a><a href="#investors">Investors</a><a href="#open-points">Open points</a><a href="#faq">FAQ</a>
+      <a href="#explore">Model</a><a href="#why">Why S7</a><a href="#concept">Concept</a><a href="#floors">Floors</a><a href="#rooms">Rooms</a><a href="#living">Living</a><a href="#renting">Renting</a><a href="#investors">Investors</a>
     </nav>
   </div>
 </header>
@@ -345,14 +383,14 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
         <h1 style="margin-top:18px">The Library Church</h1>
         <p class="lead">A church from 1930, empty since 2016, becomes a public place again. A library and a café on the ground floor, study rooms and 20 student rooms above, and a shared kitchen with a roof terrace at the top.</p>
         <div class="hero-cta">
-          <button class="btn primary" type="button" data-tour>▶ Start the tour</button>
+          <button class="btn primary" type="button" data-tour="s7">▶ Watch the fly-through</button>
           <a class="btn" href="#renting">Rooms and prices</a>
           <a class="btn" href="#investors">For investors</a>
         </div>
       </div>
       <div class="facts" aria-label="S7 key figures">
-        <div class="fact"><b class="num">20</b><span><i><span class="sw" style="--c:var(--c-live)"></span>student rooms, 12.5 m² each</i></span></div>
-        <div class="fact"><b class="num">16</b><span><i><span class="sw" style="--c:var(--c-learn)"></span>study rooms (14 on level +1, 2 on the ground floor)</i></span></div>
+        <div class="fact"><b class="num">20</b><span><i><span class="sw" style="--c:var(--c-live)"></span>student rooms, 12.5 to 19 m²</i></span></div>
+        <div class="fact"><b class="num">18</b><span><i><span class="sw" style="--c:var(--c-learn)"></span>study rooms (14 on level +1, 4 on the ground floor)</i></span></div>
         <div class="fact"><b class="num">≈ 210 m²</b><span><i><span class="sw" style="--c:var(--c-pub)"></span>reading hall in the nave</i></span></div>
         <div class="fact"><b class="num">≈ 130 m²</b><span><i><span class="sw" style="--c:var(--c-comm)"></span>community kitchen under the ridge</i></span></div>
         <div class="fact"><b class="num">14 + 67 m²</b><span><i><span class="sw" style="--c:var(--c-comm)"></span>two roof terraces</i></span></div>
@@ -378,13 +416,41 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
         <button class="btn small" type="button" id="btnRotate" aria-pressed="true">Rotate: on</button>
         <button class="btn small" type="button" id="btnLabels" aria-pressed="false">Labels: off</button>
         <span class="grow"></span>
-        <button class="btn small primary" type="button" data-tour>▶ S7 tour · 12 stops</button>
+        <button class="btn small primary" type="button" data-tour="s7">▶ Fly-through</button>
+        <button class="btn small" type="button" data-tour="s7walk">▶ Room walk · 12 stops</button>
         <a class="btn small" href="model.html#scen=s7" target="_blank" rel="noopener">Full model ↗</a>
       </div>
     </div>
     <div class="model-note">
       <span>Drag: rotate · scroll: zoom · right-drag: pan · click: select a part</span>
       <span>Any room can be entered straight from the <a href="#floors">floor plans</a>.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= WHY S7 ======================= -->
+<section id="why" class="usp" aria-labelledby="whyTitle">
+  <div class="usp-wrap">
+    <div class="usp-stage" aria-hidden="true"><canvas id="uspCanvas"></canvas><div class="usp-key" id="uspKey"></div></div>
+    <div class="usp-steps">
+      <div class="usp-step usp-intro is-on" data-step="0">
+        <p class="eyebrow">Why S7</p>
+        <h2 id="whyTitle">A library you can live above</h2>
+        <p>A church from 1930 stays one open public space at street level, and a whole student house is folded into its upper floors. Scroll, and the building comes apart layer by layer.</p>
+        <dl class="usp-stats">
+          <div><dt>homes</dt><dd>20</dd></div>
+          <div><dt>study rooms</dt><dd>18</dd></div>
+          <div><dt>reading hall</dt><dd>208 m²</dd></div>
+          <div><dt>kitchen and terraces</dt><dd>213 m²</dd></div>
+          <div><dt>ramps</dt><dd>0</dd></div>
+          <div><dt>church, kept open</dt><dd>1</dd></div>
+        </dl>
+      </div>
+      <div class="usp-step" data-step="1"><p class="usp-lv" style="--c:var(--c-pub)">Ground floor · ±0.00 m</p><h3>The nave stays public</h3><p>No walls in the nave at street level. A 208 m² reading hall on the original tiled floor, open to the whole neighbourhood, with a café in the old choir.</p></div>
+      <div class="usp-step" data-step="2"><p class="usp-lv" style="--c:var(--c-learn)">Level +1 · 2.90 m</p><h3>Eighteen rooms to focus</h3><p>Fourteen study rooms sit on the old aisle galleries and look through the arcade into the reading hall. Four more are on the ground floor.</p></div>
+      <div class="usp-step" data-step="3"><p class="usp-lv" style="--c:var(--c-live)">Levels +2 and +3 · 5.60 and 9.00 m</p><h3>Home is above the books</h3><p>Twenty student rooms rest on the arcade arches. On level +2 every room reaches out under the old aisle roof into an alcove with its own roof window, about 19 m² in all.</p></div>
+      <div class="usp-step" data-step="4"><p class="usp-lv" style="--c:var(--c-comm)">Level +4 · 12.30 m</p><h3>Dinner under the ridge</h3><p>No bedrooms in the attic. Instead one 132 m² kitchen for all residents, a terrace cut into the red tile roof, and 67 m² more on top of the café building.</p></div>
+      <div class="usp-step" data-step="5"><p class="usp-lv" style="--c:var(--c-circ)">Every level</p><h3>Zero ramps, one lift</h3><p>Every new floor meets the church at exactly the same height: 2.90, 5.60, 9.00 and 12.30 m. One lift in the glazed wing stops on all five levels.</p></div>
     </div>
   </div>
 </section>
@@ -418,13 +484,18 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="sec-head">
       <p class="eyebrow">Floor plans · 72 rooms and areas</p>
       <h2>Every floor, every room</h2>
-      <p class="lead">The plans are drawn directly from the 3D model. Click a room to see its size and use, then walk into it in the model.</p>
+      <p class="lead">Switch between the interactive plan, drawn from the 3D model, and the drawing sheets at 1:150. In the interactive plan a click on a room shows its size and use, and you can walk into it in the model.</p>
     </div>
     <div class="plan-head">
       <div class="seg" role="tablist" aria-label="Floor" id="levelTabs"></div>
+      <div class="seg" role="group" aria-label="Plan type" id="planMode"><button type="button" data-mode="plan" aria-pressed="true">Interactive plan</button><button type="button" data-mode="sheet" aria-pressed="false">Drawing sheet</button></div>
       <span class="small muted" id="levelSum"></span>
     </div>
-    <div class="plan-grid">
+    <figure class="sheet" id="sheetBox" hidden>
+      <div class="sheet-scroll" id="sheetScroll"><img id="sheetImg" src="plans/A-101.png" width="2481" height="1754" alt="Drawing sheet A-101, ground floor plan of S7 at 1:150"></div>
+      <figcaption><span id="sheetCap">Sheet A-101 · Ground floor · 1:150 on A3</span><span class="sheet-acts"><button class="btn small" type="button" id="sheetZoom">Zoom in</button><a class="btn small" href="plans/S7-floor-plans.pdf" target="_blank" rel="noopener">Open all 5 sheets (PDF) ↗</a></span></figcaption>
+    </figure>
+    <div class="plan-grid" id="planGrid">
       <div style="min-width:0">
         <div class="plan-scroll"><svg id="planSvg" viewBox="-13 -13.4 43.4 26.8" role="img" aria-label="Floor plan of the selected level"></svg></div>
         <div class="legend" id="planLegend"></div>
@@ -467,9 +538,9 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="live-grid">
       <div class="card">
         <h3>The room</h3>
-        <svg id="roomPlan" viewBox="-0.7 -0.75 5.6 4.75" role="img" aria-label="Plan of a 4.20 × 3.15 m student room with furniture" style="width:100%;height:auto;max-height:360px"></svg>
+        <svg id="roomPlan" viewBox="-0.7 -3.2 5.6 7.5" role="img" aria-label="Plan of a 4.20 × 3.15 m student room with furniture and the alcove of the level +2 rooms" style="width:100%;height:auto;max-height:460px"></svg>
         <div class="share" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-          <div><b>4.20 × 3.15 m</b><p>about 12.5 m² net, 3.1 to 3.2 m ceiling height</p></div>
+          <div><b>4.20 × 3.15 m</b><p>about 12.5 m² net; on level +2 plus an alcove of 2.20 × 2.95 m under the old aisle roof with its own roof window, about 19 m²</p></div>
           <div><b>Furnished</b><p>bed 90 × 200, desk 120 × 60 with chair, wall shelf, wardrobe, rug</p></div>
           <div><b>Your own door and key</b><p>every room door is an EI30 fire door, opened with a transponder</p></div>
           <div><b>On a quiet corridor</b><p>five rooms on each side of a 1.80 m central corridor</p></div>
@@ -481,7 +552,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
           <div><b><span class="sw" style="--c:var(--c-comm)"></span>Community kitchen</b><p>Level +4, about 130 m²: an 11 m kitchen run with hobs and sinks, two islands, five dining tables for 30 people, sofas.</p></div>
           <div><b><span class="sw" style="--c:var(--c-comm)"></span>Two roof terraces</b><p>14 m² right by the kitchen, 67 m² on the café building with loungers, a long table and planters.</p></div>
           <div><b><span class="sw" style="--c:var(--c-serv)"></span>Bathrooms</b><p>On living levels +2 and +3 in the café building: 6 toilets, 6 washbasins and 4 showers per level, for women and men.</p></div>
-          <div><b><span class="sw" style="--c:var(--c-learn)"></span>Study rooms</b><p>16 small bookable rooms, plus the reading hall and the reading balcony on the organ gallery.</p></div>
+          <div><b><span class="sw" style="--c:var(--c-learn)"></span>Study rooms</b><p>18 small bookable rooms, plus the reading hall and the reading balcony on the organ gallery.</p></div>
           <div><b><span class="sw" style="--c:var(--c-serv)"></span>Bicycle store</b><p>About 60 places in the one-storey new building, right by the entrance.</p></div>
           <div><b><span class="sw" style="--c:var(--c-cafe)"></span>A café in the house</b><p>The take-away café on the ground floor of the new building and a second counter in the choir.</p></div>
         </div>
@@ -533,7 +604,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
         <p class="eyebrow">16 rooms · standard</p>
         <div class="amt"><b>€540</b><span>a month, all inclusive</span></div>
         <p class="split">€465 rent + €75 service charge</p>
-        <ul><li>Furnished room, 12.5 m²</li><li>Heating, electricity, water, Wi-Fi</li><li>Kitchen, roof terraces, study rooms, bike place</li><li>Cleaning of the shared spaces</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
+        <ul><li>Furnished room, 12.5 m², or about 19 m² with the alcove on level +2</li><li>Heating, electricity, water, Wi-Fi</li><li>Kitchen, roof terraces, study rooms, bike place</li><li>Cleaning of the shared spaces</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
       </article>
       <article class="price">
         <p class="eyebrow">For comparison · Ghent</p>
@@ -651,47 +722,6 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
   </div>
 </section>
 
-<!-- ======================= OPEN POINTS ======================= -->
-<section id="open-points">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Open points · listed openly</p>
-      <h2>What still has to be settled</h2>
-      <p class="lead">S7 is a design by the team. It is not approved and its costs have not been calculated. These questions decide whether it can be built as shown.</p>
-    </div>
-    <div class="open-grid">
-      <div class="card"><h3>Heritage</h3><ol id="openHeritage"></ol></div>
-      <div class="card"><h3>Planning and permits</h3><ol id="openPlanning"></ol></div>
-      <div class="card"><h3>Technical and operation</h3><ol id="openTech"></ol></div>
-    </div>
-    <h3 style="margin:clamp(36px,5vw,56px) 0 16px">Next steps</h3>
-    <ol class="next">
-      <li><h4>Heritage pre-meeting</h4><p>Agree the changes to the nave, the west gable and the roof with the heritage authority.</p></li>
-      <li><h4>Survey the building</h4><p>Measured survey, structure, hazardous materials (asbestos) and roof.</p></li>
-      <li><h4>Fire safety and escape</h4><p>Solve the second escape route for the living floors and the sound insulation.</p></li>
-      <li><h4>Find operators</h4><p>Library, café and housing operator, with letters of intent.</p></li>
-      <li><h4>Estimate costs</h4><p>Work out construction and running costs, score the scenario next to S1 to S6+.</p></li>
-      <li><h4>Permit</h4><p>Planning application based on an agreed design.</p></li>
-    </ol>
-  </div>
-</section>
-
-<!-- ======================= FAQ ======================= -->
-<section id="faq" class="band">
-  <div class="wrap">
-    <div class="sec-head"><p class="eyebrow">Frequently asked questions</p><h2>Short answers</h2></div>
-    <div class="faq">
-      <details><summary>Has S7 been decided or approved?</summary><div><p>No. S7 is the team’s own proposal, built on a feasibility study (Miss Miyagi, 2026) with four scenarios. It has not been agreed with the heritage authority, scored or approved.</p></div></details>
-      <details><summary>Where do the sizes and areas come from?</summary><div><p>From the 3D model. The plans and sections of the study were traced; the position and height of the new elements are our reading of the drawings and photos, not a survey. Areas are the net areas of the drawn rooms.</p></div></details>
-      <details><summary>Can I rent a room already?</summary><div><p>Not yet. The prices on this page are a proposal to make the concept tangible. The waiting list opens once there is an operator.</p></div></details>
-      <details><summary>Is the building step-free?</summary><div><p>Mostly. The lift in the glazed wing stops on the ground floor and on every level from +1 to +4; the new building and the church floors are level, and the choir is drawn without a step. The 14 study rooms on level +1 in the side aisles, however, are reached by stair only. There is no solution for that yet.</p></div></details>
-      <details><summary>What happens to the organ?</summary><div><p>The organ gallery is kept and becomes a reading balcony on level +2. The last bay of the nave stays open up to the roof, so the organ and the east wall remain visible from the reading hall.</p></div></details>
-      <details><summary>Why only one kitchen for 20 rooms?</summary><div><p>The large kitchen under the ridge is meant to be the meeting place of the house, with a roof terrace and room for everyone. The S4 notes, however, mention a rule of one kitchen per ten units. Whether one large kitchen with several cooking runs meets it still has to be checked.</p></div></details>
-      <details><summary>What does the conversion cost?</summary><div><p>That has not been calculated yet. Known issues are roof damage, damp and probably asbestos in the roof boarding. A cost estimate is one of the next steps.</p></div></details>
-      <details><summary>How does S7 differ from S6+?</summary><div><p>The shell follows the photos of the church (red tile roofs, octagonal piers, tiled floor, bell tower). Each side aisle has its own stair, the new floors are level with the church floors, the organ gallery stays free, and the top floor is one large kitchen instead of bedrooms. This brings the number of bedrooms down from 25 to 20.</p></div></details>
-    </div>
-  </div>
-</section>
 </main>
 
 <footer>
@@ -723,6 +753,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script src="js/rooms-data.js"></script>
 <script src="js/rooms3d.js"></script>
+<script src="js/usp3d.js"></script>
 <script src="js/site.js"></script>
 </body>
 </html>
