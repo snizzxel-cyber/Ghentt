@@ -12,7 +12,7 @@ A website for investors and anyone who wants to understand scenario S7 for the R
 | `js/rooms3d.js` | 13 room models to scale (dollhouse view) |
 | `js/site.js` | Floor plans, section, charts, calculators, model controls |
 | `js/usp3d.js` | The "Why S7" band: the building as coloured layers that come apart on scroll |
-| `plans/` | The five drawing sheets A-101 to A-105 (PNG, 150 dpi) and the PDF |
+| `plans/` | The five drawing sheets A-101 to A-105 (PNG, 220 dpi, shown 1:1 on the page) and the PDF |
 
 ## Viewing
 

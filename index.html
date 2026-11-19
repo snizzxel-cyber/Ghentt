@@ -483,27 +483,17 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 <section id="floors" class="band">
   <div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">Floor plans · 72 rooms and areas</p>
+      <p class="eyebrow">Floor plans · sheets A-101 to A-105 · 1:150</p>
       <h2>Every floor, every room</h2>
-      <p class="lead">Switch between the interactive plan, drawn from the 3D model, and the drawing sheets at 1:150. In the interactive plan a click on a room shows its size and use, and you can walk into it in the model.</p>
+      <p class="lead">The five drawing sheets of S7, one per level, with room numbers, areas and the room schedule. Click a sheet to zoom in.</p>
     </div>
     <div class="plan-head">
       <div class="seg" role="tablist" aria-label="Floor" id="levelTabs"></div>
-      <div class="seg" role="group" aria-label="Plan type" id="planMode"><button type="button" data-mode="plan" aria-pressed="true">Interactive plan</button><button type="button" data-mode="sheet" aria-pressed="false">Drawing sheet</button></div>
-      <span class="small muted" id="levelSum"></span>
     </div>
-    <figure class="sheet" id="sheetBox" hidden>
-      <div class="sheet-scroll" id="sheetScroll"><img id="sheetImg" src="plans/A-101.png" width="2481" height="1754" alt="Drawing sheet A-101, ground floor plan of S7 at 1:150"></div>
+    <figure class="sheet" id="sheetBox">
+      <div class="sheet-scroll" id="sheetScroll"><img id="sheetImg" src="plans/A-101.png" width="3638" height="2573" alt="Drawing sheet A-101, ground floor plan of S7 at 1:150"></div>
       <figcaption><span id="sheetCap">Sheet A-101 · Ground floor · 1:150 on A3</span><span class="sheet-acts"><button class="btn small" type="button" id="sheetZoom">Zoom in</button><a class="btn small" href="plans/S7-floor-plans.pdf" target="_blank" rel="noopener">Open all 5 sheets (PDF) ↗</a></span></figcaption>
     </figure>
-    <div class="plan-grid" id="planGrid">
-      <div style="min-width:0">
-        <div class="plan-scroll"><svg id="planSvg" viewBox="-13 -13.4 43.4 26.8" role="img" aria-label="Floor plan of the selected level"></svg></div>
-        <div class="legend" id="planLegend"></div>
-        <div class="room-chips" id="roomChips" aria-label="Rooms on this level"></div>
-      </div>
-      <aside class="panel" id="roomPanel" aria-live="polite"></aside>
-    </div>
   </div>
 </section>
 
