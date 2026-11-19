@@ -211,8 +211,10 @@ svg.dim .lyr.hot{opacity:1}
 .linkbtn{font:600 .84rem/1 var(--f-body);color:var(--accent);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
 /* pricing */
-.price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
-@media (max-width:960px){.price-grid{grid-template-columns:1fr}}
+.price-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;align-items:stretch}
+@media (max-width:1160px){.price-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:640px){.price-grid{grid-template-columns:1fr}}
+.price .amt b{font-size:2.4rem!important}
 .price{background:var(--surface);border:1px solid var(--line);border-radius:0;padding:24px;display:grid;gap:14px;align-content:start}
 .price.feature{border-color:var(--line);border-top:3px solid var(--accent)}
 .price .amt{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
@@ -261,6 +263,7 @@ svg.dim .lyr.hot{opacity:1}
 .bar-row.ref .bar-fill{background:var(--c-circ)}
 .chart.stacked .bar-row,.chart.stacked .chart-axis{grid-template-columns:minmax(0,1fr) 64px;row-gap:4px}
 .chart.stacked .bar-row .lbl{grid-column:1/-1}
+.chart.stacked .bar-row .lbl span:last-child{white-space:normal;overflow:visible}
 .chart.stacked .chart-axis>span:first-child{display:none}
 .chart-axis{display:grid;grid-template-columns:minmax(120px,190px) minmax(0,1fr) 84px;gap:12px;font:500 .72rem var(--f-mono);color:var(--muted)}
 .chart-axis .ticks{display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:4px}
@@ -357,6 +360,39 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 .sheet.zoom .sheet-scroll img{width:240%}
 .sheet figcaption{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 12px;border-top:1px solid var(--line);font:500 .78rem/1.3 var(--f-mono);color:var(--muted)}
 .sheet-acts{display:flex;gap:8px;flex-wrap:wrap}
+
+/* feasibility */
+.fz-head{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.fz-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:28px;align-items:start}
+@media (max-width:1000px){.fz-grid{grid-template-columns:1fr}}
+.fz-in{display:grid;gap:16px}
+.fz-in fieldset{border:1px solid var(--line);margin:0;padding:10px 14px 12px;display:grid;gap:2px}
+.fz-in legend{font:500 .74rem/1 var(--f-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);padding:0 6px}
+.fz-row{display:grid;grid-template-columns:minmax(0,1fr) 168px;gap:10px;align-items:center;font-size:.88rem;padding:5px 0;border-bottom:1px dashed var(--line)}
+.fz-row:last-child{border-bottom:0}
+.fz-inp{display:flex;align-items:center;gap:6px}
+.fz-inp input{width:96px;font:500 .88rem/1 var(--f-mono);padding:6px 7px;border:1px solid var(--line-2);border-radius:var(--rb);background:var(--surface);color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.fz-inp input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.fz-inp em{font:normal 400 .74rem/1.2 var(--f-mono);color:var(--muted)}
+@media (max-width:520px){.fz-row{grid-template-columns:1fr}}
+.fz-out{display:grid;gap:18px;position:sticky;top:76px}
+@media (max-width:1000px){.fz-out{position:static}}
+.fz-tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+@media (max-width:640px){.fz-tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.fz-tiles div{background:var(--surface);padding:12px;display:grid;gap:3px;min-width:0}
+.fz-tiles b{font:650 1.25rem/1.1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.fz-tiles span{font:500 .7rem/1.25 var(--f-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.fz-cols{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:640px){.fz-cols{grid-template-columns:1fr}}
+.fz-box{border:1px solid var(--line);padding:14px;display:grid;gap:8px;align-content:start;min-width:0}
+.fz-box .rows{font-size:.84rem;gap:6px}
+.fz-box .rows div span:first-child{color:var(--muted)}
+.fz-box .rows div.sum span{color:var(--ink);font-weight:600}
+.fz-res{padding:12px;border-left:3px solid var(--accent);background:var(--surface-2);display:grid;gap:3px}
+.fz-res b{font:650 1.45rem/1.1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.fz-res span{font-size:.84rem;color:var(--muted)}
+.fz-res.bad{border-left-color:var(--brick)}
+.fz-res.good{border-left-color:var(--c-serv)}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -581,7 +617,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="sec-head">
       <p class="eyebrow">Renting · proposed prices</p>
       <h2>What a room costs</h2>
-      <p class="lead">One price for everything: rent plus a fixed service charge for heating, electricity, water, Wi-Fi and the cleaning of the shared spaces. One room in five is let at a lower rate.</p>
+      <p class="lead">One price for everything: rent plus a fixed service charge for heating, electricity, water, Wi-Fi and the cleaning of the shared spaces. The larger rooms with an alcove cost more, and one room in five is let at a social rate.</p>
       <p><span class="tag warn">Assumption · not part of the study</span></p>
     </div>
     <div class="price-grid">
@@ -589,13 +625,19 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
         <p class="eyebrow">4 rooms · social rate</p>
         <div class="amt"><b>€395</b><span>a month, all inclusive</span></div>
         <p class="split">€320 rent + €75 service charge</p>
-        <ul><li>The same room and the same services as the standard rate</li><li>Allocated by income, together with the universities’ student services</li><li>Reviewed every year</li></ul>
+        <ul><li>A level +3 room, 12.5 m², with the same services</li><li>Allocated by income, together with the universities’ student services</li><li>Reviewed every year</li></ul>
+      </article>
+      <article class="price">
+        <p class="eyebrow">6 rooms · level +3</p>
+        <div class="amt"><b>€515</b><span>a month, all inclusive</span></div>
+        <p class="split">€440 rent + €75 service charge</p>
+        <ul><li>Furnished room, 4.20 × 3.15 m, 12.5 m²</li><li>Heating, electricity, water, Wi-Fi</li><li>Kitchen, roof terraces, study rooms, bike place</li><li>Cleaning of the shared spaces</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
       </article>
       <article class="price feature">
-        <p class="eyebrow">16 rooms · standard</p>
-        <div class="amt"><b>€540</b><span>a month, all inclusive</span></div>
-        <p class="split">€465 rent + €75 service charge</p>
-        <ul><li>Furnished room, 12.5 m², or about 19 m² with the alcove on level +2</li><li>Heating, electricity, water, Wi-Fi</li><li>Kitchen, roof terraces, study rooms, bike place</li><li>Cleaning of the shared spaces</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
+        <p class="eyebrow">10 rooms · level +2 with alcove</p>
+        <div class="amt"><b>€595</b><span>a month, all inclusive</span></div>
+        <p class="split">€520 rent + €75 service charge</p>
+        <ul><li>Furnished room with an alcove under the old aisle roof, about 19 m²</li><li>Own roof window over the alcove</li><li>Everything included in the level +3 rate</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
       </article>
       <article class="price">
         <p class="eyebrow">For comparison · Ghent</p>
@@ -608,7 +650,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="contract">
       <div><b>Student lease</b><p>Under the Flemish residential lease decree (studentenhuurovereenkomst). For enrolled students.</p></div>
       <div><b>Term</b><p>Proposed: 12 months from September. For exchange students also one semester, if rooms are free.</p></div>
-      <div><b>Deposit</b><p>At most two months’ rent, without the service charge, on a blocked account in the tenant’s name. Up to €930 at the standard rate.</p></div>
+      <div><b>Deposit</b><p>At most two months’ rent, without the service charge, on a blocked account in the tenant’s name. Up to €1,040 for a level +2 room.</p></div>
       <div><b>Requirement</b><p>Enrolment at a higher-education institution in Ghent, shown when the lease is signed.</p></div>
     </div>
     <p class="small muted" style="margin-top:10px">Legal framework as described by <a href="https://www.vlaanderen.be/bouwen-wonen-en-energie/huren-en-verhuren/studentenhuisvesting-huren-of-verhuren/studentenhuurovereenkomsten" target="_blank" rel="noopener">vlaanderen.be: Studentenhuurovereenkomsten</a>. Check the current rules before signing.</p>
@@ -627,11 +669,11 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
       <h3>What does a year cost me?</h3>
       <div class="calc">
         <div style="display:grid;gap:16px">
-          <div class="field"><span id="tLbl">Rate</span><div class="seg" role="group" aria-labelledby="tLbl" id="tarifSeg"><button type="button" data-t="std" aria-pressed="true">Standard</button><button type="button" data-t="soc" aria-pressed="false">Social rate</button></div></div>
+          <div class="field"><span id="tLbl">Rate</span><div class="seg" role="group" aria-labelledby="tLbl" id="tarifSeg"><button type="button" data-t="l2" aria-pressed="true">Level +2, alcove</button><button type="button" data-t="l3" aria-pressed="false">Level +3</button><button type="button" data-t="soc" aria-pressed="false">Social rate</button></div></div>
           <div class="field"><label for="mon">Months</label><div class="row"><input id="mon" type="range" min="5" max="12" step="1" value="12"><output for="mon" id="monOut">12</output></div></div>
         </div>
         <div style="display:grid;gap:12px">
-          <div class="result"><span>Total for the lease</span><b id="yearOut">€6,480</b><span id="perOut">€540 a month, all inclusive</span></div>
+          <div class="result"><span>Total for the lease</span><b id="yearOut">€7,140</b><span id="perOut">€595 a month, all inclusive</span></div>
           <div class="rows" id="calcRows"></div>
         </div>
       </div>
@@ -678,22 +720,51 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
       <div class="card"><h3><span class="sw" style="--c:var(--c-live)"></span>Student housing</h3><dl><dt>Space</dt><dd>20 rooms, 14 study rooms on level +1, kitchen, terraces, bathrooms</dd><dt>Operator</dt><dd>a university, a foundation or a private operator</dd><dt>Contract</dt><dd>student leases, on-site management</dd></dl></div>
     </div>
 
-    <div class="card" style="margin-top:clamp(36px,5vw,56px)">
-      <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between"><h3>Worked example: rental income per year</h3><span class="tag warn">Worked example · not a forecast</span></div>
-      <p class="small muted" style="max-width:80ch">Every value is an assumption and can be moved. Construction costs, operating costs and financing have not been worked out yet; this shows gross rental income only, without service charges.</p>
-      <div class="calc">
-        <div style="display:grid;gap:14px">
-          <div class="field"><label for="iRent">Standard room rent (without service charge)</label><div class="row"><input id="iRent" type="range" min="350" max="650" step="5" value="465"><output id="iRentO">€465</output></div></div>
-          <div class="field"><label for="iSoc">Rooms at the social rate (€320)</label><div class="row"><input id="iSoc" type="range" min="0" max="10" step="1" value="4"><output id="iSocO">4</output></div></div>
-          <div class="field"><label for="iOcc">Room occupancy</label><div class="row"><input id="iOcc" type="range" min="70" max="100" step="1" value="95"><output id="iOccO">95%</output></div></div>
-          <div class="field"><label for="iCafe">Café rent per month</label><div class="row"><input id="iCafe" type="range" min="0" max="3000" step="50" value="1250"><output id="iCafeO">€1,250</output></div></div>
-          <div class="field"><label for="iLib">Library rent per m² per year (≈ 600 m²)</label><div class="row"><input id="iLib" type="range" min="0" max="120" step="1" value="45"><output id="iLibO">€45</output></div></div>
-          <div class="field"><label for="iEv">Evening events in the reading hall per year (€250 each)</label><div class="row"><input id="iEv" type="range" min="0" max="60" step="1" value="12"><output id="iEvO">12</output></div></div>
-        </div>
-        <div style="display:grid;gap:14px;align-content:start">
-          <div class="result"><span>Gross rental income per year</span><b id="iTot">€0</b><span id="iSub"></span></div>
-          <div class="stack" id="iStack" aria-hidden="true"></div>
-          <div class="rows" id="iRows"></div>
+    <div class="card fz" id="feasibility" style="margin-top:clamp(36px,5vw,56px)">
+      <div class="fz-head"><h3>Feasibility: front-door and back-door approach</h3><span class="tag warn">Worked example · placeholder costs, not a forecast</span></div>
+      <p class="small muted" style="max-width:86ch">Two classic checks of a development. The <b>front-door approach</b> starts from what the project costs and asks which rent would be needed to pay the loan and give investors their return. The <b>back-door approach</b> starts from the rent the market pays and asks how much the project may cost. Every value can be changed. The unit costs are placeholders for an order of magnitude and have to be replaced by a cost consultant’s estimate; the areas come from the 3D model.</p>
+      <div class="fz-grid">
+        <form class="fz-in" id="fzForm" onsubmit="return false">
+        <fieldset><legend>Rents</legend>
+          <label class="fz-row" for="fz_r2"><span>Rent, level +2 room with alcove</span><span class="fz-inp"><input id="fz_r2" type="number" value="520" step="5" min="0" inputmode="decimal"><em>€/month</em></span></label>
+          <label class="fz-row" for="fz_r3"><span>Rent, level +3 room</span><span class="fz-inp"><input id="fz_r3" type="number" value="440" step="5" min="0" inputmode="decimal"><em>€/month</em></span></label>
+          <label class="fz-row" for="fz_nsoc"><span>Level +3 rooms at the social rate</span><span class="fz-inp"><input id="fz_nsoc" type="number" value="4" step="1" min="0" inputmode="decimal"><em>rooms</em></span></label>
+          <label class="fz-row" for="fz_rsoc"><span>Social rent</span><span class="fz-inp"><input id="fz_rsoc" type="number" value="320" step="5" min="0" inputmode="decimal"><em>€/month</em></span></label>
+          <label class="fz-row" for="fz_occ"><span>Room occupancy</span><span class="fz-inp"><input id="fz_occ" type="number" value="95" step="1" min="0" inputmode="decimal"><em>%</em></span></label>
+          <label class="fz-row" for="fz_libA"><span>Library, rented area</span><span class="fz-inp"><input id="fz_libA" type="number" value="600" step="10" min="0" inputmode="decimal"><em>m²</em></span></label>
+          <label class="fz-row" for="fz_libR"><span>Library rent</span><span class="fz-inp"><input id="fz_libR" type="number" value="45" step="1" min="0" inputmode="decimal"><em>€/m²·year</em></span></label>
+          <label class="fz-row" for="fz_cafe"><span>Café rent</span><span class="fz-inp"><input id="fz_cafe" type="number" value="1250" step="50" min="0" inputmode="decimal"><em>€/month</em></span></label>
+          <label class="fz-row" for="fz_ev"><span>Evening events in the reading hall (€250 each)</span><span class="fz-inp"><input id="fz_ev" type="number" value="12" step="1" min="0" inputmode="decimal"><em>per year</em></span></label>
+          <label class="fz-row" for="fz_opex"><span>Operating costs (management, upkeep, insurance, vacancy reserve)</span><span class="fz-inp"><input id="fz_opex" type="number" value="25" step="1" min="0" inputmode="decimal"><em>% of income</em></span></label>
+        </fieldset>
+        <fieldset><legend>Costs</legend>
+          <label class="fz-row" for="fz_cRen"><span>Renovation of the existing church, 1,454 m²</span><span class="fz-inp"><input id="fz_cRen" type="number" value="1500" step="50" min="0" inputmode="decimal"><em>€/m²</em></span></label>
+          <label class="fz-row" for="fz_cIns"><span>New floors inside the nave, 670 m²</span><span class="fz-inp"><input id="fz_cIns" type="number" value="2200" step="50" min="0" inputmode="decimal"><em>€/m²</em></span></label>
+          <label class="fz-row" for="fz_cNew"><span>New buildings and glazed wing, 491 m²</span><span class="fz-inp"><input id="fz_cNew" type="number" value="2600" step="50" min="0" inputmode="decimal"><em>€/m²</em></span></label>
+          <label class="fz-row" for="fz_cRoof"><span>Roof and facade repair, including asbestos</span><span class="fz-inp"><input id="fz_cRoof" type="number" value="700000" step="10000" min="0" inputmode="decimal"><em>€</em></span></label>
+          <label class="fz-row" for="fz_cFit"><span>Fit-out and furniture</span><span class="fz-inp"><input id="fz_cFit" type="number" value="400000" step="10000" min="0" inputmode="decimal"><em>€</em></span></label>
+          <label class="fz-row" for="fz_fees"><span>Fees, permits and surveys</span><span class="fz-inp"><input id="fz_fees" type="number" value="15" step="1" min="0" inputmode="decimal"><em>% of works</em></span></label>
+          <label class="fz-row" for="fz_cont"><span>Contingency</span><span class="fz-inp"><input id="fz_cont" type="number" value="10" step="1" min="0" inputmode="decimal"><em>%</em></span></label>
+          <label class="fz-row" for="fz_buy"><span>Purchase price of the church</span><span class="fz-inp"><input id="fz_buy" type="number" value="0" step="10000" min="0" inputmode="decimal"><em>€</em></span></label>
+          <label class="fz-row" for="fz_grant"><span>Grants and public contribution</span><span class="fz-inp"><input id="fz_grant" type="number" value="0" step="10000" min="0" inputmode="decimal"><em>€</em></span></label>
+        </fieldset>
+        <fieldset><legend>Finance</legend>
+          <label class="fz-row" for="fz_ltv"><span>Loan share of the cost (LTV)</span><span class="fz-inp"><input id="fz_ltv" type="number" value="60" step="1" min="0" inputmode="decimal"><em>%</em></span></label>
+          <label class="fz-row" for="fz_rate"><span>Interest rate</span><span class="fz-inp"><input id="fz_rate" type="number" value="4.0" step="0.1" min="0" inputmode="decimal"><em>%</em></span></label>
+          <label class="fz-row" for="fz_term"><span>Loan term</span><span class="fz-inp"><input id="fz_term" type="number" value="25" step="1" min="0" inputmode="decimal"><em>years</em></span></label>
+          <label class="fz-row" for="fz_dscr"><span>Required debt cover (DSCR)</span><span class="fz-inp"><input id="fz_dscr" type="number" value="1.3" step="0.05" min="0" inputmode="decimal"><em>×</em></span></label>
+          <label class="fz-row" for="fz_eqr"><span>Required return on equity</span><span class="fz-inp"><input id="fz_eqr" type="number" value="6.0" step="0.1" min="0" inputmode="decimal"><em>%</em></span></label>
+        </fieldset>
+        </form>
+        <div class="fz-out">
+          <div class="fz-tiles" id="fzTiles"></div>
+          <div class="fz-cols">
+            <section class="fz-box"><h4>Front-door approach</h4><p class="small muted">From the cost to the rent it needs</p><div class="rows" id="fzFront"></div><div class="fz-res" id="fzFrontRes"></div></section>
+            <section class="fz-box"><h4>Back-door approach</h4><p class="small muted">From the market rent to the cost it can carry</p><div class="rows" id="fzBack"></div><div class="fz-res" id="fzBackRes"></div></section>
+          </div>
+          <div class="chart stacked" id="fzChart" aria-label="Estimated cost compared with the cost the rents can carry"></div>
+          <details class="tbl"><summary>Cost estimate and income in detail</summary><div class="tblwrap"><table id="fzDetail"></table></div></details>
+          <p class="small muted" id="fzNote"></p>
         </div>
       </div>
     </div>
