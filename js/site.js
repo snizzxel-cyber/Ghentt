@@ -378,7 +378,7 @@
   }
   var TYPEKEY = { student: 'student', studysm: 'studysm', commkitchen: 'commkitchen', library2: 'library', takeaway: 'takeaway', wc3: 'bath', wc3w: 'bath', lobby: 'lobby', locker: 'locker', bikes: 'bikes' };
   function rtKeyOf(r) {
-    if (/^Café inside/.test(r.name)) return 'cafeIn'; if (/^Organ/.test(r.name)) return 'organ';
+    if (/^Café inside/.test(r.name)) return 'cafeIn';
     if (/^Roof terrace, about 14/.test(r.name)) return 'terraceS'; if (/^Roof terrace on the café/.test(r.name)) return 'terraceL';
     return TYPEKEY[r.type] || null;
   }
@@ -434,9 +434,6 @@
     { key: 'takeaway', cat: 'cafe', name: 'Take-away café', count: '1×', lv: 'Ground floor, new building', dims: ['9.8 × 6.8', 'm'], area: ['58', 'm² + storage 5.3'], h: ['2.7', 'm'], model: 'Take-away café',
       p: 'The café on the ground floor of the new building opens to the street. It is the small paying commercial tenant of the house.',
       f: ['3.4 m counter with display, back bar, coffee machine', 'Seven bistro tables with 14 seats', 'Storage room of about 5 m², EI60 fire door', 'Shop window to the street'], who: 'For students, neighbours and commuters on their way to the station.' },
-    { key: 'organ', cat: 'pub', name: 'Organ gallery, reading balcony', count: '1×', lv: 'Level +2', dims: ['8.0 × 4.2', 'm'], area: ['33.6', 'm²'], h: ['open', 'up to the roof'], model: 'Organ gallery, reading balcony',
-      p: 'The organ gallery above the old main entrance is kept. It becomes a reading balcony with armchairs and a view over the whole reading hall.',
-      f: ['Organ cases with pipes on both sides of the tower', 'Four reading chairs, side tables, bookshelves', 'Glass balustrade to the nave', 'Reached by the level +2 corridor'], who: 'For quiet reading with the best view in the building.' },
     { key: 'bath', cat: 'serv', name: 'Bathroom (women and men)', count: '4×', lv: 'Levels +2 and +3', dims: ['5.2 × 3.35', 'm'], area: ['≈ 16.7', 'm²'], h: ['2.4', 'm'], model: 'Toilets and showers, women, level +2',
       p: 'The bathrooms are in the café building, reached across the bridge and the glazed wing. Each level has one room for women and one for men.',
       f: ['Three toilet cubicles', 'Three washbasins with mirror', 'Two walk-in showers with glass screens', 'Per level: 4 showers for 10 rooms'], who: 'For the residents of that level. Level +4 has no toilets; the nearest are one lift stop down.' },
