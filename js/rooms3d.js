@@ -54,16 +54,17 @@
   var tileTex = null;
   function tiles() {
     if (tileTex) return tileTex;
-    var cv = document.createElement('canvas'); cv.width = cv.height = 128; var x = cv.getContext('2d');
-    x.fillStyle = '#d8c7a6'; x.fillRect(0, 0, 128, 128);
-    x.fillStyle = '#9c5a3c'; for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) if ((i + j) % 2 === 0) x.fillRect(i * 32, j * 32, 32, 32);
-    x.fillStyle = '#e9dcc0'; for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) { x.beginPath(); x.arc(i * 32 + 16, j * 32 + 16, 5, 0, 7); x.fill(); }
-    x.strokeStyle = 'rgba(60,40,30,.25)'; x.lineWidth = 1; for (i = 0; i <= 4; i++) { x.beginPath(); x.moveTo(i * 32, 0); x.lineTo(i * 32, 128); x.stroke(); x.beginPath(); x.moveTo(0, i * 32); x.lineTo(128, i * 32); x.stroke(); }
+    var N = 512, q = N / 4, cv = document.createElement('canvas'); cv.width = cv.height = N; var x = cv.getContext('2d');
+    x.fillStyle = '#d8c7a6'; x.fillRect(0, 0, N, N);
+    x.fillStyle = '#9c5a3c'; for (var i = 0; i < 4; i++) for (var j = 0; j < 4; j++) if ((i + j) % 2 === 0) x.fillRect(i * q, j * q, q, q);
+    x.fillStyle = '#e9dcc0'; for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) { x.beginPath(); x.arc(i * q + q / 2, j * q + q / 2, q * 0.16, 0, 7); x.fill(); }
+    x.strokeStyle = 'rgba(60,40,30,.28)'; x.lineWidth = 3; for (i = 0; i <= 4; i++) { x.beginPath(); x.moveTo(i * q, 0); x.lineTo(i * q, N); x.stroke(); x.beginPath(); x.moveTo(0, i * q); x.lineTo(N, i * q); x.stroke(); }
     tileTex = new T.CanvasTexture(cv); tileTex.wrapS = tileTex.wrapT = T.RepeatWrapping;
+    if (renderer) tileTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     return tileTex;
   }
   function tiledFloor(g, w, d, x, y, z) {
-    var t = tiles().clone(); t.needsUpdate = true; t.repeat.set(w / 1.2, d / 1.2);
+    var t = tiles().clone(); t.needsUpdate = true; t.repeat.set(w / 1.2, d / 1.2); if (renderer) t.anisotropy = renderer.capabilities.getMaxAnisotropy();
     var m = new T.Mesh(new T.BoxGeometry(w, 0.06, d), new T.MeshStandardMaterial({ map: t, roughness: 0.8 }));
     m.position.set(x || 0, (y || 0) - 0.03, z || 0); m.receiveShadow = true; g.add(m); return m;
   }
@@ -88,7 +89,7 @@
   function chair(g, x, z, rot, col, light) {
     var s = sub(g, x, z, rot);
     box(s, 0.44, 0.05, 0.44, 0, 0.44, 0, col || K.teal);
-    box(s, 0.44, 0.42, 0.05, 0, 0.49, 0.2, col || K.teal);
+    box(s, 0.44, 0.42, 0.05, 0, 0.49, -0.2, col || K.teal);   // back at -z: the chair faces +z
     [-1, 1].forEach(function (a) { [-1, 1].forEach(function (b) { box(s, 0.03, 0.44, 0.03, a * 0.19, 0, b * 0.19, light ? K.oak : K.dark); }); });
     return s;
   }
@@ -96,13 +97,13 @@
   function bistro(g, x, z, r, col, h) { h = h || 0.72; cyl(g, r || 0.38, 0.04, x, h, z, col || K.oak, 24); cyl(g, 0.04, h, x, 0, z, K.steel, 8); cyl(g, 0.22, 0.03, x, 0, z, K.steel, 16); }
   function sofa(g, x, z, len, rot, col) {
     var s = sub(g, x, z, rot); col = col || K.plum;
-    box(s, len, 0.4, 0.85, 0, 0.05, 0, col); box(s, len, 0.45, 0.2, 0, 0.4, 0.33, col);
+    box(s, len, 0.4, 0.85, 0, 0.05, 0, col); box(s, len, 0.45, 0.2, 0, 0.4, -0.33, col);   // back at -z
     box(s, 0.18, 0.6, 0.85, -len / 2 + 0.09, 0.05, 0, col); box(s, 0.18, 0.6, 0.85, len / 2 - 0.09, 0.05, 0, col);
     return s;
   }
   function armchair(g, x, z, rot, col) {
     var s = sub(g, x, z, rot); col = col || K.mustard;
-    box(s, 0.75, 0.4, 0.75, 0, 0.05, 0, col); box(s, 0.75, 0.45, 0.16, 0, 0.42, 0.3, col);
+    box(s, 0.75, 0.4, 0.75, 0, 0.05, 0, col); box(s, 0.75, 0.45, 0.16, 0, 0.42, -0.3, col);   // back at -z
     box(s, 0.14, 0.25, 0.75, -0.3, 0.42, 0, col); box(s, 0.14, 0.25, 0.75, 0.3, 0.42, 0, col);
     return s;
   }
@@ -134,9 +135,10 @@
   }
   function sitter(g, x, z, rot, shirt) {
     var s = sub(g, x, z, rot);
-    box(s, 0.34, 0.14, 0.42, 0, 0.45, -0.08, K.jeans); box(s, 0.3, 0.45, 0.12, 0, 0, -0.3, K.jeans);
-    var b = new T.Mesh(new T.CylinderGeometry(0.19, 0.16, 0.56, 14), mat(shirt || K.coral)); b.position.set(0, 0.86, 0.08); b.castShadow = true; s.add(b);
-    var h = new T.Mesh(new T.SphereGeometry(0.11, 14, 12), mat(K.skin)); h.position.set(0, 1.27, 0.06); s.add(h);
+    // faces +z, like the chairs: thighs and lower legs forward, body over the back of the seat
+    box(s, 0.34, 0.14, 0.42, 0, 0.45, 0.08, K.jeans); box(s, 0.3, 0.45, 0.12, 0, 0, 0.3, K.jeans);
+    var b = new T.Mesh(new T.CylinderGeometry(0.19, 0.16, 0.56, 14), mat(shirt || K.coral)); b.position.set(0, 0.86, -0.08); b.castShadow = true; s.add(b);
+    var h = new T.Mesh(new T.SphereGeometry(0.11, 14, 12), mat(K.skin)); h.position.set(0, 1.27, -0.06); s.add(h);
     return s;
   }
   function bike(g, x, z, rot) {
@@ -206,7 +208,7 @@
     // furniture: bed along the left wall, desk along the right wall, wardrobe by the door, a reading corner in the alcove
     bed(g, -W / 2 + 0.52, -0.5, 0, 0.9, 2.0, K.teal);
     desk(g, 1.2, 0.6, W / 2 - 0.36, -0.75, Math.PI / 2);
-    chair(g, W / 2 - 0.98, -0.75, -Math.PI / 2, K.coral);
+    chair(g, W / 2 - 0.98, -0.75, Math.PI / 2, K.coral);
     box(g, 0.25, 0.03, 1.0, W / 2 - 0.14, 1.5, -0.75, K.oak); books(g, 0.9, W / 2 - 0.14, 1.53, -0.75, Math.PI / 2, 0.18);
     laptop(g, W / 2 - 0.4, 0.75, -0.75, -Math.PI / 2); lamp(g, W / 2 - 0.3, 1.35, -1.2, K.mustard);
     box(g, 0.6, 2.0, 0.55, -W / 2 + 0.4, 0, D / 2 - 0.38, K.ash); box(g, 0.01, 1.9, 0.01, -W / 2 + 0.4, 0.05, D / 2 - 0.1, K.dark);
@@ -224,7 +226,7 @@
     desk(g, 1.7, 0.65, 0.25, -D / 2 + 0.4, 0, K.oak);
     chair(g, 0.25, -D / 2 + 1.05, Math.PI, K.mustard);
     lamp(g, 0.85, 1.25, -D / 2 + 0.25, K.mustard); laptop(g, 0.2, 0.75, -D / 2 + 0.45, 0);
-    shelf(g, 0.3, 1.9, 1.0, -W / 2 + 0.2, -D / 2 + 0.6, Math.PI / 2, 4);
+    shelf(g, 1.0, 1.9, 0.3, -W / 2 + 0.17, -D / 2 + 0.6, Math.PI / 2, 4);
     armchair(g, W / 2 - 0.45, 0.35, -Math.PI / 2 - 0.4, K.teal);
     box(g, 0.9, 0.015, 0.5, 0.25, 0, D / 2 - 0.55, K.rug);
     // gallery railing in front of the room
@@ -274,7 +276,7 @@
     }
     sofa(g, w2 / 2 - 1.4, -0.6, 2.2, Math.PI, K.plum); sofa(g, w2 / 2 - 4.2, -0.6, 2.2, Math.PI, K.teal);
     box(g, 3.6, 0.015, 1.8, w2 / 2 - 2.8, 0, -0.2, K.rug);
-    person(g, -5.0, -1.4, 0.4, K.coral); person(g, -3.4, 1.0, 2.6, K.teal); sitter(g, -0.2, 1.35, 0, K.plum); sitter(g, 4.3, 1.35, Math.PI, K.mustard);
+    person(g, -5.0, -1.4, 0.4, K.coral); person(g, -3.4, 1.0, 2.6, K.teal); sitter(g, -0.2, 1.35, 0, K.plum); sitter(g, 4.3, 1.35, 0, K.mustard);
     plant(g, -w2 / 2 + 0.5, d2 / 2 - 0.4, 1.3);
     return { W: W, D: D, H: ridge, view: [0.5, 0.7, 1.0], fit: 0.44, target: [0, 1.6, 0] };
   };
@@ -348,7 +350,7 @@
   var bookTex = null;
   function books2() {
     if (bookTex) return bookTex;
-    var cv = document.createElement('canvas'); cv.width = 256; cv.height = 128; var x = cv.getContext('2d');
+    var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 512; var x = cv.getContext('2d'); x.scale(4, 4);
     var cols = ['#d0684a', '#2f7d82', '#e0b13a', '#7a5c9e', '#5aa6d1', '#8fae7e', '#f3f3ef', '#2c3136'];
     x.fillStyle = '#b48a5a'; x.fillRect(0, 0, 256, 128);
     for (var row = 0; row < 4; row++) { var px = 0; while (px < 256) { var bw = 3 + Math.floor(rnd() * 5); x.fillStyle = cols[Math.floor(rnd() * cols.length)]; x.fillRect(px, row * 32 + 6, bw, 24 - Math.floor(rnd() * 6)); px += bw + 1; } x.fillStyle = '#8a6a44'; x.fillRect(0, row * 32 + 29, 256, 3); }
@@ -426,7 +428,8 @@
         tag(w, '← entrance wing (new building, not shown)', -6.2, 1.6, 0.0, 0.42);
       } else if (r.type === 'studysm') {
         box(w, W, 0.015, D, cx, 0.005, cz, FL.learn).castShadow = false; lowWalls(w, r, 2.4, 0xf1e6df);
-        desk(w, 1.6, 0.65, cx, r.z1 - 0.45, 0, K.oak); chair(w, cx, r.z1 - 1.05, 0, K.mustard);
+        var farS = r.door === 'zmax' ? -1 : 1, dz = farS > 0 ? r.z1 - 0.45 : r.z0 + 0.45;
+        desk(w, 1.6, 0.65, cx, dz, 0, K.oak); chair(w, cx, dz - farS * 0.6, farS > 0 ? 0 : Math.PI, K.mustard);
         if (r.name === 'Study room 0.01') tag(w, 'Study rooms', cx + 1.8, 3.2, cz);
       } else if (r.type === 'wc1') {
         box(w, W, 0.015, D, cx, 0.005, cz, FL.serv).castShadow = false; lowWalls(w, r, 2.4, 0xe6ecef);
@@ -434,7 +437,7 @@
         if (r.name === 'Toilet, men') tag(w, 'WC', 6.6, 3.2, cz);
       } else if (r.type === 'locker') {
         box(w, W, 0.015, D, cx, 0.005, cz, FL.serv).castShadow = false; lowWalls(w, r, 2.4, 0xe6ecef);
-        box(w, W - 0.4, 1.9, 0.5, cx, 0, r.z0 + 0.35, K.lockerB); box(w, 2.2, 0.45, 0.4, cx, 0, cz + 0.3, K.oak);
+        box(w, W - 0.4, 1.9, 0.45, cx, 0, r.door === 'zmin' ? r.z1 - 0.3 : r.z0 + 0.3, K.lockerB);
         if (r.name === 'Locker room 1') tag(w, 'Lockers', 13.5, 3.2, cz);
       } else if (r.type === 'core') {
         box(w, W, 0.015, D, cx, 0.005, cz, FL.circ).castShadow = false; lowWalls(w, r, 2.4, 0xe6e9ec);
@@ -523,10 +526,10 @@
     // balustrade towards the nave
     box(g, W, 1.1, 0.03, 0, 0, D / 2, K.glass, { glass: true }); box(g, W, 0.06, 0.1, 0, 1.1, D / 2, K.oak);
     // reading chairs facing the nave, side tables and lamps
-    [-2.6, -0.9, 0.9, 2.6].forEach(function (x, i) { armchair(g, x, 1.6, Math.PI, [K.mustard, K.teal, K.coral, K.plum][i]); });
+    [-2.6, -0.9, 0.9, 2.6].forEach(function (x, i) { armchair(g, x, 1.6, 0, [K.mustard, K.teal, K.coral, K.plum][i]); });
     [-1.75, 1.75].forEach(function (x) { cyl(g, 0.25, 0.04, x, 0.5, 1.5, K.oak, 18); cyl(g, 0.03, 0.5, x, 0, 1.5, K.dark, 6); });
-    shelf(g, 2.4, 2.1, 0.35, -W / 2 + 0.2, -0.3, Math.PI / 2, 5); shelf(g, 2.4, 2.1, 0.35, W / 2 + 0.0, 0.2, -Math.PI / 2, 5);
-    sitter(g, -0.9, 1.55, Math.PI, K.sky); person(g, 1.8, -0.5, 0.5, K.coral);
+    shelf(g, 2.4, 2.1, 0.35, -W / 2 + 0.2, -0.3, Math.PI / 2, 5); shelf(g, 2.4, 2.1, 0.35, W / 2 - 0.2, 0.2, -Math.PI / 2, 5);
+    sitter(g, -0.9, 1.6, 0, K.sky); person(g, 1.8, -0.5, 0.5, K.coral);
     // the nave 5.6 m below
     var low = new T.Group(); low.position.y = -5.6; g.add(low);
     tiledFloor(low, W + 2, 6, 0, 0, D / 2 + 3); desk(low, 4.0, 1.2, 0, D / 2 + 3.2, 0, K.oak);
@@ -627,19 +630,19 @@
   };
 
   /* ================= viewer ================= */
-  var renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0, frames = 0;
+  var sun, renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0, frames = 0;
   function mount(cv, wrap) {
     canvas = cv; wrapEl = wrap || cv.parentNode;
     try { renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: false }); }
     catch (e) { return false; }
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.setPixelRatio(Math.min((window.devicePixelRatio || 1) * 1.5, 3));
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
     renderer.outputEncoding = T.sRGBEncoding;
     scene = new T.Scene();
     camera = new T.PerspectiveCamera(38, 1, 0.1, 400);
     scene.add(new T.HemisphereLight(0xffffff, 0xb8b0a4, 0.75));
-    var sun = new T.DirectionalLight(0xfff4e6, 0.75); sun.position.set(8, 16, 10); sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048); sun.shadow.camera.left = -24; sun.shadow.camera.right = 24; sun.shadow.camera.top = 24; sun.shadow.camera.bottom = -24; sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.02;
+    sun = new T.DirectionalLight(0xfff4e6, 0.75); sun.position.set(8, 16, 10); sun.castShadow = true;
+    sun.shadow.mapSize.set(4096, 4096); sun.shadow.camera.left = -24; sun.shadow.camera.right = 24; sun.shadow.camera.top = 24; sun.shadow.camera.bottom = -24; sun.shadow.bias = -0.0006; sun.shadow.normalBias = 0.02;
     scene.add(sun); scene.add(sun.target);
     var fill = new T.DirectionalLight(0xdfe9ff, 0.25); fill.position.set(-10, 8, -6); scene.add(fill);
     if (T.OrbitControls) {
@@ -715,6 +718,11 @@
     camera.position.copy(tg).add(dir.multiplyScalar(dist));
     if (controls) { controls.target.copy(tg); controls.minDistance = Math.max(1.5, size * 0.25); controls.maxDistance = dist * 2.2; controls.update(); }
     else camera.lookAt(tg);
+    // fit the sun's shadow camera to this room, so shadows stay sharp in small rooms
+    var S = Math.max(W, D) * 0.75 + 2, sc = sun.shadow.camera;
+    sc.left = -S; sc.right = S; sc.top = S; sc.bottom = -S; sc.near = 1; sc.far = S * 6; sc.updateProjectionMatrix();
+    var sd = new T.Vector3(8, 16, 10).normalize().multiplyScalar(S * 2.4); sun.position.copy(tg).add(sd); sun.target.position.copy(tg); sun.target.updateMatrixWorld();
+    sun.shadow.bias = -0.0004 * Math.max(1, S / 8);
     autoRot = true; lastInteract = 0; dirty = true;
     return info;
   }
