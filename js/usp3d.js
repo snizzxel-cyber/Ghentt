@@ -6,7 +6,7 @@
   var canvas = document.getElementById('uspCanvas'), stage = canvas && canvas.parentNode;
   if (!T || !canvas) return;
   var renderer;
-  try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true }); } catch (e) { return; }
+  try { renderer = new T.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true, logarithmicDepthBuffer: true }); } catch (e) { return; }
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.setClearColor(0x000000, 0);
   var scene = new T.Scene(), camera = new T.PerspectiveCamera(34, 1, 0.5, 600);

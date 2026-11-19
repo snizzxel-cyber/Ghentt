@@ -220,7 +220,7 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
   var T = THREE;
 
   /* ================= renderer, scene, camera ================= */
-  var renderer = new T.WebGLRenderer({ antialias: true });
+  var renderer = new T.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });   // even depth precision: no flicker between faces a few cm apart
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
   renderer.localClippingEnabled = true;
   wrap.insertBefore(renderer.domElement, wrap.firstChild);
@@ -1413,6 +1413,17 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
     parent.add(sg);
   }
   // flat sign plate with canvas text
+  // clean entrance sign: dark panel with white, letter-spaced capitals (canvas at 2048 px for a sharp edge)
+  function cleanSign(text, w, h) {
+    var cv = document.createElement('canvas'); cv.width = 2048; cv.height = Math.round(2048 * h / w);
+    var c = cv.getContext('2d'), H = cv.height, sp = H * 0.16;
+    c.fillStyle = '#13222a'; c.fillRect(0, 0, cv.width, H);
+    c.fillStyle = '#ffffff'; c.font = '600 ' + Math.round(H * 0.42) + 'px Helvetica, Arial, sans-serif'; c.textBaseline = 'middle';
+    var chars = text.split(''), widths = chars.map(function (ch) { return c.measureText(ch).width; }), total = widths.reduce(function (a, b) { return a + b; }, 0) + sp * (chars.length - 1), x = (cv.width - total) / 2;
+    chars.forEach(function (ch, i) { c.fillText(ch, x, H * 0.53); x += widths[i] + sp; });
+    var tx = new T.CanvasTexture(cv); tx.anisotropy = 8;
+    return new T.Mesh(new T.PlaneGeometry(w, h), new T.MeshBasicMaterial({ map: tx, side: T.DoubleSide }));
+  }
   function signMesh(text, w, h, bgc, fgc) {
     var m;
     try {
@@ -2127,8 +2138,7 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
       [-0.12, 0.12].forEach(function (z) { bx(-10.68, -10.64, 0.95, 1.35, z - 0.015, z + 0.015, M(0xb9c0c6), gEntry); });
       bx(-11.7, -10.4, 3.3, 3.5, -2.4, 2.4, CON, gEntry);
       [[-11.62, -2.32], [-11.62, 2.32]].forEach(function (q) { bx(q[0] - 0.04, q[0] + 0.04, 0, 3.3, q[1] - 0.04, q[1] + 0.04, FR, gEntry); });
-      var es = signMesh('LIBRARY  ·  STUDENT HOUSING  ·  ENTRANCE', 4.4, 0.42, '#2b6f77', '#ffffff'); es.position.set(-11.72, 3.15, 0); es.rotation.y = -Math.PI / 2; gEntry.add(es);
-      var eo = signMesh('OPEN', 0.5, 0.2, '#2bb673', '#ffffff'); eo.position.set(-10.7, 2.7, 0); eo.rotation.y = -Math.PI / 2; gEntry.add(eo);
+      var es = cleanSign('STUDENT HOUSING', 3.4, 0.4); es.position.set(-11.64, 3.72, 0); es.rotation.y = -Math.PI / 2; gEntry.add(es);
     })();
     // ground-level opening in the west wall of the choir: the way from the entrance wing to the café inside and the reading hall (heritage question)
     (function () {
@@ -4055,6 +4065,50 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
     return out;
   }
 
+  /* ---- exploded drone show (S7): the building comes apart, a drone circles each room, then it goes back together ---- */
+  var EX_PLAN = [
+    ['Take-away café', 'Take-away café', 'Ground floor of the new building, about 58 m², open to the street.'],
+    ['Entrance', 'Entrance wing', 'The glazed wing with the portal, the lift and the stair to every level.'],
+    ['Café inside: second order point and seating', 'Café in the choir', 'A second café counter behind a glass wall to the reading hall.'],
+    ['Library reading hall', 'Reading hall', '208 m² of public reading hall on the original tiled floor.'],
+    ['Book stacks, south aisle west', 'Book stacks', 'Shelving in the side aisles, with study rooms in between.'],
+    ['Bicycle parking', 'Bicycle store', 'About 60 places, right next to the entrance.'],
+    ['Study room 1.09', 'Study rooms, level +1', 'Fourteen small study rooms on the aisle galleries.'],
+    ['Toilets and showers, women, level +2', 'Bathrooms, levels +2 and +3', 'Three toilets, three washbasins and two showers per room.'],
+    ['Student room 2.06', 'Student room, level +2', '4.20 × 3.15 m plus an alcove under the aisle roof, about 19 m².'],
+    ['Organ gallery, reading balcony', 'Reading balcony', 'The organ gallery, kept as a quiet balcony over the nave.'],
+    ['Student room 3.06', 'Student room, level +3', 'Ten more rooms on the floor above, 12.5 m² each.'],
+    ['Community kitchen and dining hall', 'Community kitchen', 'One 132 m² kitchen for all residents, under the ridge.'],
+    ['Roof terrace, about 14 m²', 'Roof terrace by the kitchen', 'A terrace cut into the south roof slope.'],
+    ['Roof terrace on the café building, about 67 m²', 'Large roof terrace', '67 m² on top of the café building.']
+  ];
+  function buildExplodeShots() {
+    var S = [], ty = 7 + (stackH / 2 - 7), d = 74 + stackH * 0.9, EC = V3(8, ty, 0), EP = V3(8 + 0.6 * d, ty + 0.25 * d, 0.75 * d), v = new T.Vector3();
+    // 1: animated explosion while the camera pulls back to see the whole stack
+    S.push({ title: 'Taking it apart', text: 'Every level of the Study Chapel lifts off as a separate layer.', dur: 5, mode: 'xray', fade: true,
+      ex: function (k) { return sm(Math.min(1, k / 0.85)); },
+      cam: function (k) { var e = sm(k); return { p: lerp3(V3(-42, 30, 46), EP, e), t: lerp3(V3(8, 7, 0), EC, e) }; } });
+    // 2…n: a drone circles each room in the exploded stack
+    var n = 0;
+    EX_PLAN.forEach(function (q) {
+      var r = roomBy('s7', q[0]); if (!r) { if (window.console) console.warn('explode show: room not found', q[0]); return; }
+      var i = n++, size = Math.max(r.x1 - r.x0, r.z1 - r.z0), R = Math.max(9, Math.min(26, size * 1.25 + 6)), a0 = 0.55 + i * 0.32;
+      S.push({ title: q[1], text: q[2], dur: 4.6, mode: 'xray', blend: 1.8,
+        ex: function () { return 1; },
+        cam: function (k) {
+          if (!this._c) { scene.updateMatrixWorld(true); r.anchor.getWorldPosition(v); this._c = v.clone().add(V3(0, 1.4, 0)); }
+          var c = this._c, a = a0 + 0.55 * k;
+          return { p: V3(c.x + Math.cos(a) * R, c.y + R * 0.62, c.z + Math.sin(a) * R), t: c };
+        } });
+    });
+    // last: back to the overview, and the building goes back together
+    S.push({ title: 'Back together', text: 'Library below, study rooms in the aisles, twenty homes above and a kitchen under the ridge.', dur: 5, mode: 'xray', blend: 2.0,
+      ex: function (k) { return 1 - sm(Math.max(0, (k - 0.25) / 0.75)); },
+      cam: function (k) { var e = sm(Math.max(0, (k - 0.25) / 0.75)); return { p: lerp3(EP, V3(-42, 30, 46), e), t: lerp3(EC, V3(8, 7, 0), e) }; } });
+    S.forEach(function (s) { s.tag = 'Exploded view'; });
+    return S;
+  }
+
   var tourEl = {};
   function tourCaption() {
     var s = tour.shots[tour.i];
@@ -4098,18 +4152,18 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
     if (s.ex) applyExplode(s.ex(k), false);
     if (tour.room) camLight.position.copy(camera.position);
     tourEl.bar.style.width = (100 * k) + '%';
-    if (tour.t >= s.dur && !tour.paused) tourGo(tour.i + 1);
+    if (tour.t >= s.dur && !tour.paused) { if (tour.kind === 's7explode' && tour.i === tour.shots.length - 1) { tourStop(); return; } tourGo(tour.i + 1); }
   }
   function tourStart(kind) {
     if (tour.on) return;
     if (compare.on) compareStop();
     tour.on = true; document.body.classList.add('touring');
-    setScenario(kind === 's7' || kind === 's7walk' ? 's7' : 's5'); setSelected(null); exEl.value = 0; applyExplode(0, false);
+    setScenario(kind === 's7' || kind === 's7walk' || kind === 's7explode' ? 's7' : 's5'); setSelected(null); exEl.value = 0; applyExplode(0, false);
     controls.enabled = false;
-    tour.kind = kind === 'rooms' ? 'rooms' : (kind === 'day' ? 'day' : (kind === 's7' ? 's7' : (kind === 's7walk' ? 's7walk' : 's5'))); tour.hideLabels = tour.kind !== 's5';
+    tour.kind = kind === 'rooms' ? 'rooms' : (kind === 'day' ? 'day' : (kind === 's7' ? 's7' : (kind === 's7walk' ? 's7walk' : (kind === 's7explode' ? 's7explode' : 's5')))); tour.hideLabels = tour.kind !== 's5';
     archRender(kind === 's7');
     if (tour.kind !== 's5' && tour.kind !== 's7') { setOpacity(1); setCut(false); camLight.visible = true; }
-    tour.shots = tour.kind === 'rooms' ? buildRoomShots() : (tour.kind === 'day' ? buildDayShots() : (tour.kind === 's7' ? buildShots7() : (tour.kind === 's7walk' ? buildS7Walk() : buildShots()))); tour.i = 0; tour.paused = false;
+    tour.shots = tour.kind === 'rooms' ? buildRoomShots() : (tour.kind === 'day' ? buildDayShots() : (tour.kind === 's7' ? buildShots7() : (tour.kind === 's7walk' ? buildS7Walk() : (tour.kind === 's7explode' ? buildExplodeShots() : buildShots())))); tour.i = 0; tour.paused = false;
     tourEl.dots.innerHTML = ''; tour.shots.forEach(function (s, j) { var d = document.createElement('i'); d.title = s.title; d.addEventListener('click', function () { tourGo(j); }); tourEl.dots.appendChild(d); });
     tourEl.root.hidden = false; tourEl.pp.textContent = 'Pause';
     camera.position.copy(V3(-42, 30, 46)); tour.look.copy(V3(8, 7, 0)); tour.st = { p0: camera.position.clone(), t0: tour.look.clone() };
@@ -4247,8 +4301,25 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
   };
   if (isEmbed && window.parent !== window) { try { window.parent.postMessage({ s7ready: true }, '*'); } catch (e) {} }
 
+  /* Flicker fix. Every material of the model is double-sided, so wherever a box rests on another one (furniture on a floor,
+     a sill on a wall) its hidden underside lies in exactly the same plane as the visible surface and the two fight for the
+     same pixels. Closed solids (boxes, cylinders, extruded walls) get their own copy of the material, drawn front faces only
+     while the camera is outside; inside a room or on a tour through the rooms they are double-sided again. */
+  var SOLID = { BoxGeometry: 1, BoxBufferGeometry: 1, CylinderGeometry: 1, CylinderBufferGeometry: 1, ExtrudeGeometry: 1, ExtrudeBufferGeometry: 1 };
+  var sideMats = [], sideMap = new Map(), sidesFront = null;
+  scene.traverse(function (o) {
+    if (!o.isMesh || !o.geometry || !SOLID[o.geometry.type]) return;
+    var m = o.material; if (!m || Array.isArray(m) || m.side !== T.DoubleSide) return;
+    if (xrayMats.indexOf(m) < 0 && (m.transparent || m.opacity < 1)) return;   // glass stays double-sided; the x-ray shell is included even while it is see-through
+    var c = sideMap.get(m);
+    if (!c) { c = m.clone(); sideMap.set(m, c); sideMats.push(c); if (xrayMats.indexOf(m) >= 0) xrayMats.push(c); }
+    o.material = c;
+  });
+  function setSides(front) { sidesFront = front; sideMats.forEach(function (m) { m.side = front ? T.FrontSide : T.DoubleSide; m.needsUpdate = true; }); }
+
   (function loop(now) {
     var dt = Math.min(0.1, ((now || 0) - lastTime) / 1000 || 0); lastTime = now || 0;
+    var wantFront = !walk && !(tour.on && tour.kind !== 's7explode'); if (wantFront !== sidesFront) setSides(wantFront);
     if (tour.on) tourFrame(dt); else if (walk) updateWalk(dt); else { navStep(dt); controls.update(); }
     morphStep(dt);
     updatePeople(dt);

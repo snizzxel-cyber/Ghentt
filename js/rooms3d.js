@@ -574,8 +574,12 @@
     box(g, W, 0.08, 0.12, 0, H - 0.08, -D / 2, K.dark); box(g, 3.3, 0.08, 0.12, 0, 2.5, -D / 2, K.dark);
     box(g, 4.8, 0.2, 1.3, 0, 3.3, -D / 2 - 0.65, K.concrete); cyl(g, 0.04, 3.3, -2.3, 0, -D / 2 - 1.2, K.dark, 8); cyl(g, 0.04, 3.3, 2.3, 0, -D / 2 - 1.2, K.dark, 8);
     box(g, 6, 0.04, 2, 0, -0.04, -D / 2 - 1.1, 0x9aa1a8);
-    var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 96; var x = cv.getContext('2d'); x.fillStyle = '#2b6f77'; x.fillRect(0, 0, 1024, 96); x.fillStyle = '#fff'; x.font = 'bold 50px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('LIBRARY · STUDENT HOUSING · ENTRANCE', 512, 50);
-    var sg = new T.Mesh(new T.PlaneGeometry(4.4, 0.42), new T.MeshBasicMaterial({ map: new T.CanvasTexture(cv), side: T.DoubleSide })); sg.position.set(0, 3.12, -D / 2 - 1.31); sg.rotation.y = Math.PI; g.add(sg);
+    // clean "STUDENT HOUSING" sign standing on the canopy
+    var cv = document.createElement('canvas'); cv.width = 2048; cv.height = 240; var x = cv.getContext('2d'), sp = 38;
+    x.fillStyle = '#13222a'; x.fillRect(0, 0, 2048, 240); x.fillStyle = '#ffffff'; x.font = '600 100px Helvetica, Arial, sans-serif'; x.textBaseline = 'middle';
+    var chars = 'STUDENT HOUSING'.split(''), ws = chars.map(function (ch) { return x.measureText(ch).width; }), tw = ws.reduce(function (p, q) { return p + q; }, 0) + sp * (chars.length - 1), px = (2048 - tw) / 2;
+    chars.forEach(function (ch, i) { x.fillText(ch, px, 128); px += ws[i] + sp; });
+    var sg = new T.Mesh(new T.PlaneGeometry(3.4, 0.4), new T.MeshBasicMaterial({ map: new T.CanvasTexture(cv), side: T.DoubleSide })); sg.position.set(0, 3.72, -D / 2 - 1.24); sg.rotation.y = Math.PI; g.add(sg);
     // bench and notice board beside the portal
     box(g, 1.4, 0.45, 0.4, -2.3, 0, -D / 2 + 0.3, K.oak); box(g, 1.2, 0.8, 0.03, -2.3, 1.3, -D / 2 + 0.06, 0xd8cbb5);
     // lift at the north end (right): glass shaft 1.5 × 1.5 m
@@ -637,7 +641,7 @@
   var sun, renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0, frames = 0;
   function mount(cv, wrap) {
     canvas = cv; wrapEl = wrap || cv.parentNode;
-    try { renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: false }); }
+    try { renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: false, logarithmicDepthBuffer: true }); }
     catch (e) { return false; }
     renderer.setPixelRatio(Math.min((window.devicePixelRatio || 1) * 1.5, 3));
     renderer.shadowMap.enabled = true; renderer.shadowMap.type = T.PCFSoftShadowMap;
