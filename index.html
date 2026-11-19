@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>S7 Library Church Ghent</title>
+<title>The Study Chapel</title>
 <meta name="claude:viewport-fit-sides" content="cover">
-<meta name="description" content="Scenario S7 for the Redemptorist Church in Ghent: a public library, café, study rooms, 20 student rooms and a community kitchen with roof terrace. 3D model, floor plans, room types, rental concept and figures for investors.">
+<meta name="description" content="The Study Chapel: scenario S7 for the Redemptorist Church in Ghent. A public library, café, study rooms, 20 student rooms and a community kitchen with roof terrace, with a 3D model, drawing sheets, room models and a feasibility check for investors.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Instrument+Sans:wght@400..700&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -393,6 +393,19 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 .fz-res span{font-size:.84rem;color:var(--muted)}
 .fz-res.bad{border-left-color:var(--brick)}
 .fz-res.good{border-left-color:var(--c-serv)}
+
+/* team */
+.team-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+@media (max-width:900px){.team-grid{grid-template-columns:1fr}}
+.partner-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+@media (max-width:900px){.partner-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.partner-grid{grid-template-columns:1fr}}
+.partner-grid div{background:var(--surface);padding:16px;display:grid;gap:6px;align-content:start}
+.partner-grid b{font:650 1rem/1.25 var(--f-display)}
+.partner-grid p{font-size:.88rem;color:var(--muted)}
+.share-card{margin-top:clamp(32px,4vw,48px);display:flex;gap:20px;align-items:center;flex-wrap:wrap;padding:18px;border:1px solid var(--line);background:var(--surface);max-width:620px}
+.share-card img{width:148px;height:148px;display:block;background:#fff}
+.share-card>div{display:grid;gap:6px;min-width:0;flex:1}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -400,12 +413,12 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 
 <header class="top">
   <div class="wrap">
-    <a class="brand" href="#top" aria-label="S7 Library Church, back to the top">
+    <a class="brand" href="#top" aria-label="The Study Chapel, back to the top">
       <svg class="mark" viewBox="0 0 26 26" aria-hidden="true"><path d="M3 24V11L13 3l10 8v13z" fill="none" stroke="currentColor" stroke-width="2"/><rect x="7" y="13" width="12" height="3" fill="var(--c-comm)"/><rect x="7" y="17" width="12" height="3" fill="var(--c-live)"/><rect x="7" y="21" width="12" height="3" fill="var(--c-pub)"/></svg>
-      <b>S7</b><span>Library Church Ghent</span>
+      <b>The Study Chapel</b><span>Ghent · S7</span>
     </a>
     <nav class="nav" aria-label="Sections">
-      <a href="#explore">Model</a><a href="#why">Why S7</a><a href="#concept">Concept</a><a href="#floors">Floors</a><a href="#rooms">Rooms</a><a href="#living">Living</a><a href="#renting">Renting</a><a href="#investors">Investors</a>
+      <a href="#explore">Model</a><a href="#why">Why it works</a><a href="#concept">Concept</a><a href="#floors">Floors</a><a href="#rooms">Rooms</a><a href="#investors">Investors</a><a href="#team">Team</a>
     </nav>
   </div>
 </header>
@@ -417,11 +430,11 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="hero-grid">
       <div>
         <p class="eyebrow">Redemptorist Church · Voskenslaan, Ghent · Scenario S7</p>
-        <h1 style="margin-top:18px">The Library Church</h1>
+        <h1 style="margin-top:18px">The Study Chapel</h1>
         <p class="lead">A church from 1930, empty since 2016, becomes a public place again. A library and a café on the ground floor, study rooms and 20 student rooms above, and a shared kitchen with a roof terrace at the top.</p>
         <div class="hero-cta">
           <button class="btn primary" type="button" data-tour="s7">▶ Watch the fly-through</button>
-          <a class="btn" href="#renting">Rooms and prices</a>
+          <a class="btn" href="#floors">Floor plans</a>
           <a class="btn" href="#investors">For investors</a>
         </div>
       </div>
@@ -471,7 +484,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="usp-stage" aria-hidden="true"><canvas id="uspCanvas"></canvas><div class="usp-key" id="uspKey"></div></div>
     <div class="usp-steps">
       <div class="usp-step usp-intro is-on" data-step="0">
-        <p class="eyebrow">Why S7</p>
+        <p class="eyebrow">Why it works</p>
         <h2 id="whyTitle">A library you can live above</h2>
         <p>A church from 1930 stays one open public space at street level, and a whole student house is folded into its upper floors. Scroll, and the building comes apart layer by layer.</p>
         <dl class="usp-stats">
@@ -550,127 +563,6 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
         <p class="small muted" style="margin-top:8px">Drag to turn the room, scroll or pinch to zoom, right-drag to pan.</p>
       </div>
       <article class="rt-card" id="rtCard" aria-live="polite"></article>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= LIVING ======================= -->
-<section id="living" class="band">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Living · 20 single rooms on two levels</p>
-      <h2>Live small, share big</h2>
-      <p class="lead">Your own room is compact and quiet. Everything that needs space is shared: the kitchen, the terraces, the bathrooms, the study rooms, and a whole library on the ground floor.</p>
-    </div>
-    <div class="live-grid">
-      <div class="card">
-        <h3>The room</h3>
-        <svg id="roomPlan" viewBox="-0.7 -3.2 5.6 7.5" role="img" aria-label="Plan of a 4.20 × 3.15 m student room with furniture and the alcove of the level +2 rooms" style="width:100%;height:auto;max-height:460px"></svg>
-        <div class="share" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-          <div><b>4.20 × 3.15 m</b><p>about 12.5 m² net; on level +2 plus an alcove of 2.20 × 2.95 m under the old aisle roof with its own roof window, about 19 m²</p></div>
-          <div><b>Furnished</b><p>bed 90 × 200, desk 120 × 60 with chair, wall shelf, wardrobe, rug</p></div>
-          <div><b>Your own door and key</b><p>every room door is an EI30 fire door, opened with a transponder</p></div>
-          <div><b>On a quiet corridor</b><p>five rooms on each side of a 1.80 m central corridor</p></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>What everyone shares</h3>
-        <div class="share">
-          <div><b><span class="sw" style="--c:var(--c-comm)"></span>Community kitchen</b><p>Level +4, about 130 m²: an 11 m kitchen run with hobs and sinks, two islands, five dining tables for 30 people, sofas.</p></div>
-          <div><b><span class="sw" style="--c:var(--c-comm)"></span>Two roof terraces</b><p>14 m² right by the kitchen, 67 m² on the café building with loungers, a long table and planters.</p></div>
-          <div><b><span class="sw" style="--c:var(--c-serv)"></span>Bathrooms</b><p>On living levels +2 and +3 in the café building: 6 toilets, 6 washbasins and 4 showers per level, for women and men.</p></div>
-          <div><b><span class="sw" style="--c:var(--c-learn)"></span>Study rooms</b><p>18 small bookable rooms, plus the reading hall and the reading balcony on the organ gallery.</p></div>
-          <div><b><span class="sw" style="--c:var(--c-serv)"></span>Bicycle store</b><p>About 60 places in the one-storey new building, right by the entrance.</p></div>
-          <div><b><span class="sw" style="--c:var(--c-cafe)"></span>A café in the house</b><p>The take-away café on the ground floor of the new building and a second counter in the choir.</p></div>
-        </div>
-        <div class="ratios">
-          <div><b class="num">2.5</b><span>residents per shower</span></div>
-          <div><b class="num">≈ 6.6 m²</b><span>kitchen and dining per resident</span></div>
-          <div><b class="num">≈ 4 m²</b><span>roof terrace per resident</span></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="live-grid" style="margin-top:clamp(28px,4vw,44px)">
-      <div class="card">
-        <h3>A day in S7</h3>
-        <p class="muted small">An imagined day that shows the routes through the building. Every stop opens in the 3D model.</p>
-        <ol class="day" id="dayList"></ol>
-      </div>
-      <div class="card">
-        <h3>Living together</h3>
-        <div class="prose small">
-          <p><b>A house manager on site.</b> One contact for moving in, keys, repairs and study-room bookings. The library below has its own operator.</p>
-          <p><b>Quiet, because people read downstairs.</b> The reading hall and the living floors sit on top of each other, so good impact-sound insulation and clear quiet hours (for example 10 pm to 7 am) are part of the concept.</p>
-          <p><b>Separate access.</b> Residents use a transponder for the glazed wing and their own level. Library visitors stay on the ground floor; the café storage on level +1 is staff only.</p>
-          <p><b>The kitchen as the meeting place.</b> With one kitchen, all 20 residents meet there. A kitchen rota and fixed food lockers keep order, and a shared dinner once a week holds the community together.</p>
-          <p><b>What we do not know yet.</b> Who runs the rooms (a university, a foundation or a private operator) is still open. The rules above are a proposal.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ======================= RENTING ======================= -->
-<section id="renting">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Renting · proposed prices</p>
-      <h2>What a room costs</h2>
-      <p class="lead">One price for everything: rent plus a fixed service charge for heating, electricity, water, Wi-Fi and the cleaning of the shared spaces. The larger rooms with an alcove on level +2 cost more than the rooms on level +3.</p>
-      <p><span class="tag warn">Assumption · not part of the study</span></p>
-    </div>
-    <div class="price-grid">
-      <article class="price">
-        <p class="eyebrow">10 rooms · level +3</p>
-        <div class="amt"><b>€515</b><span>a month, all inclusive</span></div>
-        <p class="split">€440 rent + €75 service charge</p>
-        <ul><li>Furnished room, 4.20 × 3.15 m, 12.5 m²</li><li>Heating, electricity, water, Wi-Fi</li><li>Kitchen, roof terraces, study rooms, bike place</li><li>Cleaning of the shared spaces</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
-      </article>
-      <article class="price feature">
-        <p class="eyebrow">10 rooms · level +2 with alcove</p>
-        <div class="amt"><b>€595</b><span>a month, all inclusive</span></div>
-        <p class="split">€520 rent + €75 service charge</p>
-        <ul><li>Furnished room with an alcove under the old aisle roof, about 19 m²</li><li>Own roof window over the alcove</li><li>Everything included in the level +3 rate</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
-      </article>
-      <article class="price">
-        <p class="eyebrow">For comparison · Ghent</p>
-        <div class="chart stacked" id="marketChart" aria-label="Monthly rents in Ghent compared"></div>
-        <p class="small muted">Average all-in rents. Sources: <a href="https://www.ugent.be/student/nl/studentenleven/huisvesting/kot/studenten" target="_blank" rel="noopener">UGent, academic year 2025–26</a>, <a href="https://stad.gent/nl/wonen-bouwen/huren-verhuren/studentenhuisvesting-cijfers" target="_blank" rel="noopener">City of Ghent, student housing in figures</a>.</p>
-      </article>
-    </div>
-
-    <h3 style="margin:clamp(36px,5vw,56px) 0 16px">The contract</h3>
-    <div class="contract">
-      <div><b>Student lease</b><p>Under the Flemish residential lease decree (studentenhuurovereenkomst). For enrolled students.</p></div>
-      <div><b>Term</b><p>Proposed: 12 months from September. For exchange students also one semester, if rooms are free.</p></div>
-      <div><b>Deposit</b><p>At most two months’ rent, without the service charge, on a blocked account in the tenant’s name. Up to €1,040 for a level +2 room.</p></div>
-      <div><b>Requirement</b><p>Enrolment at a higher-education institution in Ghent, shown when the lease is signed.</p></div>
-    </div>
-    <p class="small muted" style="margin-top:10px">Legal framework as described by <a href="https://www.vlaanderen.be/bouwen-wonen-en-energie/huren-en-verhuren/studentenhuisvesting-huren-of-verhuren/studentenhuurovereenkomsten" target="_blank" rel="noopener">vlaanderen.be: Studentenhuurovereenkomsten</a>. Check the current rules before signing.</p>
-
-    <h3 style="margin:clamp(36px,5vw,56px) 0 16px">How to get a room</h3>
-    <ol class="steps">
-      <li><h4>Register your interest</h4><p>A short form with your course, the move-in date you want and the level you prefer.</p></li>
-      <li><h4>See the house</h4><p>First virtually with the 3D tour on this page, then at a viewing on site.</p></li>
-      <li><h4>Choose a room</h4><p>Level +2 or +3, north or south side. You get an answer within two weeks.</p></li>
-      <li><h4>Lease and deposit</h4><p>Sign the student lease, pay the deposit into the blocked account, check the room inventory when you move in.</p></li>
-      <li><h4>Move in</h4><p>Collect your transponder and get an introduction to the kitchen, bathrooms, study rooms and bicycle store.</p></li>
-      <li><h4>Stay or leave</h4><p>Renew for the next academic year by Easter. Free rooms go to the waiting list.</p></li>
-    </ol>
-
-    <div class="card" style="margin-top:clamp(36px,5vw,56px)">
-      <h3>What does a year cost me?</h3>
-      <div class="calc">
-        <div style="display:grid;gap:16px">
-          <div class="field"><span id="tLbl">Rate</span><div class="seg" role="group" aria-labelledby="tLbl" id="tarifSeg"><button type="button" data-t="l2" aria-pressed="true">Level +2, alcove</button><button type="button" data-t="l3" aria-pressed="false">Level +3</button></div></div>
-          <div class="field"><label for="mon">Months</label><div class="row"><input id="mon" type="range" min="5" max="12" step="1" value="12"><output for="mon" id="monOut">12</output></div></div>
-        </div>
-        <div style="display:grid;gap:12px">
-          <div class="result"><span>Total for the lease</span><b id="yearOut">€7,140</b><span id="perOut">€595 a month, all inclusive</span></div>
-          <div class="rows" id="calcRows"></div>
-        </div>
-      </div>
     </div>
   </div>
 </section>
@@ -761,17 +653,32 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
       </div>
     </div>
 
-    <div class="inv-grid" style="margin-top:clamp(36px,5vw,56px)">
-      <div class="card">
-        <h3>How the study scores the scenarios</h3>
-        <p class="small muted">Weighted score from zoning (20%), financial viability (20%), heritage (15%), market demand (15%), energy and technical (10%), delivery risk (10%) and social value (10%), on a scale of 1 to 5. S5 (lighter bar) is a preliminary team estimate; S6, S6+ and S7 have not been scored yet.</p>
-        <div class="chart" id="scoreChart" aria-label="Scenario scores"></div>
-        <details class="tbl"><summary>Show as a table with every criterion</summary><div class="tblwrap"><table id="scoreTable"></table></div></details>
-      </div>
-      <div class="card">
-        <h3>How S7 came about</h3>
-        <ol class="timeline" id="evo"></ol>
-      </div>
+  </div>
+</section>
+
+<!-- ======================= TEAM ======================= -->
+<section id="team">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Who is part of the project</p>
+      <h2>The people and partners behind it</h2>
+      <p class="lead">The Study Chapel is a student proposal. It builds on a feasibility study for the church and needs three operators and the city to become real.</p>
+    </div>
+    <div class="team-grid">
+      <article class="card"><p class="eyebrow">Design team</p><h3>BIP 2026/27 · Affordable Housing</h3><p class="muted">Adaptive reuse of the Redemptorist Church, scenario S7: the concept, the 3D model, the drawing sheets A-101 to A-105 and this site.</p></article>
+      <article class="card"><p class="eyebrow">Feasibility study</p><h3>Miss Miyagi, 2026</h3><p class="muted">The study of the church that this proposal builds on: survey drawings, sections and the reuse framework.</p></article>
+      <article class="card"><p class="eyebrow">The building</p><h3>Redemptorist Church</h3><p class="muted">Voskenslaan 56–58, Ghent. Neo-Romanesque, by Carlos Malfait, 1927 to 1930. Empty since 2016.</p></article>
+    </div>
+    <h3 style="margin:clamp(32px,4vw,48px) 0 14px">Partners we are looking for</h3>
+    <div class="partner-grid">
+      <div><span class="sw" style="--c:var(--c-pub)"></span><b>Library operator</b><p>The city library, a university or a foundation, for the reading hall, stacks and study rooms.</p></div>
+      <div><span class="sw" style="--c:var(--c-cafe)"></span><b>Café tenant</b><p>A small operator for the take-away café and the counter in the choir.</p></div>
+      <div><span class="sw" style="--c:var(--c-live)"></span><b>Housing operator</b><p>A university, a foundation or a private operator for the 20 student rooms.</p></div>
+      <div><span class="sw" style="--c:var(--c-circ)"></span><b>City and heritage</b><p>The City of Ghent and the Flemish heritage authority, for zoning, permits and possible grants.</p></div>
+    </div>
+    <div class="share-card">
+      <img src="qr/study-chapel-qr.svg" width="148" height="148" alt="QR code that opens this site">
+      <div><p class="eyebrow">Share this site</p><h3>Scan to open The Study Chapel</h3><p class="muted mono small" style="word-break:break-all">https://claude.ai/artifact/Aj6bPrK9JchUrfZRbnGNSa</p></div>
     </div>
   </div>
 </section>

@@ -536,7 +536,7 @@
     ['23:00', 'live', 'Back in the room', 'The reading hall below has closed and the house goes quiet.', 'Student room 2.06']
   ];
   function initDay() {
-    var ol = $('#dayList');
+    var ol = $('#dayList'); if (!ol) return;
     DAY.forEach(function (d) {
       var li = document.createElement('li');
       li.innerHTML = '<time>' + d[0] + '</time><span class="dot" style="--c:' + cv(d[1]) + '"></span><div><h4>' + d[2] + '</h4><p>' + d[3] + '</p><button class="linkbtn go" type="button">See it in 3D</button></div>';
@@ -562,7 +562,7 @@
     }
   }
   function initCharts() {
-    barChart($('#marketChart'), [
+    if ($('#marketChart')) barChart($('#marketChart'), [
       { l: 'S7 level +3', v: 515, c: cv('live') },
       { l: 'S7 level +2 with alcove', v: 595, c: cv('live') },
       { l: 'Ghent, room avg. (UGent 25–26)', v: 542, ref: 1, c: 'var(--c-circ)', tip: 'Average all-in rent for a room' },
@@ -583,9 +583,9 @@
       { l: 'S6+ Library Church Plus', v: null },
       { l: 'S7 Library Church', v: null }
     ];
-    barChart($('#scoreChart'), SC.map(function (s, i) { return { l: s.l, v: s.v, na: 'open', c: i === 4 ? 'color-mix(in srgb, var(--c-pub) 50%, var(--surface))' : 'var(--c-pub)', tip: s.t || 'not scored yet' }; }), 5, [0, 1, 2, 3, 4, 5], function (v) { return nf2.format(v); }, 'points');
+    if ($('#scoreChart')) barChart($('#scoreChart'), SC.map(function (s, i) { return { l: s.l, v: s.v, na: 'open', c: i === 4 ? 'color-mix(in srgb, var(--c-pub) 50%, var(--surface))' : 'var(--c-pub)', tip: s.t || 'not scored yet' }; }), 5, [0, 1, 2, 3, 4, 5], function (v) { return nf2.format(v); }, 'points');
     var CR = ['Zoning and legal fit', 'Financial viability', 'Heritage fit', 'Market demand', 'Energy and technical', 'Delivery risk', 'Social and affordability'], WT = [20, 20, 15, 15, 10, 10, 10];
-    $('#scoreTable').innerHTML = '<thead><tr><th>Criterion</th><th class="r">Weight</th>' + SC.slice(0, 5).map(function (s) { return '<th class="r">' + s.l.split(' ')[0] + '</th>'; }).join('') + '</tr></thead><tbody>' +
+    if ($('#scoreTable')) $('#scoreTable').innerHTML = '<thead><tr><th>Criterion</th><th class="r">Weight</th>' + SC.slice(0, 5).map(function (s) { return '<th class="r">' + s.l.split(' ')[0] + '</th>'; }).join('') + '</tr></thead><tbody>' +
       CR.map(function (c, i) { return '<tr><td>' + c + '</td><td class="r">' + WT[i] + '%</td>' + SC.slice(0, 5).map(function (s) { return '<td class="r">' + s.rows[i] + '</td>'; }).join('') + '</tr>'; }).join('') +
       '<tr><th>Total</th><td></td>' + SC.slice(0, 5).map(function (s) { return '<td class="r"><b>' + nf2.format(s.v) + '</b></td>'; }).join('') + '</tr></tbody>';
   }
@@ -602,12 +602,13 @@
       ['S6+', 'Library Church Plus', 'Denser library, rooms and four two-bedroom flats.', 'own proposal'],
       ['S7', 'Library Church', 'S6+ redrawn from the photos: full access, organ gallery kept free, kitchen under the ridge, 20 rooms.', 'this site']
     ];
-    $('#evo').innerHTML = EVO.map(function (e) { return '<li' + (e[0] === 'S7' ? ' class="now"' : '') + '><b>' + e[0] + '</b><div><h4>' + e[1] + '</h4><p>' + e[2] + '</p></div><span class="tag">' + e[3] + '</span></li>'; }).join('');
+    if ($('#evo')) $('#evo').innerHTML = EVO.map(function (e) { return '<li' + (e[0] === 'S7' ? ' class="now"' : '') + '><b>' + e[0] + '</b><div><h4>' + e[1] + '</h4><p>' + e[2] + '</p></div><span class="tag">' + e[3] + '</span></li>'; }).join('');
   }
 
   /* ================= calculators ================= */
   function initCalc() {
     var tarif = 'l2', RENT = { l2: 520, l3: 440 };
+    if (!$('#mon')) { initFeasibility(); return; }
     function upd() {
       var mon = +$('#mon').value, rent = RENT[tarif], fee = 75, per = rent + fee;
       $('#monOut').textContent = mon + ' months';

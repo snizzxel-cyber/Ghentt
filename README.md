@@ -1,4 +1,4 @@
-# S7 Library Church Ghent
+# The Study Chapel (S7), Ghent
 
 A website for investors and anyone who wants to understand scenario S7 for the Redemptorist Church (Voskenslaan, Ghent).
 
@@ -6,12 +6,13 @@ A website for investors and anyone who wants to understand scenario S7 for the R
 
 | File | Purpose |
 |---|---|
-| `index.html` | The website: 3D model, "Why S7" band, section, floor plans and drawing sheets, room types, living concept, prices, investors |
+| `index.html` | The website: 3D model, "Why it works" band, section, drawing sheets, room types, investors with feasibility check, team |
 | `model.html` | The full 3D model (every scenario) with an embed mode for S7 |
 | `js/rooms-data.js` | The 74 rooms of S7 and the wall outlines of the church, read out of the model |
 | `js/rooms3d.js` | 13 room models to scale (dollhouse view) |
 | `js/site.js` | Floor plans, section, charts, calculators, model controls |
 | `js/usp3d.js` | The "Why S7" band: the building as coloured layers that come apart on scroll |
+| `qr/` | QR code that opens the site (PNG for print, SVG for the page) |
 | `plans/` | The five drawing sheets A-101 to A-105 (PNG, 220 dpi, shown 1:1 on the page) and the PDF |
 
 ## Viewing
