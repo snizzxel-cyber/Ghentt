@@ -424,6 +424,14 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 .nkey{list-style:none;margin:10px 0 0;padding:0;display:grid;gap:6px;font-size:.9rem}
 .nkey li{display:grid;grid-template-columns:12px minmax(0,1fr) auto;gap:8px;align-items:center}
 .nkey li span:last-child{font:500 .84rem var(--f-mono);font-variant-numeric:tabular-nums}
+
+.usps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+@media (max-width:1100px){.usps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:640px){.usps{grid-template-columns:1fr}}
+.usps article{background:var(--surface);padding:18px 16px;display:grid;gap:6px;align-content:start;border-top:3px solid var(--accent)}
+.usp-n{font:650 1.5rem/1 var(--f-display);letter-spacing:-.02em;color:var(--accent);font-variant-numeric:tabular-nums}
+.usps h4{font-size:1rem}
+.usps p{font-size:.88rem;color:var(--muted);line-height:1.45}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
 </style>
 </head>
@@ -590,12 +598,32 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 <section id="investors" class="band">
   <div class="wrap">
     <div class="sec-head">
-      <p class="eyebrow">For investors · building, use, income</p>
-      <h2>Three uses, three income streams</h2>
-      <p class="lead">S7 spreads the risk across a public library, a café and student housing. The library brings visitors and a reliable public tenant; the housing brings most of the rent.</p>
+      <p class="eyebrow">For investors · investment, income, building</p>
+      <h2>A sound investment in a landmark</h2>
+      <p class="lead">About €3 million turns an empty church into 20 student rooms, a café and a public library, with a gross yield of over 5%.</p>
     </div>
 
-    <div class="inv-grid">
+    <div class="card nums" id="numbers">
+      <div class="fz-head"><h3>Investment at a glance</h3><span class="tag">Team calculation · Literature adopted</span></div>
+      <div class="nums-tiles" id="numTiles"></div>
+      <p class="nums-line" id="numLine"></p>
+      <div class="usps" aria-label="Why invest">
+        <article><b class="usp-n" id="uspValue"></b><h4>A value cushion from day one</h4><p>Capitalised at a 5% yield, the rent is worth more than the whole investment.</p></article>
+        <article><b class="usp-n">€530</b><h4>One clear rent</h4><p>Per room and month for all 20 student rooms: €10,600 a month from housing alone.</p></article>
+        <article><b class="usp-n">2 + 1</b><h4>Two incomes and a public anchor</h4><p>Student rooms and a café pay the rent; a public library brings people in every day.</p></article>
+        <article><b class="usp-n">1930</b><h4>A landmark, not a block</h4><p>A neo-Romanesque church kept as one open space: reuse instead of demolition, in a place people know.</p></article>
+        <article><b class="usp-n">5 min</b><h4>From station and campus</h4><p>A short walk from Gent-Sint-Pieters station and the university campuses, where student demand is highest.</p></article>
+      </div>
+      <div class="nums-bars">
+        <div><h4>Where the money goes</h4><div class="nbar" id="barCost"></div><ul class="nkey" id="keyCost"></ul></div>
+        <div><h4>Where the income comes from</h4><div class="nbar" id="barInc"></div><ul class="nkey" id="keyInc"></ul></div>
+        <div><h4>How it is financed</h4><div class="nbar" id="barFin"></div><ul class="nkey" id="keyFin"></ul></div>
+      </div>
+      <details class="tbl"><summary>Show the full calculation</summary><div class="tblwrap"><table id="numTable"></table></div></details>
+      <p class="small muted" id="numNote"></p>
+    </div>
+
+    <div class="inv-grid" style="margin-top:clamp(36px,5vw,56px)">
       <div class="card">
         <h3>The building today</h3>
         <div class="tblwrap"><table>
@@ -623,19 +651,6 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
       <div class="card"><h3><span class="sw" style="--c:var(--c-pub)"></span>Library</h3><dl><dt>Space</dt><dd>Reading hall, stacks, 2 ground-floor study rooms, reading balcony, lockers</dd><dt>Operator</dt><dd>public or a foundation, for example the city library or a university</dd><dt>Contract</dt><dd>long-term lease, open in the daytime and evening</dd></dl></div>
       <div class="card"><h3><span class="sw" style="--c:var(--c-cafe)"></span>Café</h3><dl><dt>Space</dt><dd>Take-away café 58 m² with storage, café in the choir about 45 m², storage hall on level +1</dd><dt>Operator</dt><dd>a small commercial tenant</dd><dt>Contract</dt><dd>commercial lease, opening hours matched to the library</dd></dl></div>
       <div class="card"><h3><span class="sw" style="--c:var(--c-live)"></span>Student housing</h3><dl><dt>Space</dt><dd>20 rooms, 14 study rooms on level +1, kitchen, terraces, bathrooms</dd><dt>Operator</dt><dd>a university, a foundation or a private operator</dd><dt>Contract</dt><dd>student leases, on-site management</dd></dl></div>
-    </div>
-
-    <div class="card nums" id="numbers" style="margin-top:clamp(36px,5vw,56px)">
-      <div class="fz-head"><h3>The numbers</h3><span class="tag">Team calculation · investment analysis after Kofner</span></div>
-      <div class="nums-tiles" id="numTiles"></div>
-      <p class="nums-line" id="numLine"></p>
-      <div class="nums-bars">
-        <div><h4>Where the money goes</h4><div class="nbar" id="barCost"></div><ul class="nkey" id="keyCost"></ul></div>
-        <div><h4>Where the income comes from</h4><div class="nbar" id="barInc"></div><ul class="nkey" id="keyInc"></ul></div>
-        <div><h4>How it is financed</h4><div class="nbar" id="barFin"></div><ul class="nkey" id="keyFin"></ul></div>
-      </div>
-      <details class="tbl"><summary>Show the full calculation</summary><div class="tblwrap"><table id="numTable"></table></div></details>
-      <p class="small muted" id="numNote"></p>
     </div>
 
   </div>

@@ -618,7 +618,7 @@
     initFeasibility();
   }
 
-  /* ================= the numbers: the team's sample calculation ("Literature adopted") =================
+  /* ================= the numbers: the team's calculation, sheet "Literature adopted" (the other sheets are examples only) =================
      Same inputs and formulas as the spreadsheet: area × production cost per m², 30 % equity and 70 % loan at 4 %,
      income from 20 rooms at €530 and the café at €18/m² on 150 m², value at a 5 % yield = yearly income × 20. */
   function initFeasibility() {
@@ -637,6 +637,7 @@
       '<div><b>' + K(income) + '</b><span>rental income a year (€' + nf.format(income / 12) + ' a month)</span></div>' +
       '<div><b>' + (Math.round(yieldGross * 1000) / 10).toLocaleString('en-GB') + '%</b><span>gross yield on the investment</span></div>' +
       '<div><b>' + M(value) + '</b><span>value of the rent at a 5% yield</span></div>';
+    if ($('#uspValue')) $('#uspValue').textContent = '+' + K(value - total);
     $('#numLine').textContent = 'At a 5% yield the yearly rent is worth ' + M(value) + ', about ' + K(value - total) + ' more than the investment of ' + M(total) + '.';
     // three bars, grouped so that only a few numbers are shown
     function bar(el, key, parts) {
@@ -671,7 +672,7 @@
       '<tr><td>Café</td><td>150 m² × €18 × 12</td><td class="r">' + eur(cafe) + '</td></tr>' +
       '<tr><th>Rental income a year</th><td>library not included</td><td class="r"><b>' + eur(income) + '</b></td></tr>' +
       '<tr><th>Value at a 5% yield</th><td>income × 20</td><td class="r"><b>' + eur(value) + '</b></td></tr></tbody>';
-    $('#numNote').textContent = 'Source: the team’s sample calculation, an investment analysis for privately funded housing after Kofner. Land costs are set to zero, and the library is not counted as income.';
+    $('#numNote').textContent = 'Source: the team’s own calculation (sheet “Literature adopted”). Land costs are set to zero, and the library is not counted as income.';
   }
 
   /* ================= start ================= */
