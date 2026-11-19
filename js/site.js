@@ -618,96 +618,60 @@
     initFeasibility();
   }
 
-  /* ================= feasibility: front-door and back-door approach =================
-     Quantities from the 3D model: existing church renovated 1,454 m² (ground floor 764 + level +1 690),
-     new floors in the nave 670 m² (level +2 incl. alcoves 314, level +3 207, level +4 149),
-     new buildings 491 m² (café building 4 × 74, bicycle store 74, glazed wing 5 × 24). */
+  /* ================= the numbers: the team's sample calculation ("Literature adopted") =================
+     Same inputs and formulas as the spreadsheet: area × production cost per m², 30 % equity and 70 % loan at 4 %,
+     income from 20 rooms at €530 and the café at €18/m² on 150 m², value at a 5 % yield = yearly income × 20. */
   function initFeasibility() {
-    var form = $('#fzForm'); if (!form) return;
-    var Q = { ren: 1454, ins: 670, nw: 491 };
-    function v(id) { var x = parseFloat(($('#fz_' + id) || {}).value); return isFinite(x) ? x : 0; }
-    function row(l, val, cls) { return '<div' + (cls ? ' class="' + cls + '"' : '') + '><span>' + l + '</span><span>' + val + '</span></div>'; }
-    function pct(x) { return (Math.round(x * 1000) / 10).toLocaleString('en-GB') + '%'; }
-    function calc() {
-      var occ = v('occ') / 100, opex = v('opex') / 100;
-      // income
-      var gpiH = (10 * v('r2') + 10 * v('r3')) * 12;
-      var egiH = gpiH * occ, other = v('libA') * v('libR') + v('cafe') * 12 + v('ev') * 250;
-      var egi = egiH + other, opx = egi * opex, noi = egi - opx;
-      var avgRent = gpiH / 12 / 20;
-      // cost
-      var works = Q.ren * v('cRen') + Q.ins * v('cIns') + Q.nw * v('cNew') + v('cRoof') + v('cFit');
-      var fees = works * v('fees') / 100, cont = (works + fees) * v('cont') / 100;
-      var costEx = works + fees + cont, tdc = costEx + v('buy'), net = Math.max(0, tdc - v('grant'));
-      // finance
-      var r = v('rate') / 100, n = Math.max(1, v('term')), mc = r > 0 ? r / (1 - Math.pow(1 + r, -n)) : 1 / n;
-      var ltv = v('ltv') / 100, dscr = Math.max(1, v('dscr')), eqr = v('eqr') / 100;
-      // front door: cost -> loan and equity -> required NOI -> required rent
-      var loanF = net * ltv, dsF = loanF * mc, eqF = net - loanF, eqCF = eqF * eqr;
-      var reqNOI = Math.max(dsF + eqCF, dsF * dscr), reqEGI = reqNOI / Math.max(0.01, 1 - opex);
-      var reqH = Math.max(0, reqEGI - other), reqGPIh = reqH / Math.max(0.01, occ), reqAvg = reqGPIh / 12 / 20;
-      // back door: market rent -> NOI -> supportable loan and equity -> supportable cost
-      var maxDS = noi / dscr, maxLoan = maxDS / mc, cfE = noi - maxDS, maxEq = eqr > 0 ? cfE / eqr : 0, maxCost = maxLoan + maxEq;
-      var costNetEx = Math.max(0, costEx - v('grant')), resid = maxCost - costNetEx;
-
-      $('#fzTiles').innerHTML =
-        '<div><b>' + eur(noi) + '</b><span>Net operating income a year</span></div>' +
-        '<div><b>' + eur(net) + '</b><span>Total cost after grants</span></div>' +
-        '<div><b>' + (net ? pct(noi / net) : '–') + '</b><span>Yield on cost</span></div>' +
-        '<div><b>' + eur(avgRent) + '</b><span>Average room rent planned</span></div>';
-      $('#fzFront').innerHTML =
-        row('Total cost after grants', eur(net)) +
-        row('Loan, ' + Math.round(ltv * 100) + '%', eur(loanF)) +
-        row('Debt service a year', eur(dsF)) +
-        row('Equity', eur(eqF)) +
-        row('Return on equity, ' + pct(eqr), eur(eqCF)) +
-        row('Required net operating income', eur(reqNOI), 'sum') +
-        row('+ operating costs', eur(reqEGI - reqNOI)) +
-        row('− library, café and events', eur(other)) +
-        row('Required room income a year', eur(reqGPIh), 'sum');
-      var mult = avgRent ? reqAvg / avgRent : 0;
-      $('#fzFrontRes').className = 'fz-res ' + (mult <= 1 ? 'good' : 'bad');
-      $('#fzFrontRes').innerHTML = '<span>Average rent per room needed</span><b>' + eur(reqAvg) + ' a month</b><span>' +
-        (mult <= 1 ? 'The planned average of ' + eur(avgRent) + ' covers it.' : (Math.round(mult * 10) / 10).toLocaleString('en-GB') + ' × the planned average of ' + eur(avgRent) + ', before the €75 service charge.') + '</span>';
-      $('#fzBack').innerHTML =
-        row('Net operating income', eur(noi)) +
-        row('Debt service it carries (÷ ' + dscr.toLocaleString('en-GB') + ' DSCR)', eur(maxDS)) +
-        row('Loan that supports', eur(maxLoan)) +
-        row('Cash flow left for equity', eur(cfE)) +
-        row('Equity at ' + pct(eqr), eur(maxEq)) +
-        row('Cost the rents can carry', eur(maxCost), 'sum') +
-        row('Estimated cost after grants, without purchase', eur(costNetEx)) ;
-      $('#fzBackRes').className = 'fz-res ' + (resid >= 0 ? 'good' : 'bad');
-      $('#fzBackRes').innerHTML = resid >= 0
-        ? '<span>The rents could also pay for the building, up to</span><b>' + eur(resid) + '</b><span>as purchase price.</span>'
-        : '<span>Funding gap</span><b>' + eur(-resid) + '</b><span>to be covered by grants, a public partner, a lower cost or more income.</span>';
-      var mx = Math.max(costNetEx, maxCost, 1);
-      barChart($('#fzChart'), [
-        { l: 'Estimated cost after grants', v: costNetEx, c: 'var(--brick)', tip: 'Works, fees and contingency, minus grants' },
-        { l: 'Cost the rents can carry', v: Math.max(0, maxCost), c: 'var(--c-pub)', tip: 'Back-door approach' }
-      ], mx * 1.05, null, eur);
-      $('#fzDetail').innerHTML = '<thead><tr><th>Item</th><th class="r">Amount</th></tr></thead><tbody>' +
-        '<tr><td>Renovation, ' + nf.format(Q.ren) + ' m² × ' + eur(v('cRen')) + '</td><td class="r">' + eur(Q.ren * v('cRen')) + '</td></tr>' +
-        '<tr><td>New floors in the nave, ' + nf.format(Q.ins) + ' m² × ' + eur(v('cIns')) + '</td><td class="r">' + eur(Q.ins * v('cIns')) + '</td></tr>' +
-        '<tr><td>New buildings and glazed wing, ' + nf.format(Q.nw) + ' m² × ' + eur(v('cNew')) + '</td><td class="r">' + eur(Q.nw * v('cNew')) + '</td></tr>' +
-        '<tr><td>Roof and facade, including asbestos</td><td class="r">' + eur(v('cRoof')) + '</td></tr>' +
-        '<tr><td>Fit-out and furniture</td><td class="r">' + eur(v('cFit')) + '</td></tr>' +
-        '<tr><th>Works</th><td class="r"><b>' + eur(works) + '</b></td></tr>' +
-        '<tr><td>Fees, permits and surveys, ' + v('fees') + '%</td><td class="r">' + eur(fees) + '</td></tr>' +
-        '<tr><td>Contingency, ' + v('cont') + '%</td><td class="r">' + eur(cont) + '</td></tr>' +
-        '<tr><td>Purchase price</td><td class="r">' + eur(v('buy')) + '</td></tr>' +
-        '<tr><td>Grants and public contribution</td><td class="r">−' + eur(v('grant')) + '</td></tr>' +
-        '<tr><th>Total cost after grants</th><td class="r"><b>' + eur(net) + '</b></td></tr>' +
-        '<tr><td>Room rent, 10 × ' + eur(v('r2')) + ' + 10 × ' + eur(v('r3')) + ', × 12, ' + Math.round(occ * 100) + '% let</td><td class="r">' + eur(egiH) + '</td></tr>' +
-        '<tr><td>Library, ' + nf.format(v('libA')) + ' m² × ' + eur(v('libR')) + '</td><td class="r">' + eur(v('libA') * v('libR')) + '</td></tr>' +
-        '<tr><td>Café, 12 × ' + eur(v('cafe')) + '</td><td class="r">' + eur(v('cafe') * 12) + '</td></tr>' +
-        '<tr><td>Events, ' + v('ev') + ' × €250</td><td class="r">' + eur(v('ev') * 250) + '</td></tr>' +
-        '<tr><td>Operating costs, ' + v('opex') + '%</td><td class="r">−' + eur(opx) + '</td></tr>' +
-        '<tr><th>Net operating income</th><td class="r"><b>' + eur(noi) + '</b></td></tr></tbody>';
-      $('#fzNote').textContent = 'Mortgage constant ' + pct(mc) + ' a year (' + pct(r) + ' over ' + n + ' years). The service charge of €75 per room is treated as a pass-through for utilities and is not counted as income. The front-door result uses whichever is higher: debt service plus the return on equity, or debt service × DSCR.';
+    if (!$('#numbers')) return;
+    var C = [   // [item, units, m² per unit, €/m² or lump sum]
+      ['Student rooms', 20, 12, 2800], ['New building', 4, 70, 3136.829375 * 1.29], ['Study rooms', 16, 6.4, 2800],
+      ['Bicycle store', 1, 66.6, 2300], ['Top floor (kitchen)', 1, 132, 4046], ['Terraces', 1, 67 + 13, 2000], ['Lift', 0, 0, 100000]
+    ];
+    var cost = C.map(function (c) { return c[1] ? c[1] * c[2] * c[3] : c[3]; }), total = cost.reduce(function (p, q) { return p + q; }, 0);
+    var EQ = 0.30, RATE = 0.04, equity = total * EQ, loan = total * (1 - EQ);
+    var rooms = 20 * 530 * 12, cafe = 150 * 18 * 12, income = rooms + cafe, value = income * 20, yieldGross = income / total;
+    function M(v) { return '€' + (Math.round(v / 10000) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' M'; }
+    function K(v) { return '€' + nf.format(Math.round(v / 1000)) + 'k'; }
+    $('#numTiles').innerHTML =
+      '<div><b>' + M(total) + '</b><span>total investment</span></div>' +
+      '<div><b>' + K(income) + '</b><span>rental income a year (€' + nf.format(income / 12) + ' a month)</span></div>' +
+      '<div><b>' + (Math.round(yieldGross * 1000) / 10).toLocaleString('en-GB') + '%</b><span>gross yield on the investment</span></div>' +
+      '<div><b>' + M(value) + '</b><span>value of the rent at a 5% yield</span></div>';
+    $('#numLine').textContent = 'At a 5% yield the yearly rent is worth ' + M(value) + ', about ' + K(value - total) + ' more than the investment of ' + M(total) + '.';
+    // three bars, grouped so that only a few numbers are shown
+    function bar(el, key, parts) {
+      var sum = parts.reduce(function (p, q) { return p + q[1]; }, 0);
+      $(el).innerHTML = parts.map(function (q) { return '<i style="--c:' + q[2] + ';flex:' + q[1] + '" title="' + q[0] + '"></i>'; }).join('');
+      $(key).innerHTML = parts.map(function (q) { return '<li><span class="sw" style="--c:' + q[2] + '"></span><span>' + q[0] + '</span><span>' + q[3] + '</span></li>'; }).join('');
     }
-    form.addEventListener('input', calc);
-    calc();
+    bar('#barCost', '#keyCost', [
+      ['New building', cost[1], 'var(--c-cafe)', M(cost[1])],
+      ['Student and study rooms', cost[0] + cost[2], 'var(--c-live)', M(cost[0] + cost[2])],
+      ['Kitchen and terraces', cost[4] + cost[5], 'var(--c-comm)', M(cost[4] + cost[5])],
+      ['Bicycle store and lift', cost[3] + cost[6], 'var(--c-circ)', M(cost[3] + cost[6])]
+    ]);
+    bar('#barInc', '#keyInc', [
+      ['20 student rooms at €530', rooms, 'var(--c-live)', Math.round(rooms / income * 100) + '%'],
+      ['Café, 150 m² at €18/m²', cafe, 'var(--c-cafe)', Math.round(cafe / income * 100) + '%']
+    ]);
+    bar('#barFin', '#keyFin', [
+      ['Equity', equity, 'var(--accent)', Math.round(EQ * 100) + '%'],
+      ['Loan at ' + Math.round(RATE * 100) + '%', loan, 'var(--line-2)', Math.round((1 - EQ) * 100) + '%']
+    ]);
+    // the full calculation, folded away
+    var rows = C.map(function (c, i) {
+      var what = c[1] ? (c[1] > 1 ? c[1] + ' × ' + nf1.format(c[2]) + ' m² = ' : '') + nf1.format(c[1] * c[2]) + ' m² × €' + nf.format(Math.round(c[3])) + '/m²' : 'lump sum';
+      return '<tr><td>' + c[0] + '</td><td>' + what + '</td><td class="r">' + eur(cost[i]) + '</td></tr>';
+    }).join('');
+    $('#numTable').innerHTML = '<thead><tr><th>Item</th><th>Calculation</th><th class="r">Amount</th></tr></thead><tbody>' + rows +
+      '<tr><th>Total investment</th><td>land not included</td><td class="r"><b>' + eur(total) + '</b></td></tr>' +
+      '<tr><td>Equity</td><td>30%</td><td class="r">' + eur(equity) + '</td></tr>' +
+      '<tr><td>Loan</td><td>70%, at 4% a year</td><td class="r">' + eur(loan) + '</td></tr>' +
+      '<tr><td>Student rooms</td><td>20 × €530 × 12</td><td class="r">' + eur(rooms) + '</td></tr>' +
+      '<tr><td>Café</td><td>150 m² × €18 × 12</td><td class="r">' + eur(cafe) + '</td></tr>' +
+      '<tr><th>Rental income a year</th><td>library not included</td><td class="r"><b>' + eur(income) + '</b></td></tr>' +
+      '<tr><th>Value at a 5% yield</th><td>income × 20</td><td class="r"><b>' + eur(value) + '</b></td></tr></tbody>';
+    $('#numNote').textContent = 'Source: the team’s sample calculation, an investment analysis for privately funded housing after Kofner. Land costs are set to zero, and the library is not counted as income.';
   }
 
   /* ================= start ================= */
