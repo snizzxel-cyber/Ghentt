@@ -211,7 +211,7 @@ svg.dim .lyr.hot{opacity:1}
 .linkbtn{font:600 .84rem/1 var(--f-body);color:var(--accent);background:none;border:0;padding:4px 0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
 /* pricing */
-.price-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;align-items:stretch}
+.price-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;align-items:stretch}
 @media (max-width:1160px){.price-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media (max-width:640px){.price-grid{grid-template-columns:1fr}}
 .price .amt b{font-size:2.4rem!important}
@@ -617,18 +617,12 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
     <div class="sec-head">
       <p class="eyebrow">Renting · proposed prices</p>
       <h2>What a room costs</h2>
-      <p class="lead">One price for everything: rent plus a fixed service charge for heating, electricity, water, Wi-Fi and the cleaning of the shared spaces. The larger rooms with an alcove cost more, and one room in five is let at a social rate.</p>
+      <p class="lead">One price for everything: rent plus a fixed service charge for heating, electricity, water, Wi-Fi and the cleaning of the shared spaces. The larger rooms with an alcove on level +2 cost more than the rooms on level +3.</p>
       <p><span class="tag warn">Assumption · not part of the study</span></p>
     </div>
     <div class="price-grid">
       <article class="price">
-        <p class="eyebrow">4 rooms · social rate</p>
-        <div class="amt"><b>€395</b><span>a month, all inclusive</span></div>
-        <p class="split">€320 rent + €75 service charge</p>
-        <ul><li>A level +3 room, 12.5 m², with the same services</li><li>Allocated by income, together with the universities’ student services</li><li>Reviewed every year</li></ul>
-      </article>
-      <article class="price">
-        <p class="eyebrow">6 rooms · level +3</p>
+        <p class="eyebrow">10 rooms · level +3</p>
         <div class="amt"><b>€515</b><span>a month, all inclusive</span></div>
         <p class="split">€440 rent + €75 service charge</p>
         <ul><li>Furnished room, 4.20 × 3.15 m, 12.5 m²</li><li>Heating, electricity, water, Wi-Fi</li><li>Kitchen, roof terraces, study rooms, bike place</li><li>Cleaning of the shared spaces</li><li class="no">Private bathroom (bathrooms are shared)</li></ul>
@@ -657,7 +651,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
 
     <h3 style="margin:clamp(36px,5vw,56px) 0 16px">How to get a room</h3>
     <ol class="steps">
-      <li><h4>Register your interest</h4><p>A short form with your course, the move-in date you want and your rate. For the social rate, add proof of income.</p></li>
+      <li><h4>Register your interest</h4><p>A short form with your course, the move-in date you want and the level you prefer.</p></li>
       <li><h4>See the house</h4><p>First virtually with the 3D tour on this page, then at a viewing on site.</p></li>
       <li><h4>Choose a room</h4><p>Level +2 or +3, north or south side. You get an answer within two weeks.</p></li>
       <li><h4>Lease and deposit</h4><p>Sign the student lease, pay the deposit into the blocked account, check the room inventory when you move in.</p></li>
@@ -669,7 +663,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
       <h3>What does a year cost me?</h3>
       <div class="calc">
         <div style="display:grid;gap:16px">
-          <div class="field"><span id="tLbl">Rate</span><div class="seg" role="group" aria-labelledby="tLbl" id="tarifSeg"><button type="button" data-t="l2" aria-pressed="true">Level +2, alcove</button><button type="button" data-t="l3" aria-pressed="false">Level +3</button><button type="button" data-t="soc" aria-pressed="false">Social rate</button></div></div>
+          <div class="field"><span id="tLbl">Rate</span><div class="seg" role="group" aria-labelledby="tLbl" id="tarifSeg"><button type="button" data-t="l2" aria-pressed="true">Level +2, alcove</button><button type="button" data-t="l3" aria-pressed="false">Level +3</button></div></div>
           <div class="field"><label for="mon">Months</label><div class="row"><input id="mon" type="range" min="5" max="12" step="1" value="12"><output for="mon" id="monOut">12</output></div></div>
         </div>
         <div style="display:grid;gap:12px">
@@ -728,8 +722,6 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
         <fieldset><legend>Rents</legend>
           <label class="fz-row" for="fz_r2"><span>Rent, level +2 room with alcove</span><span class="fz-inp"><input id="fz_r2" type="number" value="520" step="5" min="0" inputmode="decimal"><em>€/month</em></span></label>
           <label class="fz-row" for="fz_r3"><span>Rent, level +3 room</span><span class="fz-inp"><input id="fz_r3" type="number" value="440" step="5" min="0" inputmode="decimal"><em>€/month</em></span></label>
-          <label class="fz-row" for="fz_nsoc"><span>Level +3 rooms at the social rate</span><span class="fz-inp"><input id="fz_nsoc" type="number" value="4" step="1" min="0" inputmode="decimal"><em>rooms</em></span></label>
-          <label class="fz-row" for="fz_rsoc"><span>Social rent</span><span class="fz-inp"><input id="fz_rsoc" type="number" value="320" step="5" min="0" inputmode="decimal"><em>€/month</em></span></label>
           <label class="fz-row" for="fz_occ"><span>Room occupancy</span><span class="fz-inp"><input id="fz_occ" type="number" value="95" step="1" min="0" inputmode="decimal"><em>%</em></span></label>
           <label class="fz-row" for="fz_libA"><span>Library, rented area</span><span class="fz-inp"><input id="fz_libA" type="number" value="600" step="10" min="0" inputmode="decimal"><em>m²</em></span></label>
           <label class="fz-row" for="fz_libR"><span>Library rent</span><span class="fz-inp"><input id="fz_libR" type="number" value="45" step="1" min="0" inputmode="decimal"><em>€/m²·year</em></span></label>

@@ -563,7 +563,6 @@
   }
   function initCharts() {
     barChart($('#marketChart'), [
-      { l: 'S7 social rate', v: 395, c: cv('live') },
       { l: 'S7 level +3', v: 515, c: cv('live') },
       { l: 'S7 level +2 with alcove', v: 595, c: cv('live') },
       { l: 'Ghent, room avg. (UGent 25–26)', v: 542, ref: 1, c: 'var(--c-circ)', tip: 'Average all-in rent for a room' },
@@ -608,7 +607,7 @@
 
   /* ================= calculators ================= */
   function initCalc() {
-    var tarif = 'l2', RENT = { l2: 520, l3: 440, soc: 320 };
+    var tarif = 'l2', RENT = { l2: 520, l3: 440 };
     function upd() {
       var mon = +$('#mon').value, rent = RENT[tarif], fee = 75, per = rent + fee;
       $('#monOut').textContent = mon + ' months';
@@ -633,9 +632,9 @@
     function row(l, val, cls) { return '<div' + (cls ? ' class="' + cls + '"' : '') + '><span>' + l + '</span><span>' + val + '</span></div>'; }
     function pct(x) { return (Math.round(x * 1000) / 10).toLocaleString('en-GB') + '%'; }
     function calc() {
-      var nsoc = Math.max(0, Math.min(10, Math.round(v('nsoc')))), occ = v('occ') / 100, opex = v('opex') / 100;
+      var occ = v('occ') / 100, opex = v('opex') / 100;
       // income
-      var gpiH = (10 * v('r2') + (10 - nsoc) * v('r3') + nsoc * v('rsoc')) * 12;
+      var gpiH = (10 * v('r2') + 10 * v('r3')) * 12;
       var egiH = gpiH * occ, other = v('libA') * v('libR') + v('cafe') * 12 + v('ev') * 250;
       var egi = egiH + other, opx = egi * opex, noi = egi - opx;
       var avgRent = gpiH / 12 / 20;
@@ -702,7 +701,7 @@
         '<tr><td>Purchase price</td><td class="r">' + eur(v('buy')) + '</td></tr>' +
         '<tr><td>Grants and public contribution</td><td class="r">−' + eur(v('grant')) + '</td></tr>' +
         '<tr><th>Total cost after grants</th><td class="r"><b>' + eur(net) + '</b></td></tr>' +
-        '<tr><td>Room rent, 10 × ' + eur(v('r2')) + ' + ' + (10 - nsoc) + ' × ' + eur(v('r3')) + ' + ' + nsoc + ' × ' + eur(v('rsoc')) + ', × 12, ' + Math.round(occ * 100) + '% let</td><td class="r">' + eur(egiH) + '</td></tr>' +
+        '<tr><td>Room rent, 10 × ' + eur(v('r2')) + ' + 10 × ' + eur(v('r3')) + ', × 12, ' + Math.round(occ * 100) + '% let</td><td class="r">' + eur(egiH) + '</td></tr>' +
         '<tr><td>Library, ' + nf.format(v('libA')) + ' m² × ' + eur(v('libR')) + '</td><td class="r">' + eur(v('libA') * v('libR')) + '</td></tr>' +
         '<tr><td>Café, 12 × ' + eur(v('cafe')) + '</td><td class="r">' + eur(v('cafe') * 12) + '</td></tr>' +
         '<tr><td>Events, ' + v('ev') + ' × €250</td><td class="r">' + eur(v('ev') * 250) + '</td></tr>' +
