@@ -447,7 +447,7 @@
       p: 'Ghent is a cycling city. The one-storey building at the south-west corner holds about 60 bicycles.',
       f: ['Five rows of stands', 'About 60 places', 'Right next to the main entrance', 'Whether this is enough for residents and visitors still has to be calculated'], who: 'For residents and library visitors.' }
   ];
-  var rtCur = null, rtMounted = false;
+  var rtCur = null, rtMounted = false, advance = function () {};
   function selectType(key) {
     var t = null; RT.forEach(function (x) { if (x.key === key) t = x; }); if (!t) return;
     rtCur = t;
@@ -475,6 +475,7 @@
       rtMounted = !!(window.S7Rooms && window.S7Rooms.mount(canvas, viewer));
       if (!rtMounted) { var f = document.createElement('div'); f.className = 'vfail'; f.textContent = '3D view not available: this browser has no WebGL, or three.js did not load.'; viewer.appendChild(f); return; }
       if (rtCur) window.S7Rooms.show(rtCur.key);
+      window.S7Rooms.tour(function () { advance(); });   // endless loop: each room turns once, then the next one follows
     }
     if (window.IntersectionObserver) { var io = new IntersectionObserver(function (en) { if (en[0].isIntersecting) { mountNow(); io.disconnect(); } }, { rootMargin: '400px' }); io.observe(viewer); } else mountNow();
     $('#rtReset').addEventListener('click', function () { if (rtMounted) window.S7Rooms.resetView(); });
@@ -536,12 +537,13 @@
       $('#rtFsInfo').textContent = t.dims[0] + ' ' + t.dims[1] + ' · ' + t.area[0] + ' ' + t.area[1] + ' · ' + t.count + ' — ' + t.p;
     }
     function fsGo(step) {
-      selectType(RT[(idxOf() + step + RT.length) % RT.length].key); fsCaption();
-      if (fsPlay) window.S7Rooms.tour(function () { fsGo(1); });
+      selectType(RT[(idxOf() + step + RT.length) % RT.length].key); if (fsOn) fsCaption();
+      if (fsPlay) window.S7Rooms.tour(advance);
     }
+    advance = function () { fsGo(1); };
     function fsSetPlay(on) {
       fsPlay = on; var b = $('#rtFsPlay'); b.textContent = on ? '❚❚' : '▶ Play'; b.setAttribute('aria-label', on ? 'Pause' : 'Play');
-      window.S7Rooms.setRotate(on); window.S7Rooms.tour(on ? function () { fsGo(1); } : null);
+      window.S7Rooms.setRotate(on); window.S7Rooms.tour(on ? advance : null);
     }
     function fsTick() { if (!fsOn) return; $('#rtFsBar').style.width = (window.S7Rooms.tourProgress() * 100).toFixed(1) + '%'; fsRaf = requestAnimationFrame(fsTick); }
     function fsEnter() {
@@ -550,14 +552,14 @@
       var rq = viewer.requestFullscreen || viewer.webkitRequestFullscreen;
       if (rq) { try { var pr = rq.call(viewer); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
       fsCaption(); fsSetPlay(true);
-      setTimeout(function () { window.S7Rooms.reframe(); }, 250);   // frame the room again for the new screen shape
+      setTimeout(function () { var sd = $('.rt-fs-side'), wide = window.innerWidth > 760; window.S7Rooms.setFs(true, wide && sd ? Math.round((sd.offsetWidth + 24) / 2) : 0, !wide && sd ? -Math.round((sd.offsetHeight - 40) / 2) : 0); window.S7Rooms.reframe(); }, 250);   // frame the room again for the new screen shape
       fsTick(); $('#rtFsPlay').focus();
     }
     function fsLeave() {
       if (!fsOn) return;
       fsOn = false; cancelAnimationFrame(fsRaf);
       viewer.classList.remove('is-fs'); document.body.classList.remove('rt-fs-on'); $('#rtFs').hidden = true;
-      window.S7Rooms.tour(null); window.S7Rooms.setRotate(true); $('#rtRot').textContent = 'Rotate: on';
+      fsPlay = true; $('#rtFsPlay').textContent = '❚❚'; window.S7Rooms.setFs(false); window.S7Rooms.setRotate(true); window.S7Rooms.tour(advance); $('#rtRot').textContent = 'Rotate: on';
       var fe = document.fullscreenElement || document.webkitFullscreenElement;
       if (fe) { var ex = document.exitFullscreen || document.webkitExitFullscreen; try { var pr = ex.call(document); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
       setTimeout(function () { window.S7Rooms.reframe(); }, 250);

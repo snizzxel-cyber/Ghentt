@@ -639,7 +639,7 @@
 
   /* ================= viewer ================= */
   var sun, renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0, frames = 0;
-  var tourCb = null, tourAcc = 0, lastAz = null, lastT = 0, TURN = 24;   // show mode: one full turn in TURN seconds, then tourCb()
+  var tourCb = null, tourAcc = 0, lastAz = null, lastT = 0, TURN = 24, fsMode = false, shiftPx = 0, shiftPy = 0;   // show mode: one full turn in TURN seconds, then tourCb()
   function mount(cv, wrap) {
     canvas = cv; wrapEl = wrap || cv.parentNode;
     try { renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: false, logarithmicDepthBuffer: true }); }
@@ -678,7 +678,9 @@
   function resize() {
     if (!renderer) return;
     var w = Math.max(1, wrapEl.clientWidth), h = Math.max(1, wrapEl.clientHeight);
-    renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); dirty = true;
+    renderer.setSize(w, h, false); camera.aspect = w / h;
+    if (shiftPx || shiftPy) camera.setViewOffset(w, h, shiftPx, shiftPy, w, h); else camera.clearViewOffset();   // moves the room to the left of the text column
+    camera.updateProjectionMatrix(); dirty = true;
   }
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   function loop(now) {
@@ -734,7 +736,7 @@
     var dir = new T.Vector3(v[0], v[1], v[2]).normalize();
     var size = Math.max(W, D * 0.9, H * 1.4), fov = camera.fov * Math.PI / 180;
     var aspectK = Math.max(1, 1.25 / camera.aspect);
-    var dist = (size * (info.fit || 0.72)) / Math.tan(fov / 2) * aspectK * (tourCb ? 1.2 : 1);   // a little further out in the full screen show, clear of the caption
+    var dist = (size * (info.fit || 0.72)) / Math.tan(fov / 2) * aspectK * (fsMode ? 1.2 : 1);   // a little further out in the full screen show, clear of the caption
     var tg = info.target ? new T.Vector3(info.target[0], info.target[1], info.target[2]) : new T.Vector3(0, Math.min(H * 0.32, 1.4), 0);
     camera.position.copy(tg).add(dir.multiplyScalar(dist));
     if (controls) { controls.target.copy(tg); controls.minDistance = Math.max(1.5, size * 0.25); controls.maxDistance = dist * 2.2; controls.update(); }
@@ -754,5 +756,6 @@
   api.tourProgress = function () { return tourCb ? Math.min(1, tourAcc / (2 * Math.PI)) : 0; };
   api.setRotate = function (on) { autoRot = !!on; lastInteract = on ? 0 : performance.now() + 1e9; dirty = true; };
   api.reframe = function () { resize(); if (curKey) show(curKey); };
+  api.setFs = function (on, sx, sy) { fsMode = !!on; shiftPx = on ? (sx || 0) : 0; shiftPy = on ? (sy || 0) : 0; };
   api.toggleRotate = function () { autoRot = !autoRot; lastInteract = autoRot ? 0 : performance.now() + 1e9; dirty = true; return autoRot; };
 })();
