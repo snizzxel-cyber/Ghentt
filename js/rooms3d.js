@@ -639,6 +639,7 @@
 
   /* ================= viewer ================= */
   var sun, renderer, scene, camera, controls, root, canvas, wrapEl, visible = true, dirty = true, autoRot = true, curKey = null, lastInteract = 0, frames = 0;
+  var tourCb = null, tourAcc = 0, lastAz = null, lastT = 0, TURN = 24;   // show mode: one full turn in TURN seconds, then tourCb()
   function mount(cv, wrap) {
     canvas = cv; wrapEl = wrap || cv.parentNode;
     try { renderer = new T.WebGLRenderer({ canvas: cv, antialias: true, alpha: false, preserveDrawingBuffer: false, logarithmicDepthBuffer: true }); }
@@ -688,11 +689,23 @@
     if (nowVis && !visible) dirty = true;
     visible = nowVis;
     if (!visible) return;
+    var dt = lastT ? Math.min(0.2, (now - lastT) / 1000) : 0; lastT = now;
     if (controls) {
-      if (!autoRot && !reduced && performance.now() - lastInteract > 12000) autoRot = true;
-      controls.autoRotate = autoRot && !reduced; controls.autoRotateSpeed = 0.55;
+      if (!autoRot && !reduced && performance.now() - lastInteract > (tourCb ? 4000 : 12000)) autoRot = true;
+      controls.autoRotate = autoRot && !reduced;
+      // in show mode the speed follows the frame time, so a turn takes TURN seconds on any screen
+      controls.autoRotateSpeed = tourCb ? dt * 3600 / TURN : 0.55;
       controls.update();
       if (controls.autoRotate) dirty = true;
+      if (tourCb && autoRot) {
+        if (reduced) tourAcc += dt * 2 * Math.PI / TURN;
+        else {
+          var az = controls.getAzimuthalAngle();
+          if (lastAz !== null) { var d = az - lastAz; if (d > Math.PI) d -= 2 * Math.PI; if (d < -Math.PI) d += 2 * Math.PI; tourAcc += Math.abs(d); }
+          lastAz = az;
+        }
+        if (tourAcc >= 2 * Math.PI - 0.01) { tourAcc = 0; lastAz = null; tourCb(); }
+      } else lastAz = null;
     }
     if (!dirty) return;
     dirty = false;
@@ -721,7 +734,7 @@
     var dir = new T.Vector3(v[0], v[1], v[2]).normalize();
     var size = Math.max(W, D * 0.9, H * 1.4), fov = camera.fov * Math.PI / 180;
     var aspectK = Math.max(1, 1.25 / camera.aspect);
-    var dist = (size * (info.fit || 0.72)) / Math.tan(fov / 2) * aspectK;
+    var dist = (size * (info.fit || 0.72)) / Math.tan(fov / 2) * aspectK * (tourCb ? 1.2 : 1);   // a little further out in the full screen show, clear of the caption
     var tg = info.target ? new T.Vector3(info.target[0], info.target[1], info.target[2]) : new T.Vector3(0, Math.min(H * 0.32, 1.4), 0);
     camera.position.copy(tg).add(dir.multiplyScalar(dist));
     if (controls) { controls.target.copy(tg); controls.minDistance = Math.max(1.5, size * 0.25); controls.maxDistance = dist * 2.2; controls.update(); }
@@ -731,11 +744,15 @@
     sc.left = -S; sc.right = S; sc.top = S; sc.bottom = -S; sc.near = 1; sc.far = S * 6; sc.updateProjectionMatrix();
     var sd = new T.Vector3(8, 16, 10).normalize().multiplyScalar(S * 2.4); sun.position.copy(tg).add(sd); sun.target.position.copy(tg); sun.target.updateMatrixWorld();
     sun.shadow.bias = -0.0004 * Math.max(1, S / 8);
-    autoRot = true; lastInteract = 0; dirty = true;
+    autoRot = true; lastInteract = 0; dirty = true; tourAcc = 0; lastAz = null;
     return info;
   }
   api.mount = mount; api.show = show; api.keys = Object.keys(B);
   api.stats = function () { return { visible: visible, frames: frames, autoRot: autoRot, dirty: dirty }; };
   api.resetView = function () { if (curKey) show(curKey); };
+  api.tour = function (cb) { tourCb = cb || null; tourAcc = 0; lastAz = null; autoRot = true; lastInteract = 0; dirty = true; };
+  api.tourProgress = function () { return tourCb ? Math.min(1, tourAcc / (2 * Math.PI)) : 0; };
+  api.setRotate = function (on) { autoRot = !!on; lastInteract = on ? 0 : performance.now() + 1e9; dirty = true; };
+  api.reframe = function () { resize(); if (curKey) show(curKey); };
   api.toggleRotate = function () { autoRot = !autoRot; lastInteract = autoRot ? 0 : performance.now() + 1e9; dirty = true; return autoRot; };
 })();

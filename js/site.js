@@ -480,6 +480,58 @@
     $('#rtReset').addEventListener('click', function () { if (rtMounted) window.S7Rooms.resetView(); });
     $('#rtRot').addEventListener('click', function () { if (!rtMounted) return; var on = window.S7Rooms.toggleRotate(); this.textContent = 'Rotate: ' + (on ? 'on' : 'off'); });
     selectType('student');
+
+    // full screen show: each room turns once, then the next room follows, round and round
+    var fsOn = false, fsPlay = true, fsRaf = 0;
+    function idxOf() { for (var i = 0; i < RT.length; i++) if (RT[i] === rtCur) return i; return 0; }
+    function fsCaption() {
+      var t = rtCur, i = idxOf();
+      $('#rtFsN').textContent = 'Room type ' + (i + 1) + ' of ' + RT.length + ' · ' + t.lv;
+      $('#rtFsName').textContent = t.name;
+      $('#rtFsInfo').textContent = t.dims[0] + ' ' + t.dims[1] + ' · ' + t.area[0] + ' ' + t.area[1] + ' · ' + t.count + ' — ' + t.p;
+    }
+    function fsGo(step) {
+      selectType(RT[(idxOf() + step + RT.length) % RT.length].key); fsCaption();
+      if (fsPlay) window.S7Rooms.tour(function () { fsGo(1); });
+    }
+    function fsSetPlay(on) {
+      fsPlay = on; var b = $('#rtFsPlay'); b.textContent = on ? '❚❚' : '▶ Play'; b.setAttribute('aria-label', on ? 'Pause' : 'Play');
+      window.S7Rooms.setRotate(on); window.S7Rooms.tour(on ? function () { fsGo(1); } : null);
+    }
+    function fsTick() { if (!fsOn) return; $('#rtFsBar').style.width = (window.S7Rooms.tourProgress() * 100).toFixed(1) + '%'; fsRaf = requestAnimationFrame(fsTick); }
+    function fsEnter() {
+      if (!rtMounted || fsOn) return;
+      fsOn = true; viewer.classList.add('is-fs'); document.body.classList.add('rt-fs-on'); $('#rtFs').hidden = false;
+      var rq = viewer.requestFullscreen || viewer.webkitRequestFullscreen;
+      if (rq) { try { var pr = rq.call(viewer); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
+      fsCaption(); fsSetPlay(true);
+      setTimeout(function () { window.S7Rooms.reframe(); }, 250);   // frame the room again for the new screen shape
+      fsTick(); $('#rtFsPlay').focus();
+    }
+    function fsLeave() {
+      if (!fsOn) return;
+      fsOn = false; cancelAnimationFrame(fsRaf);
+      viewer.classList.remove('is-fs'); document.body.classList.remove('rt-fs-on'); $('#rtFs').hidden = true;
+      window.S7Rooms.tour(null); window.S7Rooms.setRotate(true); $('#rtRot').textContent = 'Rotate: on';
+      var fe = document.fullscreenElement || document.webkitFullscreenElement;
+      if (fe) { var ex = document.exitFullscreen || document.webkitExitFullscreen; try { var pr = ex.call(document); if (pr && pr.catch) pr.catch(function () {}); } catch (e) {} }
+      setTimeout(function () { window.S7Rooms.reframe(); }, 250);
+      $('#rtFull').focus();
+    }
+    function onFsChange() { if (fsOn && !(document.fullscreenElement || document.webkitFullscreenElement)) fsLeave(); }
+    document.addEventListener('fullscreenchange', onFsChange); document.addEventListener('webkitfullscreenchange', onFsChange);
+    $('#rtFull').addEventListener('click', fsEnter);
+    $('#rtFsExit').addEventListener('click', fsLeave);
+    $('#rtFsPrev').addEventListener('click', function () { fsGo(-1); });
+    $('#rtFsNext').addEventListener('click', function () { fsGo(1); });
+    $('#rtFsPlay').addEventListener('click', function () { fsSetPlay(!fsPlay); });
+    document.addEventListener('keydown', function (e) {
+      if (!fsOn) return;
+      if (e.key === 'Escape') fsLeave();
+      else if (e.key === 'ArrowRight') fsGo(1);
+      else if (e.key === 'ArrowLeft') fsGo(-1);
+      else if (e.key === ' ' && e.target.tagName !== 'BUTTON') { e.preventDefault(); fsSetPlay(!fsPlay); }
+    });
   }
 
   /* ================= student room plan (1:50) ================= */
