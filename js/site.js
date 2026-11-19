@@ -484,8 +484,53 @@
     // full screen show: each room turns once, then the next room follows, round and round
     var fsOn = false, fsPlay = true, fsRaf = 0;
     function idxOf() { for (var i = 0; i < RT.length; i++) if (RT[i] === rtCur) return i; return 0; }
+    // small axonometric of the whole building (top right): every room grey, the rooms of this type in colour
+    var LOC = {
+      student: function (r) { return r.type === 'student'; }, studysm: function (r) { return r.type === 'studysm'; },
+      commkitchen: function (r) { return r.type === 'commkitchen'; }, terraceS: function (r) { return /about 14/.test(r.name); },
+      terraceL: function (r) { return /café building/.test(r.name); }, library: function (r) { return r.type === 'library2' || r.type === 'stacks'; },
+      cafeIn: function (r) { return /^Café inside/.test(r.name); }, takeaway: function (r) { return r.type === 'takeaway'; },
+      bath: function (r) { return /^wc3/.test(r.type); }, lobby: function (r) { return r.type === 'lobby'; },
+      locker: function (r) { return r.type === 'locker'; }, bikes: function (r) { return r.type === 'bikes'; }
+    };
+    var SHELL = [   // outline of the church and the new building, for orientation only
+      [-0.5, 27.3, -8.8, 8.8, 0, 5.6], [-0.5, 27.3, -4.4, 4.4, 5.6, 12.3], [-10.4, -0.5, -11.7, -4.8, 0, 12.3],
+      [-10.4, -0.5, -4.8, 4.8, 0, 4.6], [-10.4, -0.5, 4.8, 11.7, 0, 2.7]
+    ];
+    var LN = Math.hypot(1, 0.35), LC = Math.cos(0.56), LS = Math.sin(0.56);   // seen from the south-west, a little from above
+    function lp(x, y, z) { return [(x + 0.35 * z) / LN, -y * LC + ((z - 0.35 * x) / LN) * LS]; }
+    function near(b) { return ((b[2] + b[3]) / 2 - 0.35 * (b[0] + b[1]) / 2) / LN; }
+    function faces(b) {
+      var x0 = b[0], x1 = b[1], z0 = b[2], z1 = b[3], y0 = b[4], y1 = b[5];
+      return [[[x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0]], [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], [[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]]];
+    }
+    function poly(f, attr) { return '<polygon points="' + f.map(function (q) { var s = lp(q[0], q[1], q[2]); return s[0].toFixed(2) + ',' + s[1].toFixed(2); }).join(' ') + '" ' + attr + '/>'; }
+    (function () {   // fit the drawing once
+      var mn = [1e9, 1e9], mx = [-1e9, -1e9];
+      SHELL.concat([[0.3, 22.3, -3, 3, 12.3, 16]]).forEach(function (b) { [b[0], b[1]].forEach(function (x) { [b[2], b[3]].forEach(function (z) { [b[4], b[5]].forEach(function (y) { var s = lp(x, y, z); mn = [Math.min(mn[0], s[0]), Math.min(mn[1], s[1])]; mx = [Math.max(mx[0], s[0]), Math.max(mx[1], s[1])]; }); }); }); });
+      $('#rtFsLoc').setAttribute('viewBox', (mn[0] - 1).toFixed(1) + ' ' + (mn[1] - 1).toFixed(1) + ' ' + (mx[0] - mn[0] + 2).toFixed(1) + ' ' + (mx[1] - mn[1] + 2).toFixed(1));
+    })();
+    function locDraw(t) {
+      var R = (window.S7_ROOMS || []).map(function (r) { return { r: r, b: [r.x0, r.x1, r.z0, r.z1, r.y0, r.y1] }; });
+      var hit = LOC[t.key] || function () { return false; }, col = cv(t.cat);
+      var byDepth = function (a, b) { return near(a.b) - near(b.b) || a.b[4] - b.b[4]; };
+      var sv = SHELL.map(function (b) { return faces(b).map(function (f) { return poly(f, 'fill="none" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"'); }).join(''); }).join('');
+      // the nave roof as a gable over the living floors
+      var g = [lp(-0.5, 12.3, -4.4), lp(-0.5, 16, 0), lp(-0.5, 12.3, 4.4), lp(27.3, 12.3, 4.4), lp(27.3, 16, 0), lp(-0.5, 16, 0)];
+      sv += '<polyline points="' + g.map(function (s) { return s[0].toFixed(2) + ',' + s[1].toFixed(2); }).join(' ') + '" fill="none" stroke="rgba(255,255,255,.3)" stroke-width=".8" stroke-dasharray="2 2" vector-effect="non-scaling-stroke"/>';
+      R.filter(function (o) { return !hit(o.r); }).sort(byDepth).forEach(function (o) {
+        sv += faces(o.b).map(function (f) { return poly(f, 'fill="rgba(255,255,255,.07)" stroke="rgba(255,255,255,.32)" stroke-width=".6" vector-effect="non-scaling-stroke"'); }).join('');
+      });
+      var hl = R.filter(function (o) { return hit(o.r); }).sort(byDepth);
+      sv += '<g class="hl">' + hl.map(function (o) {
+        return faces(o.b).map(function (f, i) { return poly(f, 'style="fill:' + col + '" fill-opacity="' + [0.7, 0.85, 1][i] + '" stroke="#fff" stroke-width=".9" vector-effect="non-scaling-stroke"'); }).join('');
+      }).join('') + '</g>';
+      $('#rtFsLoc').innerHTML = sv;
+      $('#rtFsLocCap').textContent = t.lv + (hl.length > 1 ? ' · ' + hl.length + ' marked' : '');
+    }
     function fsCaption() {
       var t = rtCur, i = idxOf();
+      locDraw(t);
       $('#rtFsN').textContent = 'Room type ' + (i + 1) + ' of ' + RT.length + ' · ' + t.lv;
       $('#rtFsName').textContent = t.name;
       $('#rtFsInfo').textContent = t.dims[0] + ' ' + t.dims[1] + ' · ' + t.area[0] + ' ' + t.area[1] + ' · ' + t.count + ' — ' + t.p;

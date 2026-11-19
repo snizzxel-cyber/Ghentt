@@ -195,6 +195,14 @@ svg.dim .lyr.hot{opacity:1}
 .rt-fs-ctl button:hover{background:rgba(17,27,32,.95)}
 .rt-fs-ctl button:focus-visible{outline:2px solid #4fb3ad;outline-offset:-2px}
 body.rt-fs-on{overflow:hidden}
+.rt-fs-loc{position:absolute;right:clamp(12px,3vw,32px);top:clamp(12px,3vw,32px);width:min(340px,38vw);background:rgba(17,27,32,.84);padding:12px 14px;display:grid;gap:6px;color:#cfd8dc}
+.rt-fs-loc svg{display:block;width:100%;height:auto;overflow:visible}
+.rt-fs-loc-h{font:500 .7rem/1 var(--f-mono);letter-spacing:.08em;text-transform:uppercase;color:#9fd3cf}
+.rt-fs-loc-c{font-size:.82rem;line-height:1.3}
+.rt-fs-loc .hl{animation:locPulse 1.8s ease-in-out infinite}
+@keyframes locPulse{50%{opacity:.6}}
+@media (prefers-reduced-motion:reduce){.rt-fs-loc .hl{animation:none}}
+@media (max-width:760px){.rt-fs-loc{top:auto;bottom:74px;width:min(230px,58vw);padding:8px 10px}.rt-fs-loc-h{display:none}}
 .viewer .vfail{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
 .rt-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
 .rt-card .dims{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--rb);overflow:hidden}
@@ -606,6 +614,7 @@ footer{background:var(--surface);border-top:1px solid var(--line);padding-block:
           <div class="vbar"><span class="vtag" id="rtTag"></span><span style="display:flex;gap:6px"><button class="btn small" type="button" id="rtRot">Rotate: on</button><button class="btn small" type="button" id="rtReset">Reset view</button><button class="btn small primary" type="button" id="rtFull">⛶ Full screen show</button></span></div>
           <div class="rt-fs" id="rtFs" hidden>
             <div class="rt-fs-cap"><span class="rt-fs-n" id="rtFsN"></span><h3 id="rtFsName"></h3><p id="rtFsInfo"></p><div class="rt-fs-bar"><i id="rtFsBar"></i></div></div>
+            <div class="rt-fs-loc" aria-hidden="true"><span class="rt-fs-loc-h">Where it is in the building</span><svg id="rtFsLoc" xmlns="http://www.w3.org/2000/svg"></svg><span class="rt-fs-loc-c" id="rtFsLocCap"></span></div>
             <div class="rt-fs-ctl"><button type="button" id="rtFsPrev" aria-label="Previous room">◀</button><button type="button" id="rtFsPlay" aria-label="Pause">❚❚</button><button type="button" id="rtFsNext" aria-label="Next room">▶</button><button type="button" id="rtFsExit">✕ Close</button></div>
           </div>
         </div>
