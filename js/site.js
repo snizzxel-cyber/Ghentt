@@ -619,60 +619,96 @@
   }
 
   /* ================= the numbers: the team's calculation, sheet "Literature adopted" (the other sheets are examples only) =================
-     Same inputs and formulas as the spreadsheet: area × production cost per m², 30 % equity and 70 % loan at 4 %,
-     income from 20 rooms at €530 and the café at €18/m² on 150 m², value at a 5 % yield = yearly income × 20. */
+     Default values are the spreadsheet's: area × production cost per m², 30 % equity and 70 % loan at 4 %,
+     income from 20 rooms at €530 and the café at €18/m² on 150 m², value at a 5 % yield = yearly income ÷ 5 %.
+     The sliders change these inputs; every number below them follows. */
   function initFeasibility() {
     if (!$('#numbers')) return;
     var C = [   // [item, units, m² per unit, €/m² or lump sum]
       ['Student rooms', 20, 12, 2800], ['New building', 4, 70, 3136.829375 * 1.29], ['Study rooms', 16, 6.4, 2800],
       ['Bicycle store', 1, 66.6, 2300], ['Top floor (kitchen)', 1, 132, 4046], ['Terraces', 1, 67 + 13, 2000], ['Lift', 0, 0, 100000]
     ];
-    var cost = C.map(function (c) { return c[1] ? c[1] * c[2] * c[3] : c[3]; }), total = cost.reduce(function (p, q) { return p + q; }, 0);
-    var EQ = 0.30, RATE = 0.04, equity = total * EQ, loan = total * (1 - EQ);
-    var rooms = 20 * 530 * 12, cafe = 150 * 18 * 12, income = rooms + cafe, value = income * 20, yieldGross = income / total;
-    function M(v) { return '€' + (Math.round(v / 10000) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' M'; }
-    function K(v) { return '€' + nf.format(Math.round(v / 1000)) + 'k'; }
-    $('#numTiles').innerHTML =
-      '<div><b>' + M(total) + '</b><span>total investment</span></div>' +
-      '<div><b>' + K(income) + '</b><span>rental income a year (€' + nf.format(income / 12) + ' a month)</span></div>' +
-      '<div><b>' + (Math.round(yieldGross * 1000) / 10).toLocaleString('en-GB') + '%</b><span>gross yield on the investment</span></div>' +
-      '<div><b>' + M(value) + '</b><span>value of the rent at a 5% yield</span></div>';
-    if ($('#uspValue')) $('#uspValue').textContent = '+' + K(value - total);
-    $('#numLine').textContent = 'At a 5% yield the yearly rent is worth ' + M(value) + ', about ' + K(value - total) + ' more than the investment of ' + M(total) + '.';
-    // three bars, grouped so that only a few numbers are shown
+    var ROOMS = 20, CAFE_M2 = 150;
+    var IN = {
+      rent: ['#inRent', function (v) { return '€' + v; }],
+      cafe: ['#inCafe', function (v) { return '€' + v; }],
+      vac: ['#inVac', function (v) { return v + '%'; }],
+      rate: ['#inRate', function (v) { return pct(v, 1); }],
+      eq: ['#inEq', function (v) { return v + '%'; }],
+      cost: ['#inCost', function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '±') + Math.abs(v) + '%'; }],
+      cap: ['#inCap', function (v) { return pct(v, 2); }]
+    };
+    function pct(v, d) { return (Math.round(v * 100) / 100).toLocaleString('en-GB', { maximumFractionDigits: d }) + '%'; }
+    function M(v) { return (v < 0 ? '−' : '') + '€' + (Math.round(Math.abs(v) / 10000) / 100).toLocaleString('en-GB', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' M'; }
+    function K(v) { return Math.abs(v) >= 1e6 ? M(v) : (v < 0 ? '−' : '') + '€' + nf.format(Math.round(Math.abs(v) / 1000)) + 'k'; }
+    function P(v) { return (Math.round(v * 1000) / 10).toLocaleString('en-GB').replace('-', '−') + '%'; }
     function bar(el, key, parts) {
-      var sum = parts.reduce(function (p, q) { return p + q[1]; }, 0);
-      $(el).innerHTML = parts.map(function (q) { return '<i style="--c:' + q[2] + ';flex:' + q[1] + '" title="' + q[0] + '"></i>'; }).join('');
+      $(el).innerHTML = parts.map(function (q) { return '<i style="--c:' + q[2] + ';flex:' + Math.max(q[1], 0) + '" title="' + q[0] + '"></i>'; }).join('');
       $(key).innerHTML = parts.map(function (q) { return '<li><span class="sw" style="--c:' + q[2] + '"></span><span>' + q[0] + '</span><span>' + q[3] + '</span></li>'; }).join('');
     }
-    bar('#barCost', '#keyCost', [
-      ['New building', cost[1], 'var(--c-cafe)', M(cost[1])],
-      ['Student and study rooms', cost[0] + cost[2], 'var(--c-live)', M(cost[0] + cost[2])],
-      ['Kitchen and terraces', cost[4] + cost[5], 'var(--c-comm)', M(cost[4] + cost[5])],
-      ['Bicycle store and lift', cost[3] + cost[6], 'var(--c-circ)', M(cost[3] + cost[6])]
-    ]);
-    bar('#barInc', '#keyInc', [
-      ['20 student rooms at €530', rooms, 'var(--c-live)', Math.round(rooms / income * 100) + '%'],
-      ['Café, 150 m² at €18/m²', cafe, 'var(--c-cafe)', Math.round(cafe / income * 100) + '%']
-    ]);
-    bar('#barFin', '#keyFin', [
-      ['Equity', equity, 'var(--accent)', Math.round(EQ * 100) + '%'],
-      ['Loan at ' + Math.round(RATE * 100) + '%', loan, 'var(--line-2)', Math.round((1 - EQ) * 100) + '%']
-    ]);
-    // the full calculation, folded away
-    var rows = C.map(function (c, i) {
-      var what = c[1] ? (c[1] > 1 ? c[1] + ' × ' + nf1.format(c[2]) + ' m² = ' : '') + nf1.format(c[1] * c[2]) + ' m² × €' + nf.format(Math.round(c[3])) + '/m²' : 'lump sum';
-      return '<tr><td>' + c[0] + '</td><td>' + what + '</td><td class="r">' + eur(cost[i]) + '</td></tr>';
-    }).join('');
-    $('#numTable').innerHTML = '<thead><tr><th>Item</th><th>Calculation</th><th class="r">Amount</th></tr></thead><tbody>' + rows +
-      '<tr><th>Total investment</th><td>land not included</td><td class="r"><b>' + eur(total) + '</b></td></tr>' +
-      '<tr><td>Equity</td><td>30%</td><td class="r">' + eur(equity) + '</td></tr>' +
-      '<tr><td>Loan</td><td>70%, at 4% a year</td><td class="r">' + eur(loan) + '</td></tr>' +
-      '<tr><td>Student rooms</td><td>20 × €530 × 12</td><td class="r">' + eur(rooms) + '</td></tr>' +
-      '<tr><td>Café</td><td>150 m² × €18 × 12</td><td class="r">' + eur(cafe) + '</td></tr>' +
-      '<tr><th>Rental income a year</th><td>library not included</td><td class="r"><b>' + eur(income) + '</b></td></tr>' +
-      '<tr><th>Value at a 5% yield</th><td>income × 20</td><td class="r"><b>' + eur(value) + '</b></td></tr></tbody>';
-    $('#numNote').textContent = 'Source: the team’s own calculation (sheet “Literature adopted”). Land costs are set to zero, and the library is not counted as income.';
+    var defaults = {};
+    Object.keys(IN).forEach(function (k) { defaults[k] = $(IN[k][0]).value; });
+
+    function upd() {
+      var v = {};
+      Object.keys(IN).forEach(function (k) { var el = $(IN[k][0]); v[k] = Number(el.value); el.nextElementSibling.textContent = IN[k][1](v[k]); });
+      var f = 1 + v.cost / 100, EQ = v.eq / 100, RATE = v.rate / 100, VAC = v.vac / 100, CAP = v.cap / 100;
+      var cost = C.map(function (c) { return (c[1] ? c[1] * c[2] * c[3] : c[3]) * f; }), total = cost.reduce(function (p, q) { return p + q; }, 0);
+      var equity = total * EQ, loan = total - equity, interest = loan * RATE;
+      var rooms = ROOMS * v.rent * 12, cafe = CAFE_M2 * v.cafe * 12, gross = rooms + cafe, loss = gross * VAC, income = gross - loss;
+      var value = income / CAP, cushion = value - total, yieldGross = income / total, left = income - interest, roe = left / equity;
+      $('#numTiles').innerHTML =
+        '<div><b>' + M(total) + '</b><span>total investment</span></div>' +
+        '<div><b>' + K(income) + '</b><span>rental income a year (' + eur(income / 12) + ' a month' + (VAC ? ', after vacancy' : '') + ')</span></div>' +
+        '<div><b>' + P(yieldGross) + '</b><span>gross yield on the investment</span></div>' +
+        '<div><b>' + M(value) + '</b><span>value of the rent at a ' + pct(v.cap, 2) + ' yield</span></div>' +
+        '<div><b>' + K(interest) + '</b><span>interest a year on a loan of ' + M(loan) + '</span></div>' +
+        '<div><b' + (left < 0 ? ' class="neg"' : '') + '>' + K(left) + '</b><span>left after interest a year, ' + P(roe) + ' on the equity of ' + M(equity) + '</span></div>';
+      var uv = $('#uspValue');
+      if (uv) {
+        uv.textContent = (cushion >= 0 ? '+' : '') + K(cushion); uv.classList.toggle('neg', cushion < 0);
+        $('#uspValueH').textContent = cushion >= 0 ? 'A value cushion from day one' : 'No value cushion at these settings';
+        $('#uspValueP').textContent = 'Capitalised at a ' + pct(v.cap, 2) + ' yield, the rent is worth ' + (cushion >= 0 ? 'more' : 'less') + ' than the whole investment.';
+        $('#uspRent').textContent = '€' + v.rent;
+        $('#uspRentP').textContent = 'Per room and month for all 20 student rooms: ' + eur(ROOMS * v.rent) + ' a month from housing alone.';
+      }
+      $('#numLine').textContent = 'At a ' + pct(v.cap, 2) + ' yield the yearly rent is worth ' + M(value) + ', about ' + K(Math.abs(cushion)) + (cushion >= 0 ? ' more' : ' less') + ' than the investment of ' + M(total) + '.';
+      bar('#barCost', '#keyCost', [
+        ['New building', cost[1], 'var(--c-cafe)', M(cost[1])],
+        ['Student and study rooms', cost[0] + cost[2], 'var(--c-live)', M(cost[0] + cost[2])],
+        ['Kitchen and terraces', cost[4] + cost[5], 'var(--c-comm)', M(cost[4] + cost[5])],
+        ['Bicycle store and lift', cost[3] + cost[6], 'var(--c-circ)', M(cost[3] + cost[6])]
+      ]);
+      var inc = [
+        ['20 student rooms at €' + v.rent, rooms * (1 - VAC), 'var(--c-live)', Math.round(rooms / gross * 100) + '%'],
+        ['Café, 150 m² at €' + v.cafe + '/m²', cafe * (1 - VAC), 'var(--c-cafe)', Math.round(cafe / gross * 100) + '%']
+      ];
+      if (VAC) inc.push(['Vacancy and rent loss', loss, 'var(--line-2)', '−' + Math.round(VAC * 100) + '%']);
+      bar('#barInc', '#keyInc', inc);
+      bar('#barFin', '#keyFin', [
+        ['Equity', equity, 'var(--accent)', Math.round(EQ * 100) + '%'],
+        ['Loan at ' + pct(v.rate, 1), loan, 'var(--line-2)', Math.round((1 - EQ) * 100) + '%']
+      ]);
+      var rows = C.map(function (c, i) {
+        var what = c[1] ? (c[1] > 1 ? c[1] + ' × ' + nf1.format(c[2]) + ' m² = ' : '') + nf1.format(c[1] * c[2]) + ' m² × €' + nf.format(Math.round(c[3] * f)) + '/m²' : 'lump sum';
+        return '<tr><td>' + c[0] + '</td><td>' + what + '</td><td class="r">' + eur(cost[i]) + '</td></tr>';
+      }).join('');
+      $('#numTable').innerHTML = '<thead><tr><th>Item</th><th>Calculation</th><th class="r">Amount</th></tr></thead><tbody>' + rows +
+        '<tr><th>Total investment</th><td>land not included' + (v.cost ? ', building costs ' + IN.cost[1](v.cost) : '') + '</td><td class="r"><b>' + eur(total) + '</b></td></tr>' +
+        '<tr><td>Equity</td><td>' + v.eq + '%</td><td class="r">' + eur(equity) + '</td></tr>' +
+        '<tr><td>Loan</td><td>' + (100 - v.eq) + '%, at ' + pct(v.rate, 1) + ' a year</td><td class="r">' + eur(loan) + '</td></tr>' +
+        '<tr><td>Student rooms</td><td>20 × €' + v.rent + ' × 12</td><td class="r">' + eur(rooms) + '</td></tr>' +
+        '<tr><td>Café</td><td>150 m² × €' + v.cafe + ' × 12</td><td class="r">' + eur(cafe) + '</td></tr>' +
+        (VAC ? '<tr><td>Vacancy and rent loss</td><td>' + v.vac + '% of the rent</td><td class="r">−' + eur(loss) + '</td></tr>' : '') +
+        '<tr><th>Rental income a year</th><td>library not included</td><td class="r"><b>' + eur(income) + '</b></td></tr>' +
+        '<tr><td>Interest a year</td><td>loan × ' + pct(v.rate, 1) + '</td><td class="r">−' + eur(interest) + '</td></tr>' +
+        '<tr><th>Left after interest</th><td>before running costs and repayment</td><td class="r"><b>' + eur(left) + '</b></td></tr>' +
+        '<tr><th>Value at a ' + pct(v.cap, 2) + ' yield</th><td>income ÷ ' + pct(v.cap, 2) + '</td><td class="r"><b>' + eur(value) + '</b></td></tr></tbody>';
+    }
+    Object.keys(IN).forEach(function (k) { $(IN[k][0]).addEventListener('input', upd); });
+    $('#numReset').addEventListener('click', function () { Object.keys(IN).forEach(function (k) { $(IN[k][0]).value = defaults[k]; }); upd(); });
+    upd();
+    $('#numNote').textContent = 'Source: the team’s own calculation (sheet “Literature adopted”); the sliders start at its values. Land costs are set to zero, the library is not counted as income, and “left after interest” comes before running costs, tax and loan repayment.';
   }
 
   /* ================= start ================= */
