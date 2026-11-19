@@ -1,6 +1,6 @@
 /* S7 rooms as drawn in model.html (extracted with window.S7API.rooms()). Coordinates in metres:
    x runs west (negative) to east, z north (negative) to south, y is height. alc: the alcove of a level +2 room under the aisle roof. */
-window.S7_ROOMS = [{"name":"Entrance and book return","type":"lobby","lv":"Ground floor","x0":-10.3,"x1":-7.9,"z0":-4.2,"z1":3.9,"y0":0,"y1":3.4,"m2":9.8,"area":true,"door":null},
+window.S7_ROOMS = [{"name":"Entrance","type":"lobby","lv":"Ground floor","x0":-10.3,"x1":-7.9,"z0":-4.2,"z1":3.9,"y0":0,"y1":3.4,"m2":9.8,"area":true,"door":null},
 {"name":"Café inside: second order point and seating","type":"lounge","lv":"Ground floor","x0":-7.6,"x1":-1,"z0":-3.6,"z1":3.6,"y0":0.06,"y1":4.6,"m2":47.5,"area":true,"door":null},
 {"name":"Library reading hall","type":"library2","lv":"Ground floor","x0":0.5,"x1":26.5,"z0":-4,"z1":4,"y0":0,"y1":5.4,"m2":208,"area":true,"door":null},
 {"name":"Book stacks, south aisle west","type":"stacks","lv":"Ground floor","x0":4.5,"x1":12.2,"z0":4.9,"z1":8.6,"y0":0,"y1":3.2,"m2":28.5,"area":true,"door":null},

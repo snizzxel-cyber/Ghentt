@@ -53,7 +53,6 @@
     if ((k = n.match(/^Bathroom, (men|women)/))) return k[1] === 'men' ? 'Bath M' : 'Bath W';
     if (/^Stair/.test(n)) return 'Stair';
     if (/^Book stacks/.test(n)) return 'Stacks';
-    if (n === 'Entrance and book return') return 'Entrance';
     if (n === 'Café storage (staff only)') return 'Café storage';
     if (n === 'Café storage') return 'Storage';
     if (n === 'Roof terrace by the kitchen') return 'Terrace';
@@ -66,7 +65,7 @@
     studysm: 'A small room for studying, not for living: desk, chair, shelf and armchair. Bookable for residents and library users.',
     library2: 'The open reading hall in the nave, with long tables, shelving around the piers and two rows of free-standing shelf units. The tiled floor stays visible.',
     stacks: 'Library shelving in the side aisle, below the gallery of study rooms.',
-    lobby: 'Main entrance in the glazed wing: a portal with two sliding doors, a canopy, the book return, the lift and the stair. A 2.2 m opening leads into the choir.',
+    lobby: 'Main entrance in the glazed wing: a portal with two sliding doors, a canopy, the lift and the stair. A 2.2 m opening leads into the choir.',
     commkitchen: 'The only kitchen in the building, for all 20 residents: an 11 m kitchen run with hobs and sinks, two islands with stools, five dining tables and sofas under the ridge.',
     terrace7: 'Roof terrace for the residents, with a glass guard, tables and planters. Reached by lift without a step.',
     wc1: 'A single toilet with washbasin for library visitors.',
@@ -441,9 +440,9 @@
     { key: 'bath', cat: 'serv', name: 'Bathroom (women and men)', count: '4×', lv: 'Levels +2 and +3', dims: ['5.2 × 3.35', 'm'], area: ['≈ 16.7', 'm²'], h: ['2.4', 'm'], model: 'Toilets and showers, women, level +2',
       p: 'The bathrooms are in the café building, reached across the bridge and the glazed wing. Each level has one room for women and one for men.',
       f: ['Three toilet cubicles', 'Three washbasins with mirror', 'Two walk-in showers with glass screens', 'Per level: 4 showers for 10 rooms'], who: 'For the residents of that level. Level +4 has no toilets; the nearest are one lift stop down.' },
-    { key: 'lobby', cat: 'pub', name: 'Entrance and book return', count: '1×', lv: 'Ground floor, glazed wing', dims: ['8.1 × 2.4', 'm'], area: ['≈ 9.8', 'm² free'], h: ['3.4', 'm'], model: 'Entrance and book return',
+    { key: 'lobby', cat: 'pub', name: 'Entrance', count: '1×', lv: 'Ground floor, glazed wing', dims: ['8.1 × 2.4', 'm'], area: ['≈ 9.8', 'm² free'], h: ['3.4', 'm'], model: 'Entrance',
       p: 'The glazed wing facing Clemenspoort is the main entrance for everyone: library, café and residents. The lift and stair to every level stand here too.',
-      f: ['3 m portal with two sliding doors and a canopy', 'Book return next to the portal', '1.5 × 1.5 m lift that stops on every level', 'U-shaped stair; 2.2 m opening into the choir'], who: 'For all visitors; residents go upstairs with their transponder.' },
+      f: ['3 m portal with two sliding doors and a canopy', 'Notice board and seating by the portal', '1.5 × 1.5 m lift that stops on every level', 'U-shaped stair; 2.2 m opening into the choir'], who: 'For all visitors; residents go upstairs with their transponder.' },
     { key: 'locker', cat: 'serv', name: 'Locker room', count: '2×', lv: 'Ground floor, covered passage', dims: ['5.0 × 1.3', 'm'], area: ['5.9', 'm²'], h: ['2.6', 'm'], model: 'Locker room 1',
       p: 'Two narrow rooms in the covered passage along the south aisle, under a new flat roof with roof windows, so that bags and coats stay out of the reading hall.',
       f: ['A wall of lockers in two tiers', 'Mirror at the end', 'Door from the passage, which becomes the student entrance'], who: 'For library visitors and residents.' },

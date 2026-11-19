@@ -563,7 +563,7 @@
     return { W: W, D: D, H: H };
   };
 
-  // entrance wing with the book return, lift and stair (ground floor), 8.1 × 2.4 m
+  // entrance wing with the lift and stair (ground floor), 8.1 × 2.4 m
   B.lobby = function (g) {
     var W = 8.1, D = 2.4, H = 3.4;
     box(g, W, 0.06, D, 0, -0.06, 0, 0xcfe6ea);
@@ -576,8 +576,8 @@
     box(g, 6, 0.04, 2, 0, -0.04, -D / 2 - 1.1, 0x9aa1a8);
     var cv = document.createElement('canvas'); cv.width = 1024; cv.height = 96; var x = cv.getContext('2d'); x.fillStyle = '#2b6f77'; x.fillRect(0, 0, 1024, 96); x.fillStyle = '#fff'; x.font = 'bold 50px sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText('LIBRARY · STUDENT HOUSING · ENTRANCE', 512, 50);
     var sg = new T.Mesh(new T.PlaneGeometry(4.4, 0.42), new T.MeshBasicMaterial({ map: new T.CanvasTexture(cv), side: T.DoubleSide })); sg.position.set(0, 3.12, -D / 2 - 1.31); sg.rotation.y = Math.PI; g.add(sg);
-    // book return slot beside the portal
-    box(g, 0.6, 1.1, 0.4, -2.2, 0, -D / 2 + 0.25, 0x59606a); box(g, 0.4, 0.06, 0.05, -2.2, 0.95, -D / 2 + 0.47, K.mustard);
+    // bench and notice board beside the portal
+    box(g, 1.4, 0.45, 0.4, -2.3, 0, -D / 2 + 0.3, K.oak); box(g, 1.2, 0.8, 0.03, -2.3, 1.3, -D / 2 + 0.06, 0xd8cbb5);
     // lift at the north end (right): glass shaft 1.5 × 1.5 m
     var lx = 3.25, lz = -0.2;
     [[-0.75, -0.75], [0.75, -0.75], [-0.75, 0.75], [0.75, 0.75]].forEach(function (p) { box(g, 0.08, H, 0.08, lx + p[0], 0, lz + p[1], K.dark); });
@@ -595,7 +595,7 @@
     // north end wall (right) with the fire door to the café building; south end (left) closed
     box(g, 0.12, H, D, -W / 2 - 0.06, 0, 0, K.glass, { glass: true });
     box(g, 0.12, 0.35, D, W / 2 + 0.06, 0, 0, 0xe3dccb);
-    person(g, -0.6, 0.3, 2.6, K.coral); person(g, 1.4, 0.6, -1.9, K.teal);
+    person(g, 0.3, 0.35, 2.6, K.coral); person(g, 1.5, -0.3, -1.9, K.teal);
     return { W: W, D: D + 2.6, H: H, view: [0.35, 0.75, 1.0], fit: 0.62, target: [0, 1.0, -0.6] };
   };
 
@@ -623,7 +623,11 @@
     var W = 9.8, D = 6.8, H = 2.7;
     shell(g, W, D, H, { floorCol: 0x9aa1a8, wall: 0xe3dccb });
     seed = 11;
-    [-2.6, -1.5, -0.4, 0.7, 1.8].forEach(function (z, r) { for (var x = -4.2; x <= 3.95; x += 0.7) bike(g, x, z + (r % 2 ? 0.08 : 0), 0); box(g, 8.6, 0.05, 0.05, -0.1, 0.25, z - 0.25, K.steel); });
+    // stands for about 60 bikes (five rows of 12); only every third place is taken, so the store reads clearly
+    [-2.6, -1.5, -0.4, 0.7, 1.8].forEach(function (z, r) {
+      box(g, 8.6, 0.05, 0.05, -0.1, 0.25, z - 0.25, K.steel);
+      var k = 0; for (var x = -4.2; x <= 3.95; x += 0.7, k++) { box(g, 0.04, 0.5, 0.04, x, 0, z - 0.25, K.steel); if ((k + r) % 3 === 0) bike(g, x, z + (r % 2 ? 0.08 : 0), 0); }
+    });
     box(g, 2.4, 2.3, 0.04, -3.5, 0, D / 2 + 0.02, K.dark);
     person(g, 3.8, 2.7, Math.PI + 0.3, K.teal);
     return { W: W, D: D, H: H, view: [0.6, 1.0, 1.0], fit: 0.62 };
