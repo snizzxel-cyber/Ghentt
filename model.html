@@ -4261,21 +4261,36 @@ body.comparing #tourStart2,body.comparing #tourStart4,body.comparing #tourStart6
 
   /* embed API: commands from the parent page */
   function roomByNameActive(n) { for (var i = 0; i < ROOMS.length; i++) if (ROOMS[i].scen === active && ROOMS[i].name === n) return ROOMS[i]; return null; }
+  var exAnim = null;
+  function animateExplode(to, pose) {
+    var from = explodeT, p0 = camera.position.clone(), t0 = controls.target.clone(), p1 = V3(pose.p[0], pose.p[1], pose.p[2]), t1 = V3(pose.t[0], pose.t[1], pose.t[2]);
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches, id = {}, start = performance.now(), dur = 2400;
+    exAnim = id;
+    (function step(now) {
+      if (exAnim !== id) return;
+      var k = calm ? 1 : Math.min(1, (now - start) / dur), e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+      applyExplode(from + (to - from) * e, false); exEl.value = Math.round(explodeT * 100);
+      camera.position.lerpVectors(p0, p1, e); controls.target.lerpVectors(t0, t1, e); controls.update();
+      if (k < 1) requestAnimationFrame(step); else exAnim = null;
+    })(start);
+  }
   function embedCmd(m) {
     if (!m || !m.cmd) return;
     if (m.cmd === 'rotate') { if (controls.autoRotate !== undefined) { leaveWalk(); if (tour.on) tourStop(); controls.autoRotate = !!m.v; } return; }
     if (m.cmd !== 'labels' && window.S7STOPSPIN) window.S7STOPSPIN();
+    if (m.cmd !== 'labels') exAnim = null;   // a running explode animation gives way to any new command
     if (m.cmd !== 'tour' && tour.on) tourStop();
     if (m.cmd === 'view') {
       leaveWalk();
-      if (m.ex != null) { exEl.value = Math.round(m.ex * 100); applyExplode(m.ex, false); }
+      if (m.ex != null && explodeT > 0.001 && m.v !== 'section') { setMode(m.v); animateExplode(m.ex, presets[m.cam || 'sw']); return; }
+      if (m.ex != null) { exAnim = null; exEl.value = Math.round(m.ex * 100); applyExplode(m.ex, false); }
       setMode(m.v);
       if (m.v !== 'section' && m.cam) flyTo(m.cam);
     } else if (m.cmd === 'cam') {
       leaveWalk(); flyTo(m.v);
     } else if (m.cmd === 'explode') {
-      leaveWalk(); var t = Number(m.v) || 0; exEl.value = Math.round(t * 100); applyExplode(t, true);
-      if (t > 0) { var ty = 7 + (stackH / 2 - 7), d = 74 + stackH * 0.9; presets.exp = { p: [8 + 0.6 * d, ty + 0.25 * d, 0.75 * d], t: [8, ty, 0] }; flyTo('exp'); } else flyTo('sw');
+      leaveWalk(); var t = Number(m.v) || 0;
+      if (t > 0) { var ty = 7 + (stackH / 2 - 7), d = 74 + stackH * 0.9; presets.exp = { p: [8 + 0.6 * d, ty + 0.25 * d, 0.75 * d], t: [8, ty, 0] }; animateExplode(t, presets.exp); } else animateExplode(0, presets.sw);
     } else if (m.cmd === 'room') {
       var r = roomByNameActive(m.name); if (!r) return;
       if (m.roam) roamStart(r.id); else enterRoom(r.id);

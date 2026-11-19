@@ -140,7 +140,7 @@
   $$('#segView button').forEach(function (b) {
     b.addEventListener('click', function () {
       press($('#segView'), b);
-      if (b.dataset.view === 'explode') { toModel({ cmd: 'tour', v: 's7explode' }); return; }
+      if (b.dataset.view === 'explode') send({ cmd: 'explode', v: 1 });
       else send({ cmd: 'view', v: b.dataset.view, ex: 0, cam: b.dataset.view === 'section' ? null : 'sw' });
       if (b.dataset.view !== 'section') press($('#segCam'), $('#segCam button[data-cam="sw"]'));
     });
